@@ -13,11 +13,11 @@ HelloApp::~HelloApp() {
     if (m_vao) glDeleteVertexArrays(1, &m_vao);
 }
 
-const char* HelloApp::Name() const {
+std::string HelloApp::Name() const {
     return "HelloApp";
 }
 
-bool HelloApp::Init() {
+bool HelloApp::Init(gramma::AppContext &ctx) {
     // Tiny triangle to verify pipeline
     float tri[6] = {-0.5f, -0.3f, 0.5f, -0.3f, 0.0f, 0.4f};
     glGenVertexArrays(1, &m_vao);
@@ -25,7 +25,7 @@ bool HelloApp::Init() {
     glGenBuffers(1, &m_vbo);
     glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
     glBufferData(GL_ARRAY_BUFFER, sizeof(tri), tri, GL_STATIC_DRAW);
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void *)0);
     glEnableVertexAttribArray(0);
 
     m_cam.SetOrtho(-1.6f, 1.6f, -0.9f, 0.9f);
@@ -33,11 +33,11 @@ bool HelloApp::Init() {
     return true;
 }
 
-void HelloApp::Update(double /*dt*/) {
+void HelloApp::Update(gramma::AppContext &ctx, double /*dt*/) {
     // nothing yet
 }
 
-void HelloApp::Render() {
+void HelloApp::Render(gramma::AppContext &ctx) {
     m_shader.Bind();
     m_shader.SetMat4("uMVP", m_cam.ViewProj());
     m_shader.SetVec3("uColor", {1.0f, 1.0f, 1.0f});

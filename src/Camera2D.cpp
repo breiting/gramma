@@ -13,6 +13,15 @@ void Camera2D::SetOrtho(float l, float r, float b, float t) {
     m_Top = t;
 }
 
+void Camera2D::SetOrthoByHeight(float height, float aspect) {
+    float halfH = height * 0.5f;
+    float halfW = halfH * aspect;
+    m_Left = -halfW;
+    m_Right = +halfW;
+    m_Bottom = -halfH;
+    m_Top = +halfH;
+}
+
 void Camera2D::SetPosition(glm::vec2 pos) {
     m_Position = pos;
 }

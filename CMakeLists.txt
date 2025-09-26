@@ -9,6 +9,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Options
 option(GRAMMA_BUILD_HELLO "Build hello app" ON)
+option(GRAMMA_BUILD_BOUNCE "Build bouncing app" ON)
 
 
 # -------- Dependencies (fetch once, available everywhere) --------
@@ -43,10 +44,14 @@ include_directories(${CMAKE_SOURCE_DIR}/inc)
 
 # Lib: gramma
 add_library(gramma
-		src/Window.cpp
-		src/Time.cpp
-		src/Shader.cpp
 		src/Camera2D.cpp
+		src/CircleBatch.cpp
+		src/LineBatch.cpp
+		src/Runner.cpp
+		src/Shader.cpp
+		src/Time.cpp
+		src/Window.cpp
+		src/World2d.cpp
 )
 target_link_libraries(gramma PUBLIC glfw glad glm::glm)
 target_include_directories(gramma PUBLIC inc)
@@ -58,6 +63,16 @@ if(GRAMMA_BUILD_HELLO)
 				apps/hello/HelloApp.cpp
 		)
 	target_link_libraries(hello
+				PRIVATE gramma glm::glm
+		)
+endif()
+
+if(GRAMMA_BUILD_BOUNCE)
+	add_executable(bounce
+				apps/bounce/main.cpp
+				apps/bounce/BounceApp.cpp
+		)
+	target_link_libraries(bounce
 				PRIVATE gramma glm::glm
 		)
 endif()

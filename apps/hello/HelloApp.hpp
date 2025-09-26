@@ -9,12 +9,12 @@
 class HelloApp : public gramma::IApp {
    public:
     ~HelloApp();
-    const char* Name() const override;
+    std::string Name() const override;
 
-    bool Init() override;
-    void Update(double /*dt*/) override;
+    bool Init(gramma::AppContext &ctx) override;
+    void Update(gramma::AppContext &ctx, double /*dt*/) override;
 
-    void Render() override;
+    void Render(gramma::AppContext &ctx) override;
 
    private:
     GLuint m_vao = 0, m_vbo = 0;
