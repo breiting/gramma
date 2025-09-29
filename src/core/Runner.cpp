@@ -1,6 +1,7 @@
 #include <glad.h>
 
 #include <gramma/core/Runner.hpp>
+#include <gramma/core/Time.hpp>
 
 namespace gr {
 
@@ -15,8 +16,6 @@ bool Runner::Init(std::unique_ptr<IApp> app, int width, int height, const std::s
 
     if (!m_Window.Create({width, height, title, msaa})) return false;
 
-    m_Now = 0.0;
-    m_LastTime = 0.0;
     m_Quit = false;
 
     m_App = std::move(app);
@@ -28,15 +27,29 @@ bool Runner::Init(std::unique_ptr<IApp> app, int width, int height, const std::s
 void Runner::Run() {
     if (!m_App) return;
 
+    const double dtUpdate = 1.0 / m_UpdateRate;
+    double accumulator = 0.0;
+    double lastTime = gr::Now();
+
     while (!m_Quit && Poll()) {
+        double now = gr::Now();
+        double frameTime = now - lastTime;
+        lastTime = now;
+        accumulator += frameTime;
+
+        while (accumulator >= dtUpdate) {
+            m_App->Update(*this, dtUpdate);
+            accumulator -= dtUpdate;
+        }
+
         BeginFrame();
-
-        // App update & render
-        m_App->Update(*this, m_Window.DeltaTime());
         m_App->Render(*this);
-
         EndFrame();
     }
+}
+
+void Runner::SetUpdateRate(double rate) {
+    m_UpdateRate = rate;
 }
 
 bool Runner::Poll() {

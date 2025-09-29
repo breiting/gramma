@@ -17,6 +17,8 @@ class Runner : public AppContext {
 
     void Run();
 
+    void SetUpdateRate(double rate);  // in Hz (e.g. 60)
+
     // AppContext
     double Aspect() const override;
     void RequestQuit() override;
@@ -25,8 +27,7 @@ class Runner : public AppContext {
     gr::Window m_Window;
     std::unique_ptr<IApp> m_App;
 
-    double m_Now{0.0};
-    double m_LastTime{0.0};
+    double m_UpdateRate{60.0};
     bool m_Quit{false};
 
     void BeginFrame();

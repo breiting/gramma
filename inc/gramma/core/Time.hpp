@@ -1,11 +1,14 @@
 #pragma once
+
+#include <chrono>
+
 namespace gr {
 
-/** Simple timer that computes dt. */
-class Time {
-    double now = 0.0;
-    double dt = 0.0;
-    void Tick();
-};
+/** Returns the time in seconds
+ */
+inline double Now() {
+    using clock = std::chrono::steady_clock;
+    return std::chrono::duration<double>(clock::now().time_since_epoch()).count();
+}
 
 }  // namespace gr
