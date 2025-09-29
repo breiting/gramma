@@ -4,7 +4,11 @@
 #include <GLFW/glfw3.h>
 // clang-format on
 
+#include <functional>
 #include <string>
+
+#include "gramma/core/IApp.hpp"
+#include "gramma/view/Gui.hpp"
 
 namespace gr {
 
@@ -25,13 +29,33 @@ class Window {
     void BeginFrame();  // clears
     void EndFrame();    // swap buffers
 
-    double DeltaTime() const;
     float Aspect() const;
+
+    void RegisterGui(Gui& gui);
+
+    void SetKeyPressedHandler(IKeyPressedHandler* h) {
+        m_KeyPressedHandler = h;
+    }
+
+    void SetMouseButtonHandler(IMouseButtonHandler* h) {
+        m_MouseButtonHandler = h;
+    }
+
+    void SetMouseMoveHandler(IMouseMoveHandler* h) {
+        m_MouseMoveHandler = h;
+    }
+
+   private:
+    void InstallGlfwCallbacks();
 
    private:
     GLFWwindow* m_Window;
-    double m_LastTime;
-    double m_Dt;
+
+    // Handler
+    IKeyPressedHandler* m_KeyPressedHandler = nullptr;
+    IMouseButtonHandler* m_MouseButtonHandler = nullptr;
+    IMouseMoveHandler* m_MouseMoveHandler = nullptr;
+
     int m_FramebufferWidth;
     int m_FramebufferHeight;
 };

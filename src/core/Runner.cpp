@@ -2,6 +2,7 @@
 
 #include <gramma/core/Runner.hpp>
 #include <gramma/core/Time.hpp>
+#include <gramma/view/Gui.hpp>
 
 namespace gr {
 
@@ -20,12 +21,19 @@ bool Runner::Init(std::unique_ptr<IApp> app, int width, int height, const std::s
 
     m_App = std::move(app);
 
-    // Give the app a chance to set up GL resources
+    m_Window.SetKeyPressedHandler(m_App.get());
+    m_Window.SetMouseButtonHandler(m_App.get());
+    m_Window.SetMouseMoveHandler(m_App.get());
+
     return m_App->Init(*this);
 }
 
 void Runner::Run() {
     if (!m_App) return;
+
+    Gui gui;
+    // m_Gui.SetFontDirectory(fontDir);
+    m_Window.RegisterGui(gui);
 
     const double dtUpdate = 1.0 / m_UpdateRate;
     double accumulator = 0.0;
@@ -33,24 +41,36 @@ void Runner::Run() {
 
     while (!m_Quit && Poll()) {
         double now = gr::Now();
-        double frameTime = now - lastTime;
+        m_FrameDt = now - lastTime;
         lastTime = now;
-        accumulator += frameTime;
+        accumulator += m_FrameDt;
 
         // Only update according to given update rate
         while (accumulator >= dtUpdate) {
+            m_UpdateDt = dtUpdate;
             m_App->Update(*this, dtUpdate);
             accumulator -= dtUpdate;
         }
 
         BeginFrame();
+        gui.Begin();
         m_App->Render(*this);
+        m_App->Ui(*this);
+        gui.End();
         EndFrame();
     }
 }
 
 void Runner::SetUpdateRate(double rate) {
     m_UpdateRate = rate;
+}
+
+double Runner::GetFrameDt() {
+    return m_FrameDt;
+}
+
+double Runner::GetUpdateDt() {
+    return m_UpdateDt;
 }
 
 bool Runner::Poll() {

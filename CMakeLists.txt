@@ -35,6 +35,15 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(glfw)
 
+# Dear ImGui
+FetchContent_Declare(imgui
+		GIT_REPOSITORY https://github.com/ocornut/imgui.git
+		GIT_TAG        v1.92.3
+)
+FetchContent_MakeAvailable(imgui)
+
+
+
 # glad (local)
 add_library(glad STATIC extern/glad/src/gl.cpp)
 target_include_directories(glad PUBLIC extern/glad/include)
@@ -50,11 +59,29 @@ add_library(gramma
 		src/model/World2d.cpp
 		src/view/Camera2D.cpp
 		src/view/CircleBatch.cpp
+		src/view/Gui.cpp
 		src/view/LineBatch.cpp
 		src/view/Shader.cpp
+
+	${imgui_SOURCE_DIR}/imgui.cpp
+	${imgui_SOURCE_DIR}/imgui_draw.cpp
+	${imgui_SOURCE_DIR}/imgui_tables.cpp
+	${imgui_SOURCE_DIR}/imgui_widgets.cpp
+	${imgui_SOURCE_DIR}/backends/imgui_impl_glfw.cpp
+	${imgui_SOURCE_DIR}/backends/imgui_impl_opengl3.cpp
+
 )
-target_link_libraries(gramma PUBLIC glfw glad glm::glm)
-target_include_directories(gramma PUBLIC inc)
+target_link_libraries(gramma
+PUBLIC
+	glfw glad glm::glm
+)
+
+target_include_directories(gramma
+PUBLIC
+	inc
+	${imgui_SOURCE_DIR}
+	${imgui_SOURCE_DIR}/backends
+)
 
 # Apps
 if(GRAMMA_BUILD_HELLO)

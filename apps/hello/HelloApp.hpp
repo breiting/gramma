@@ -15,6 +15,7 @@ class HelloApp : public gr::IApp {
     void Update(gr::AppContext &ctx, double /*dt*/) override;
 
     void Render(gr::AppContext &ctx) override;
+    void Ui(gr::AppContext &ctx) override;
 
    private:
     GLuint m_vao = 0, m_vbo = 0;

@@ -37,6 +37,9 @@ void HelloApp::Update(gr::AppContext &ctx, double /*dt*/) {
     // nothing yet
 }
 
+void HelloApp::Ui(gr::AppContext &ctx) {
+}
+
 void HelloApp::Render(gr::AppContext &ctx) {
     m_shader.Bind();
     m_shader.SetMat4("uMVP", m_cam.ViewProj());

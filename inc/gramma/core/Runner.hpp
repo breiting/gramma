@@ -22,12 +22,17 @@ class Runner : public AppContext {
     // AppContext
     double Aspect() const override;
     void RequestQuit() override;
+    double GetFrameDt() override;
+    double GetUpdateDt() override;
 
    private:
     gr::Window m_Window;
     std::unique_ptr<IApp> m_App;
 
     double m_UpdateRate{60.0};
+    double m_FrameDt{0.0};
+    double m_UpdateDt{0.0};
+
     bool m_Quit{false};
 
     void BeginFrame();
