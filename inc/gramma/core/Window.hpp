@@ -29,9 +29,11 @@ class Window {
     float Aspect() const;
 
    private:
-    GLFWwindow* m_Window = nullptr;
-    double m_LastTime = 0.0, m_Dt = 0.0;
-    int m_FramebufferWidth = 1, m_FramebufferHeight = 1;
+    GLFWwindow* m_Window;
+    double m_LastTime;
+    double m_Dt;
+    int m_FramebufferWidth;
+    int m_FramebufferHeight;
 };
 
 }  // namespace gr

@@ -3,11 +3,12 @@
 #include <vector>
 
 #include "Body2D.hpp"
+#include "gramma/model/IModel.hpp"
 
 namespace gr {
 
 /** Minimal 2D physics world: gravity, ground (y = groundY), semi-implicit Euler. */
-class World2D {
+class World2D : public IModel {
    public:
     glm::vec2 gravity{0.0f, -9.81f};  // m/s^2
     float groundY{0.0f};              // floor line at y = groundY
@@ -27,8 +28,8 @@ class World2D {
         return m_bodies;
     }
 
-    /** Advance simulation by dt seconds (semi-implicit Euler). */
-    void step(float dt);
+    void Reset(uint32_t seed);
+    void Step(double dt);
 
    private:
     std::vector<Body2D> m_bodies;

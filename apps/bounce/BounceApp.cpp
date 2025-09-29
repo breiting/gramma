@@ -10,10 +10,8 @@ std::string BounceApp::Name() const {
 }
 
 bool BounceApp::Init(gr::AppContext &ctx) {
-    auto wi = ctx.Window();
-
     // View
-    m_cam.SetOrthoByHeight(10, wi.aspect);
+    m_cam.SetOrthoByHeight(10, ctx.Aspect());
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     m_circles.init();
@@ -38,7 +36,7 @@ bool BounceApp::Init(gr::AppContext &ctx) {
 
 void BounceApp::Update(gr::AppContext &ctx, double dt) {
     // fixed step is fine here (or use dt)
-    m_world.step((float)dt);
+    m_world.Step((float)dt);
 }
 
 void BounceApp::Render(gr::AppContext &ctx) {
