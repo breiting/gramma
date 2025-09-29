@@ -4,7 +4,7 @@
 
 #include "Body2D.hpp"
 
-namespace gramma {
+namespace gr {
 
 /** Minimal 2D physics world: gravity, ground (y = groundY), semi-implicit Euler. */
 class World2D {
@@ -37,4 +37,4 @@ class World2D {
     void solveGroundCollision(Body2D& b);
 };
 
-}  // namespace gramma
+}  // namespace gr

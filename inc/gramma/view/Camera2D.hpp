@@ -1,7 +1,7 @@
 #pragma once
 #include <glm/mat4x4.hpp>
 
-namespace gramma {
+namespace gr {
 
 /** Simple orthographic 2D camera (view-projection only). */
 class Camera2D {
@@ -19,4 +19,4 @@ class Camera2D {
     float m_Zoom;
 };
 
-}  // namespace gramma
+}  // namespace gr

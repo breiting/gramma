@@ -5,7 +5,7 @@
 #include <glm/vec3.hpp>
 #include <string>
 
-namespace gramma {
+namespace gr {
 
 /** Minimal shader wrapper (unlit). */
 class Shader {
@@ -33,4 +33,4 @@ class Shader {
     GLuint m_id = 0;
 };
 
-}  // namespace gramma
+}  // namespace gr

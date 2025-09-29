@@ -3,7 +3,7 @@
 #include <glm/vec2.hpp>
 #include <vector>
 
-namespace gramma {
+namespace gr {
 
 /** Simple polyline batch in world units. */
 class LineBatch {
@@ -17,4 +17,4 @@ class LineBatch {
     int m_count = 0;
 };
 
-}  // namespace gramma
+}  // namespace gr

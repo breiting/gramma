@@ -1,11 +1,11 @@
 #include <GLFW/glfw3.h>
 
-#include <gramma/Time.hpp>
+#include <gramma/core/Time.hpp>
 
-namespace gramma {
+namespace gr {
 void Time::Tick() {
     double t = glfwGetTime();
     dt = t - now;
     now = t;
 }
-}  // namespace gramma
+}  // namespace gr

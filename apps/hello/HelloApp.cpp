@@ -2,11 +2,11 @@
 
 #include <glad.h>
 
-#include <gramma/Camera2D.hpp>
-#include <gramma/IApp.hpp>
-#include <gramma/Shader.hpp>
+#include <gramma/core/IApp.hpp>
+#include <gramma/view/Camera2D.hpp>
+#include <gramma/view/Shader.hpp>
 
-using namespace gramma;
+using namespace gr;
 
 HelloApp::~HelloApp() {
     if (m_vbo) glDeleteBuffers(1, &m_vbo);
@@ -17,7 +17,7 @@ std::string HelloApp::Name() const {
     return "HelloApp";
 }
 
-bool HelloApp::Init(gramma::AppContext &ctx) {
+bool HelloApp::Init(gr::AppContext &ctx) {
     // Tiny triangle to verify pipeline
     float tri[6] = {-0.5f, -0.3f, 0.5f, -0.3f, 0.0f, 0.4f};
     glGenVertexArrays(1, &m_vao);
@@ -33,11 +33,11 @@ bool HelloApp::Init(gramma::AppContext &ctx) {
     return true;
 }
 
-void HelloApp::Update(gramma::AppContext &ctx, double /*dt*/) {
+void HelloApp::Update(gr::AppContext &ctx, double /*dt*/) {
     // nothing yet
 }
 
-void HelloApp::Render(gramma::AppContext &ctx) {
+void HelloApp::Render(gr::AppContext &ctx) {
     m_shader.Bind();
     m_shader.SetMat4("uMVP", m_cam.ViewProj());
     m_shader.SetVec3("uColor", {1.0f, 1.0f, 1.0f});

@@ -1,8 +1,8 @@
 #include <algorithm>
 #include <cmath>
-#include <gramma/World2D.hpp>
+#include <gramma/model/World2D.hpp>
 
-namespace gramma {
+namespace gr {
 
 void World2D::step(float dt) {
     for (auto& b : m_bodies) {
@@ -38,4 +38,4 @@ void World2D::solveGroundCollision(Body2D& b) {
     }
 }
 
-}  // namespace gramma
+}  // namespace gr

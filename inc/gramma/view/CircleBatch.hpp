@@ -3,7 +3,7 @@
 #include <glm/vec2.hpp>
 #include <vector>
 
-namespace gramma {
+namespace gr {
 
 /** Instanced circles in world units (meters). */
 class CircleBatch {
@@ -23,4 +23,4 @@ class CircleBatch {
     std::vector<Instance> m_data;
 };
 
-}  // namespace gramma
+}  // namespace gr

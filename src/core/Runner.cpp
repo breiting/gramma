@@ -1,8 +1,8 @@
 #include <glad.h>
 
-#include <gramma/Runner.hpp>
+#include <gramma/core/Runner.hpp>
 
-namespace gramma {
+namespace gr {
 
 Runner::~Runner() {
     // ensure window/context are torn down after app is destroyed
@@ -13,7 +13,7 @@ Runner::~Runner() {
 bool Runner::Init(std::unique_ptr<IApp> app, int width, int height, const std::string& title, int msaa) {
     if (!app) return false;
 
-    gramma::Window::CreateInfo ci;
+    gr::Window::CreateInfo ci;
     ci.width = width;
     ci.height = height;
     ci.title = title;
@@ -76,4 +76,4 @@ void Runner::endFrame_() {
     m_window.EndFrame();
 }
 
-}  // namespace gramma
+}  // namespace gr

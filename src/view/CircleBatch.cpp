@@ -1,11 +1,10 @@
 #include <glad.h>
 
-#include <gramma/CircleBatch.hpp>
+#include <gramma/view/CircleBatch.hpp>
 #include <iostream>
-#include <string>
 #include <vector>
 
-namespace gramma {
+namespace gr {
 
 static GLuint mkShader(GLenum t, const char* s) {
     GLuint sh = glCreateShader(t);
@@ -112,4 +111,4 @@ void CircleBatch::draw(const glm::mat4& vp, float alpha) const {
     glDrawArraysInstanced(GL_TRIANGLE_STRIP, 0, 4, (GLsizei)m_data.size());
 }
 
-}  // namespace gramma
+}  // namespace gr

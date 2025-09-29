@@ -1,11 +1,11 @@
-#include <gramma/IApp.hpp>
-#include <gramma/Runner.hpp>
-#include <gramma/Window.hpp>
+#include <gramma/core/IApp.hpp>
+#include <gramma/core/Runner.hpp>
+#include <gramma/core/Window.hpp>
 #include <memory>
 
 #include "HelloApp.hpp"
 
-using namespace gramma;
+using namespace gr;
 
 int main() {
     auto app = std::make_unique<HelloApp>();

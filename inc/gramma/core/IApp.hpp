@@ -1,12 +1,11 @@
 #pragma once
 #include <string>
 
-namespace gramma {
+namespace gr {
 
 class AppContext;
 
 /** Minimal application interface.
- *  Controller calls Update/Render each frame.
  */
 class IApp {
    public:
@@ -17,4 +16,4 @@ class IApp {
     virtual void Render(AppContext& ctx) = 0;
 };
 
-}  // namespace gramma
+}  // namespace gr

@@ -1,9 +1,9 @@
 #include <glad.h>
 
-#include <gramma/LineBatch.hpp>
+#include <gramma/view/LineBatch.hpp>
 #include <iostream>
 
-namespace gramma {
+namespace gr {
 static GLuint mkShader(GLenum t, const char* s) {
     GLuint sh = glCreateShader(t);
     glShaderSource(sh, 1, &s, nullptr);
@@ -74,4 +74,4 @@ void LineBatch::draw(const glm::mat4& vp, float alpha) const {
     glDrawArrays(GL_LINES, 0, m_count);
 }
 
-}  // namespace gramma
+}  // namespace gr

@@ -1,15 +1,15 @@
 #include "BounceApp.hpp"
 
 #include <cstdlib>
-#include <gramma/Runner.hpp>
+#include <gramma/core/Runner.hpp>
 
-using namespace gramma;
+using namespace gr;
 
 std::string BounceApp::Name() const {
     return "BallBounce";
 }
 
-bool BounceApp::Init(gramma::AppContext &ctx) {
+bool BounceApp::Init(gr::AppContext &ctx) {
     auto wi = ctx.Window();
 
     // View
@@ -36,12 +36,12 @@ bool BounceApp::Init(gramma::AppContext &ctx) {
     return true;
 }
 
-void BounceApp::Update(gramma::AppContext &ctx, double dt) {
+void BounceApp::Update(gr::AppContext &ctx, double dt) {
     // fixed step is fine here (or use dt)
     m_world.step((float)dt);
 }
 
-void BounceApp::Render(gramma::AppContext &ctx) {
+void BounceApp::Render(gr::AppContext &ctx) {
     glm::mat4 vp = m_cam.ViewProj();
 
     // circles

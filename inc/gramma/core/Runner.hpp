@@ -1,10 +1,10 @@
 #pragma once
-#include <gramma/IApp.hpp>
-#include <gramma/Window.hpp>
+#include <gramma/core/IApp.hpp>
+#include <gramma/core/Window.hpp>
 #include <memory>
 #include <string>
 
-namespace gramma {
+namespace gr {
 
 /** Lightweight services the app may query without owning the window. */
 class AppContext {
@@ -45,7 +45,7 @@ class Runner : public AppContext {
     }
 
    private:
-    gramma::Window m_window;
+    gr::Window m_window;
     std::unique_ptr<IApp> m_app;
 
     WindowInfo m_winInfo{};
@@ -58,4 +58,4 @@ class Runner : public AppContext {
     bool poll_();
 };
 
-}  // namespace gramma
+}  // namespace gr

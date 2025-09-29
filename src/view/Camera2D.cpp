@@ -1,7 +1,7 @@
 #include <glm/gtc/matrix_transform.hpp>
-#include <gramma/Camera2D.hpp>
+#include <gramma/view/Camera2D.hpp>
 
-namespace gramma {
+namespace gr {
 
 Camera2D::Camera2D() : m_Left(-1.6f), m_Right(1.6f), m_Bottom(-0.9f), m_Top(0.9f), m_Zoom(1.0f) {
 }
@@ -38,4 +38,4 @@ glm::mat4 Camera2D::ViewProj() const {
     return P * V;
 }
 
-}  // namespace gramma
+}  // namespace gr

@@ -1,7 +1,7 @@
-#include <gramma/Shader.hpp>
+#include <gramma/view/Shader.hpp>
 #include <iostream>
 
-namespace gramma {
+namespace gr {
 
 static GLuint compile(GLenum type, const std::string& src) {
     GLuint s = glCreateShader(type);
@@ -76,4 +76,4 @@ bool Shader::BuildUnlit() {
     return Build(vs, fs);
 }
 
-}  // namespace gramma
+}  // namespace gr

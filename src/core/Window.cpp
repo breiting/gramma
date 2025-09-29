@@ -1,6 +1,6 @@
-#include <gramma/Window.hpp>
+#include <gramma/core/Window.hpp>
 
-namespace gramma {
+namespace gr {
 
 bool Window::Create(const CreateInfo& ci) {
     if (!glfwInit()) return false;
@@ -56,6 +56,14 @@ bool Window::Poll() {
     return true;
 }
 
+double Window::DeltaTime() const {
+    return m_Dt;
+}
+
+float Window::Aspect() const {
+    return float(m_FramebufferWidth) / float(m_FramebufferHeight);
+}
+
 void Window::BeginFrame() {
     glClearColor(0.02f, 0.02f, 0.03f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
@@ -65,4 +73,4 @@ void Window::EndFrame() {
     glfwSwapBuffers(m_Window);
 }
 
-}  // namespace gramma
+}  // namespace gr

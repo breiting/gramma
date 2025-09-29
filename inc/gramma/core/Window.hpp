@@ -6,7 +6,7 @@
 
 #include <string>
 
-namespace gramma {
+namespace gr {
 
 /** Thin GLFW window wrapper with basic frame control. */
 class Window {
@@ -25,15 +25,8 @@ class Window {
     void BeginFrame();  // clears
     void EndFrame();    // swap buffers
 
-    GLFWwindow* Handle() const {
-        return m_Window;
-    }
-    double DeltaTime() const {
-        return m_Dt;
-    }
-    float Aspect() const {
-        return float(m_FramebufferWidth) / float(m_FramebufferHeight);
-    }
+    double DeltaTime() const;
+    float Aspect() const;
 
    private:
     GLFWwindow* m_Window = nullptr;
@@ -41,4 +34,4 @@ class Window {
     int m_FramebufferWidth = 1, m_FramebufferHeight = 1;
 };
 
-}  // namespace gramma
+}  // namespace gr

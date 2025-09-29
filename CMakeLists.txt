@@ -44,14 +44,14 @@ include_directories(${CMAKE_SOURCE_DIR}/inc)
 
 # Lib: gramma
 add_library(gramma
-		src/Camera2D.cpp
-		src/CircleBatch.cpp
-		src/LineBatch.cpp
-		src/Runner.cpp
-		src/Shader.cpp
-		src/Time.cpp
-		src/Window.cpp
-		src/World2d.cpp
+		src/view/Camera2D.cpp
+		src/view/CircleBatch.cpp
+		src/view/LineBatch.cpp
+		src/view/Shader.cpp
+		src/core/Runner.cpp
+		src/core/Time.cpp
+		src/core/Window.cpp
+		src/model/World2d.cpp
 )
 target_link_libraries(gramma PUBLIC glfw glad glm::glm)
 target_include_directories(gramma PUBLIC inc)

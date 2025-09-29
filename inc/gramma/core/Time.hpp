@@ -1,5 +1,5 @@
 #pragma once
-namespace gramma {
+namespace gr {
 
 /** Simple timer that computes dt. */
 struct Time {
@@ -8,4 +8,4 @@ struct Time {
     void Tick();
 };
 
-}  // namespace gramma
+}  // namespace gr

@@ -1,7 +1,7 @@
 #pragma once
 #include <glm/vec2.hpp>
 
-namespace gramma {
+namespace gr {
 
 /** Rigid 2D circle (world units = meters). */
 struct Body2D {
@@ -27,4 +27,4 @@ struct Body2D {
     }
 };
 
-}  // namespace gramma
+}  // namespace gr
