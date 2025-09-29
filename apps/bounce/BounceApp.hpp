@@ -9,23 +9,25 @@
 #include <gramma/view/LineBatch.hpp>
 #include <gramma/view/Shader.hpp>
 
+using namespace gr;
+
 class BounceApp : public gr::IApp {
    public:
     BounceApp() = default;
     ~BounceApp() = default;
     std::string Name() const override;
 
-    bool Init(gr::AppContext& ctx) override;
-    void Update(gr::AppContext& ctx, double /*dt*/) override;
+    bool Init(AppContext& ctx) override;
+    void Update(AppContext& ctx, double /*dt*/) override;
 
-    void Render(gr::AppContext& ctx) override;
+    void Render(AppContext& ctx) override;
 
    private:
     GLuint m_vao = 0, m_vbo = 0;
-    gr::Shader m_shader;
-    gr::Camera2D m_cam;
+    Shader m_shader;
+    Camera2D m_cam;
 
-    gr::World2D m_world;
-    gr::CircleBatch m_circles;
-    gr::LineBatch m_lines;
+    World2D m_world;
+    CircleBatch m_circles;
+    LineBatch m_lines;
 };

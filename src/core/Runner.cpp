@@ -37,6 +37,7 @@ void Runner::Run() {
         lastTime = now;
         accumulator += frameTime;
 
+        // Only update according to given update rate
         while (accumulator >= dtUpdate) {
             m_App->Update(*this, dtUpdate);
             accumulator -= dtUpdate;
@@ -59,7 +60,6 @@ bool Runner::Poll() {
 
 void Runner::BeginFrame() {
     m_Window.BeginFrame();
-    // common GL state you want globally (optional)
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
