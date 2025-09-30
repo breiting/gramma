@@ -18,6 +18,7 @@ file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/generated/assets")
 # Options
 option(GRAMMA_BUILD_HELLO "Build hello app" ON)
 option(GRAMMA_BUILD_BOUNCE "Build bouncing app" ON)
+option(GRAMMA_BUILD_RESCUE "Build rescue app" ON)
 
 
 # -------- Dependencies (fetch once, available everywhere) --------
@@ -56,15 +57,19 @@ add_library(gramma
 		src/core/Time.cpp
 		src/core/Window.cpp
 		src/model/World2D.cpp
+		src/model/GreedyExitStrategy.cpp
+		src/model/SimpleRepulsionHandler.cpp
+		src/model/Simulation.cpp
 		src/view/Camera2D.cpp
 		src/view/CircleShapes.cpp
 										# src/view/Font.cpp
 		src/view/Hud.cpp
 		src/view/LineShape.cpp
-		src/view/TriangularMesh.cpp
 		src/view/Panel.cpp
 		src/view/QuadShapes.cpp
 		src/view/Shader.cpp
+		src/view/LineShape.cpp
+		src/view/TriangularMesh.cpp
 										# src/view/TextElement.cpp
 
 )
@@ -121,4 +126,16 @@ if(GRAMMA_BUILD_BOUNCE)
 		)
 	target_include_directories(bounce PRIVATE ${CMAKE_SOURCE_DIR}/inc ${CMAKE_SOURCE_DIR}/extern/glad/include)
 	target_compile_features(bounce PRIVATE cxx_std_17)
+endif()
+
+if(GRAMMA_BUILD_RESCUE)
+	add_executable(rescue
+				apps/rescue/main.cpp
+				apps/rescue/RescueApp.cpp
+		)
+	target_link_libraries(rescue
+				PRIVATE gramma glm::glm
+		)
+	target_include_directories(rescue PRIVATE ${CMAKE_SOURCE_DIR}/inc ${CMAKE_SOURCE_DIR}/extern/glad/include)
+	target_compile_features(rescue PRIVATE cxx_std_17)
 endif()
