@@ -6,7 +6,8 @@ namespace gr {
 
 struct IAgentView {
     virtual ~IAgentView() = default;
-    virtual void Draw(const Agent& agent, const glm::mat4& vp) const = 0;
+    virtual void Init() = 0;
+    virtual void Draw(const Agent& agent, const glm::mat4& vp) = 0;
 };
 
 }  // namespace gr

@@ -2,12 +2,14 @@
 #include <gramma/view/Shader.hpp>
 #include <iostream>
 
+#include "assets/basic_frag.h"
+#include "assets/basic_vert.h"
 #include "assets/circle_frag.h"
 #include "assets/circle_vert.h"
 #include "assets/line_frag.h"
 #include "assets/line_vert.h"
-#include "assets/phong_frag.h"
-#include "assets/phong_vert.h"
+#include "assets/ring_frag.h"
+#include "assets/ring_vert.h"
 #include "assets/unlit_frag.h"
 #include "assets/unlit_vert.h"
 
@@ -96,12 +98,16 @@ unsigned int Shader::GetInt(const std::string& name) const {
     return glGetUniformLocation(m_Id, name.c_str());
 }
 
-void Shader::BuildPhong() {
-    CompileShader(phong_vert_glsl, phong_frag_glsl);
+void Shader::BuildRing() {
+    CompileShader(ring_vert_glsl, ring_frag_glsl);
 }
 
 void Shader::BuildUnlit() {
     CompileShader(unlit_vert_glsl, unlit_frag_glsl);
+}
+
+void Shader::BuildBasic() {
+    CompileShader(basic_vert_glsl, basic_frag_glsl);
 }
 
 void Shader::BuildCircle() {

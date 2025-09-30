@@ -20,10 +20,11 @@ class Shader {
     void Bind() const;
 
     // Load and build a pre-defined shader
-    void BuildPhong();
-    void BuildUnlit();
+    void BuildBasic();
     void BuildCircle();
     void BuildLine();
+    void BuildRing();
+    void BuildUnlit();
 
     // Set data to shader
     void SetMat3(const std::string& name, const glm::mat3& m) const;

@@ -65,6 +65,7 @@ add_library(gramma
 		src/view/Font.cpp
 		src/view/Hud.cpp
 		src/view/CircleShape.cpp
+		src/view/GlowAgentView.cpp
 		src/view/LineShape.cpp
 		src/view/Panel.cpp
 		src/view/QuadShapes.cpp
@@ -74,7 +75,7 @@ add_library(gramma
 		src/view/TextElement.cpp
 		src/view/TexturedQuadShapes.cpp
 		src/view/Texture.cpp
-						#src/view/Image.cpp
+												#src/view/Image.cpp
 )
 
 
@@ -84,10 +85,12 @@ add_library(gramma
 set(SHADER_SRC_DIR "${CMAKE_SOURCE_DIR}/assets")
 set(GEN_INC_DIR    "${CMAKE_BINARY_DIR}/generated")
 
-embed_text_to_header("${SHADER_SRC_DIR}/phong.vert"  "${GEN_INC_DIR}/assets/phong_vert.h"  phong_vert_glsl)
-embed_text_to_header("${SHADER_SRC_DIR}/phong.frag"  "${GEN_INC_DIR}/assets/phong_frag.h"  phong_frag_glsl)
+embed_text_to_header("${SHADER_SRC_DIR}/ring.vert"  "${GEN_INC_DIR}/assets/ring_vert.h"  ring_vert_glsl)
+embed_text_to_header("${SHADER_SRC_DIR}/ring.frag"  "${GEN_INC_DIR}/assets/ring_frag.h"  ring_frag_glsl)
 embed_text_to_header("${SHADER_SRC_DIR}/unlit.vert"  "${GEN_INC_DIR}/assets/unlit_vert.h"  unlit_vert_glsl)
 embed_text_to_header("${SHADER_SRC_DIR}/unlit.frag"  "${GEN_INC_DIR}/assets/unlit_frag.h"  unlit_frag_glsl)
+embed_text_to_header("${SHADER_SRC_DIR}/basic.vert"  "${GEN_INC_DIR}/assets/basic_vert.h"  basic_vert_glsl)
+embed_text_to_header("${SHADER_SRC_DIR}/basic.frag"  "${GEN_INC_DIR}/assets/basic_frag.h"  basic_frag_glsl)
 embed_text_to_header("${SHADER_SRC_DIR}/circle.vert" "${GEN_INC_DIR}/assets/circle_vert.h" circle_vert_glsl)
 embed_text_to_header("${SHADER_SRC_DIR}/circle.frag" "${GEN_INC_DIR}/assets/circle_frag.h" circle_frag_glsl)
 embed_text_to_header("${SHADER_SRC_DIR}/line.vert"   "${GEN_INC_DIR}/assets/line_vert.h"   line_vert_glsl)

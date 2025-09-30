@@ -1,18 +1,26 @@
 #pragma once
-#include <gramma/view/CircleShapes.hpp>
+#include <gramma/view/CircleShape.hpp>
+#include <gramma/view/IAgentView.hpp>
+#include <gramma/view/Shader.hpp>
 
-#include "IAgentView.hpp"
+#include "gramma/view/LineShape.hpp"
 
 namespace gr {
 
-class FancyAgentView : public IAgentView {
+class GlowAgentView : public IAgentView {
    public:
-    FancyAgentView();
+    GlowAgentView() = default;
 
-    void Draw(const Agent& agent, const glm::mat4& vp) const override;
+    void Init() override;
+
+    void Draw(const Agent& agent, const glm::mat4& vp) override;
 
    private:
-    CircleShapes m_Shapes;
+    Shader m_BodyShader;
+    Shader m_RingShader;
+
+    CircleShape m_Body;
+    CircleShape m_Ring;
 };
 
 }  // namespace gr

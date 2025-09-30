@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "GLFW/glfw3.h"
+#include "gramma/model/AgentTraits.hpp"
 
 using namespace gr;
 
@@ -50,28 +51,34 @@ bool BounceApp::Init(gr::AppContext& ctx) {
     // onMouseMove = [this](double x, double y) { printf("%3.2f %3.2f\n", x, y); };
 
     // Load font
-    if (!m_font.Load("../assets/fonts/Roboto-Medium.ttf", 24.0f)) {
-        return false;
-    }
+    // if (!m_font.Load("../assets/fonts/Roboto-Medium.ttf", 24.0f)) {
+    //     return false;
+    // }
 
     // Create HUD panel
-    auto* hud = ctx.GetHud();
-    m_PerfPanel = std::make_unique<Panel>(glm::vec2(10, 10), glm::vec2(250, 80), hud->GetQuadBatch(),
-                                          glm::vec4(0.5, 0, 0, 0.7), glm::vec4(0.5, 1, 1, 1), 2.0f);
+    // auto* hud = ctx.GetHud();
+    // m_PerfPanel = std::make_unique<Panel>(glm::vec2(10, 10), glm::vec2(250, 80), hud->GetQuadBatch(),
+    //                                       glm::vec4(0.5, 0, 0, 0.7), glm::vec4(0.5, 1, 1, 1), 2.0f);
 
-    m_fpsText = std::make_unique<TextElement>(glm::vec2(20, 20), "Bernhard", glm::vec4(1, 1, 1, 1), &m_font);
-    m_PerfPanel->AddElement(std::move(m_fpsText));
+    // m_fpsText = std::make_unique<TextElement>(glm::vec2(20, 20), "Bernhard", glm::vec4(1, 1, 1, 1), &m_font);
+    // m_PerfPanel->AddElement(std::move(m_fpsText));
 
-    hud->AddPanel(std::move(m_PerfPanel));
+    // hud->AddPanel(std::move(m_PerfPanel));
+
+    m_AgentView.Init();
+
+    m_Agent.Pos = {1.0, 1.0};
+    AgentTraits traits;
+    traits.age = gr::AgeClass::Child;
+    traits.bodyRadius = 0.2;
+    traits.comfortRadius = 0.8;
+    m_Agent.traits = traits;
 
     return true;
 }
 
 void BounceApp::Update(gr::AppContext& ctx, double dt) {
-    // fixed step is fine here (or use dt)
     m_World.Step((float)dt);
-
-    // TODO: Update HUD text when font is fixed
 }
 
 void BounceApp::Render(gr::AppContext& ctx) {
@@ -90,4 +97,6 @@ void BounceApp::Render(gr::AppContext& ctx) {
     m_Circles.Upload();
     m_Lines.Draw(m_LineShader, vp, glm::vec4(1.0, 1.0, 1.0, 0.8));
     m_Circles.Draw(m_CircleShader, vp, glm::vec4(1.0, 1.0, 1.0, 0.95));
+
+    m_AgentView.Draw(m_Agent, vp);
 }

@@ -13,6 +13,10 @@ CircleShape::~CircleShape() {
     if (m_Vao) glDeleteVertexArrays(1, &m_Vao);
 }
 
+void CircleShape::Clear() {
+    m_Points.clear();
+}
+
 void CircleShape::Init() {
     glGenVertexArrays(1, &m_Vao);
     glBindVertexArray(m_Vao);
@@ -49,10 +53,11 @@ void CircleShape::Draw(const Shader& shader, const glm::mat4& vp, const glm::vec
     shader.SetMat4(Uniforms::MVP, vp);
     shader.SetVec4(Uniforms::COLOR, color);
     glBindVertexArray(m_Vao);
+
     if (m_Filled) {
         glDrawArrays(GL_TRIANGLE_FAN, 0, m_Points.size());
     } else {
-        glDrawArrays(GL_TRIANGLE_STRIP, 0, m_Points.size());
+        glDrawArrays(GL_LINE_LOOP, 0, m_Points.size());
     }
 }
 

@@ -13,6 +13,8 @@
 #include <gramma/view/TextElement.hpp>
 #include <memory>
 
+#include "gramma/view/GlowAgentView.hpp"
+
 using namespace gr;
 
 class BounceApp : public gr::IApp {
@@ -35,6 +37,10 @@ class BounceApp : public gr::IApp {
     World2D m_World;
     CircleShapes m_Circles;
     LineShape m_Lines;
+
+    GlowAgentView m_AgentView;
+    Agent m_Agent;
+
     bool m_Quit{false};
 
     std::unique_ptr<Panel> m_PerfPanel;
