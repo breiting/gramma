@@ -2,7 +2,6 @@
 
 #include <cstdio>
 #include <cstdlib>
-#include <fstream>
 #include <gramma/core/Runner.hpp>
 #include <vector>
 
@@ -16,28 +15,30 @@ std::string BounceApp::Name() const {
 
 bool BounceApp::Init(gr::AppContext& ctx) {
     // View
-    m_cam.SetOrthoByHeight(10, ctx.Aspect());
+    m_Camera.SetOrthoByHeight(10, ctx.Aspect());
+
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    m_circles.init();
-    m_lines.init();
-    m_circleShader.BuildCircle();
-    m_lineShader.BuildLine();
+
+    m_Circles.init();
+    m_Lines.init();
+    m_CircleShader.BuildCircle();
+    m_LineShader.BuildLine();
 
     // Model
-    m_world.gravity = {0.f, -9.81f};
-    m_world.groundY = -0.6f;
-    m_world.groundFriction = 0.15f;
+    m_World.gravity = {0.f, -9.81f};
+    m_World.groundY = -0.6f;
+    m_World.groundFriction = 0.15f;
     // one dynamic ball (mass=1kg, r=0.1m, e=0.65)
-    //
+
     for (int i = -5; i < 6; i++) {
-        auto idx = m_world.addBody(Body2D::Dynamic(0.1f, 0.10f, abs(i * 0.1) + 0.3));
-        m_world.body(idx).pos = {i, 5.f};
-        m_world.body(idx).vel = {0.0f, 0.0f};
+        auto idx = m_World.addBody(Body2D::Dynamic(0.1f, 0.10f, abs(i * 0.1) + 0.3));
+        m_World.body(idx).pos = {i, 5.f};
+        m_World.body(idx).vel = {0.0f, 0.0f};
     }
 
     // ground line for rendering
-    m_lines.set({{-10.f, m_world.groundY}, {10.f, m_world.groundY}});
+    m_Lines.set({{-10.f, m_World.groundY}, {10.f, m_World.groundY}});
 
     // Set input callbacks
     onKeyPressed = [this](int key, int mods) {
@@ -69,7 +70,7 @@ bool BounceApp::Init(gr::AppContext& ctx) {
 
 void BounceApp::Update(gr::AppContext& ctx, double dt) {
     // fixed step is fine here (or use dt)
-    m_world.Step((float)dt);
+    m_World.Step((float)dt);
 
     // TODO: Update HUD text when font is fixed
 }
@@ -80,14 +81,14 @@ void BounceApp::Render(gr::AppContext& ctx) {
         return;
     }
 
-    glm::mat4 vp = m_cam.ViewProj();
+    glm::mat4 vp = m_Camera.ViewProj();
 
     // circles
-    m_circles.clear();
-    for (auto& b : m_world.bodies()) {
-        m_circles.add(b.pos, 2.0f * b.radius);
+    m_Circles.clear();
+    for (auto& b : m_World.bodies()) {
+        m_Circles.add(b.pos, 2.0f * b.radius);
     }
-    m_circles.upload();
-    m_lines.draw(m_lineShader, vp, 0.8f);
-    m_circles.draw(m_circleShader, vp, 0.95f);
+    m_Circles.upload();
+    m_Lines.draw(m_LineShader, vp, 0.8f);
+    m_Circles.draw(m_CircleShader, vp, 0.95f);
 }

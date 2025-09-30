@@ -28,13 +28,13 @@ class BounceApp : public gr::IApp {
 
    private:
     GLuint m_vao = 0, m_vbo = 0;
-    Shader m_circleShader;
-    Shader m_lineShader;
-    Camera2D m_cam;
+    Shader m_CircleShader;
+    Shader m_LineShader;
+    Camera2D m_Camera;
 
-    World2D m_world;
-    CircleBatch m_circles;
-    LineBatch m_lines;
+    World2D m_World;
+    CircleBatch m_Circles;
+    LineBatch m_Lines;
     bool m_Quit{false};
 
     std::unique_ptr<Panel> m_PerfPanel;
