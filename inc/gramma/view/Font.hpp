@@ -1,10 +1,8 @@
 #pragma once
 #include <glad.h>
+#include <stb_truetype.h>
 
-#include <string>
 #include <unordered_map>
-
-#include "../../../extern/stb/stb_truetype.h"
 
 namespace gr {
 

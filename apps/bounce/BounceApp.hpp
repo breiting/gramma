@@ -12,6 +12,7 @@
 #include <memory>
 
 #include "../../inc/gramma/view/Shader.hpp"
+#include "gramma/view/TextElement.hpp"
 
 using namespace gr;
 
@@ -38,8 +39,6 @@ class BounceApp : public gr::IApp {
     bool m_Quit{false};
 
     std::unique_ptr<Panel> m_PerfPanel;
-    // TODO: Add text elements when font is fixed
-    // TextElement* m_fpsText;
-    // TextElement* m_upsText;
-    // Font m_font;
+    std::unique_ptr<TextElement> m_fpsText;
+    Font m_font;
 };

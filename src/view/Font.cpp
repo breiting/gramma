@@ -1,9 +1,5 @@
-#define STB_TRUETYPE_IMPLEMENTATION
-#define STBTT_DEF
 #include <gramma/view/Font.hpp>
 #include <iostream>
-
-#include "../../../extern/stb/stb_truetype.h"
 
 namespace gr {
 

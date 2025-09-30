@@ -62,7 +62,7 @@ add_library(gramma
 		src/model/Simulation.cpp
 		src/view/Camera2D.cpp
 		src/view/CircleShapes.cpp
-										# src/view/Font.cpp
+		src/view/Font.cpp
 		src/view/Hud.cpp
 		src/view/LineShape.cpp
 		src/view/Panel.cpp
@@ -70,8 +70,7 @@ add_library(gramma
 		src/view/Shader.cpp
 		src/view/LineShape.cpp
 		src/view/TriangularMesh.cpp
-										# src/view/TextElement.cpp
-
+		src/view/TextElement.cpp
 )
 
 
@@ -93,6 +92,7 @@ embed_text_to_header("${SHADER_SRC_DIR}/line.frag"   "${GEN_INC_DIR}/assets/line
 
 target_link_libraries(gramma
 PUBLIC
+	project_settings
 	glfw glad glm::glm
 )
 target_compile_features(gramma PUBLIC cxx_std_17)
@@ -100,6 +100,7 @@ target_compile_features(gramma PUBLIC cxx_std_17)
 target_include_directories(gramma
 PUBLIC
 	inc
+	extern/stb
 	${GEN_INC_DIR}
 )
 

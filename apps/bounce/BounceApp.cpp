@@ -54,10 +54,8 @@ bool BounceApp::Init(gr::AppContext& ctx) {
     m_PerfPanel = std::make_unique<Panel>(glm::vec2(10, 10), glm::vec2(250, 80), hud->GetQuadBatch(),
                                           glm::vec4(0.5, 0, 0, 0.7), glm::vec4(0.5, 1, 1, 1), 2.0f);
 
-    // TODO: Add text elements when font is fixed
-    // auto fpsText = std::make_unique<TextElement>(glm::vec2(10, 10), "FPS: 0", glm::vec4(1, 1, 1, 1), &m_font);
-    // m_fpsText = fpsText.get();
-    // m_perfPanel->AddElement(std::move(fpsText));
+    m_fpsText = std::make_unique<TextElement>(glm::vec2(10, 10), "FPS: 0", glm::vec4(1, 1, 1, 1), &m_font);
+    m_PerfPanel->AddElement(std::move(m_fpsText));
 
     // auto upsText = std::make_unique<TextElement>(glm::vec2(10, 40), "UPS: 0", glm::vec4(1, 1, 1, 1), &m_font);
     // m_upsText = upsText.get();

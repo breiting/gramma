@@ -2,19 +2,21 @@
 #include <gramma/view/Panel.hpp>
 #include <gramma/view/TextElement.hpp>
 
+#include "gramma/view/QuadShapes.hpp"
+
 namespace gr {
 
 TextElement::TextElement(const glm::vec2& pos, const std::string& text, const glm::vec4& color, Font* font)
     : Element(pos), m_text(text), m_color(color), m_font(font) {
 }
 
-void TextElement::Render(QuadBatch& qb) const {
+void TextElement::Render(QuadShapes& qb) const {
     if (!m_font) return;
 
-    glm::vec2 currentPos = m_pos;  // assume pos is relative to panel, but for simplicity, treat as screen pos
+    glm::vec2 currentPos = m_Pos;  // assume pos is relative to panel, but for simplicity, treat as screen pos
     for (char c : m_text) {
         if (c == '\n') {
-            currentPos.x = m_pos.x;
+            currentPos.x = m_Pos.x;
             currentPos.y += 20.0f;
             continue;
         }
