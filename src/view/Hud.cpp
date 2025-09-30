@@ -25,6 +25,7 @@ void Hud::Render(const AppContext& ctx) {
     m_quadBatch.Upload();
 
     glm::mat4 proj = glm::ortho(0.0f, (float)ctx.GetWidth(), (float)ctx.GetHeight(), 0.0f);
+    m_shader.Bind();
     m_shader.SetMat4("uMVP", proj);
 
     m_quadBatch.Draw(m_shader);
