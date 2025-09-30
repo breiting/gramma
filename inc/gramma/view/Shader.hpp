@@ -31,6 +31,8 @@ class Shader {
     void SetVec3(const std::string& name, const glm::vec3& value) const;
     void SetFloat(const std::string& name, float value) const;
     void SetBool(const std::string& name, bool value) const;
+    /** Set integer uniform. */
+    void SetInt(const std::string& name, int value) const;
 
     unsigned int GetInt(const std::string& name) const;
 

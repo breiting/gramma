@@ -71,6 +71,9 @@ add_library(gramma
 		src/view/LineShape.cpp
 		src/view/TriangularMesh.cpp
 		src/view/TextElement.cpp
+		src/view/TexturedQuadShapes.cpp
+		src/view/Texture.cpp
+		src/view/Image.cpp
 )
 
 

@@ -7,12 +7,12 @@
 #include <gramma/view/Camera2D.hpp>
 #include <gramma/view/CircleShapes.hpp>
 #include <gramma/view/Font.hpp>
+#include <gramma/view/Image.hpp>
 #include <gramma/view/LineShape.hpp>
 #include <gramma/view/Panel.hpp>
+#include <gramma/view/Shader.hpp>
+#include <gramma/view/TextElement.hpp>
 #include <memory>
-
-#include "../../inc/gramma/view/Shader.hpp"
-#include "gramma/view/TextElement.hpp"
 
 using namespace gr;
 
@@ -40,5 +40,6 @@ class BounceApp : public gr::IApp {
 
     std::unique_ptr<Panel> m_PerfPanel;
     std::unique_ptr<TextElement> m_fpsText;
+    std::unique_ptr<Image> m_Image;
     Font m_font;
 };
