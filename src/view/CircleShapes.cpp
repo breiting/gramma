@@ -21,7 +21,7 @@ void CircleShapes::Init() {
     glBindBuffer(GL_ARRAY_BUFFER, m_VboInst);
     glBufferData(GL_ARRAY_BUFFER, 0, nullptr, GL_DYNAMIC_DRAW);
 
-    // instances: pos (loc=1), size (loc=2)
+    // instances: pos (loc=1), size (loc=2), color (loc=3)
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Instance), (void*)0);
     glEnableVertexAttribArray(1);
     glVertexAttribDivisor(1, 1);
@@ -29,13 +29,17 @@ void CircleShapes::Init() {
     glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, sizeof(Instance), (void*)offsetof(Instance, Diameter));
     glEnableVertexAttribArray(2);
     glVertexAttribDivisor(2, 1);
+
+    glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(Instance), (void*)offsetof(Instance, Color));
+    glEnableVertexAttribArray(3);
+    glVertexAttribDivisor(3, 1);
 }
 
 void CircleShapes::Clear() {
     m_Data.clear();
 }
-void CircleShapes::Add(const glm::vec2& pos, float diameter) {
-    m_Data.push_back({pos, diameter});
+void CircleShapes::Add(const glm::vec2& pos, float diameter, const glm::vec4& color) {
+    m_Data.push_back({pos, diameter, color});
 }
 void CircleShapes::Upload() {
     glBindVertexArray(m_Vao);

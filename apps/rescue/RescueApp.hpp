@@ -4,6 +4,7 @@
 #include <gramma/model/Simulation.hpp>
 #include <gramma/view/Camera2D.hpp>
 #include <gramma/view/CircleShapes.hpp>
+#include <gramma/view/LineShape.hpp>
 #include <gramma/view/Shader.hpp>
 #include <memory>
 
@@ -19,7 +20,9 @@ class RescueApp : public gr::IApp {
    private:
     std::unique_ptr<gr::Simulation> m_Simulation;
     gr::Camera2D m_Camera;
-    gr::CircleShapes m_CircleShapes;
+    gr::CircleShapes m_BodyShapes;
+    gr::LineShape m_ComfortShapes;
     gr::Shader m_Shader;
+    bool m_Restart{false};
     bool m_Quit{false};
 };

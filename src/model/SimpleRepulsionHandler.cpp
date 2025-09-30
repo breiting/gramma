@@ -14,7 +14,7 @@ void SimpleRepulsionHandler::HandleCollisions(std::vector<Agent>& agents) const 
             Agent& b = agents[j];
             glm::vec2 diff = a.Pos - b.Pos;
             float dist = glm::length(diff);
-            float minDist = a.Radius + b.Radius;
+            float minDist = a.traits.comfortRadius + b.traits.comfortRadius;
             if (dist < minDist && dist > 0.0f) {
                 glm::vec2 repulsion = glm::normalize(diff) * (minDist - dist) * m_RepulsionStrength;
                 a.Vel += repulsion;

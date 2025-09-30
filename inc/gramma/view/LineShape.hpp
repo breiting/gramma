@@ -14,7 +14,8 @@ class LineShape : public IRenderable {
     void Init() override;
     void Clear() override;                        // reset
     void Set(const std::vector<glm::vec2>& pts);  // set points, pairs as segments
-    void Upload() override;                       // upload to GPU
+    void AddCircleOutline(const glm::vec2& center, float radius, int segments = 32);
+    void Upload() override;  // upload to GPU
     void Draw(const Shader& shader, const glm::mat4& vp, float alpha = 1.0f) override;
 
    private:

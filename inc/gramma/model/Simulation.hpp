@@ -11,7 +11,7 @@ namespace gr {
 /** Manages the evacuation simulation. */
 class Simulation {
    public:
-    Simulation(const Room& room, const Exit& exit, std::unique_ptr<INavigationStrategy> navStrategy,
+    Simulation(const Room& room, std::unique_ptr<INavigationStrategy> navStrategy,
                std::unique_ptr<ICollisionHandler> collisionHandler, int numAgents);
     ~Simulation() = default;
 
@@ -30,16 +30,19 @@ class Simulation {
     /** Get the room. */
     const Room& GetRoom() const;
 
-    /** Get the exit. */
-    const Exit& GetExit() const;
+    /** Get elapsed simulation time. */
+    float GetElapsedTime() const;
+
+    /** Get agent counts by age class. */
+    std::array<int, 4> GetAgeCounts() const;
 
    private:
     Room m_Room;
-    Exit m_Exit;
     std::unique_ptr<INavigationStrategy> m_NavStrategy;
     std::unique_ptr<ICollisionHandler> m_CollisionHandler;
     std::vector<Agent> m_Agents;
     int m_NumAgents;
+    float m_ElapsedTime = 0.0f;
 };
 
 }  // namespace gr

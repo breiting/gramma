@@ -9,7 +9,7 @@ glm::vec2 GreedyExitStrategy::ComputeDesiredVelocity(const Agent& agent, const E
     float dist = glm::length(dir);
     if (dist > 0.0f) {
         dir = glm::normalize(dir);
-        return dir * agent.SpeedPref;
+        return dir * agent.traits.speedPref;
     }
     return glm::vec2(0.0f);  // already at exit
 }
