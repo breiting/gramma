@@ -4,15 +4,15 @@
 #include <iostream>
 #include <memory>
 
-#include "HelloApp.hpp"
+#include "BounceApp.hpp"
 
 using namespace gr;
 
 int main() {
-    auto app = std::make_unique<HelloApp>();
+    auto app = std::make_unique<BounceApp>();
     Runner runner;
     try {
-        runner.Init(std::move(app), 1280, 720, "gramma — Hello", 4);
+        runner.Init(std::move(app), 1280, 720, "gramma — Bounce", 4);
     } catch (const std::exception& e) {
         std::cerr << "Error: " << e.what() << std::endl;
         return -1;

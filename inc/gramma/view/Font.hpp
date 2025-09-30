@@ -1,0 +1,39 @@
+#pragma once
+#include <glad.h>
+
+#include <string>
+#include <unordered_map>
+
+#include "../../../extern/stb/stb_truetype.h"
+
+namespace gr {
+
+/** Simple font renderer using stb_truetype. */
+class Font {
+   public:
+    Font();
+    ~Font();
+
+    /** Load font from TTF data. */
+    bool Load(const unsigned char* ttfData, int size, float fontSize);
+
+    /** Get texture ID for a character. */
+    GLuint GetCharTexture(char c);
+
+    /** Get character metrics. */
+    stbtt_bakedchar* GetCharData(char c);
+
+    /** Get font size. */
+    float GetFontSize() const {
+        return m_fontSize;
+    }
+
+   private:
+    stbtt_fontinfo m_fontInfo;
+    const unsigned char* m_ttfData;
+    std::unordered_map<char, GLuint> m_charTextures;
+    std::unordered_map<char, stbtt_bakedchar> m_charData;
+    float m_fontSize;
+};
+
+}  // namespace gr

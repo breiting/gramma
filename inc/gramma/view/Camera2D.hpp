@@ -1,13 +1,14 @@
 #pragma once
 #include <glm/mat4x4.hpp>
 
-namespace gramma {
+namespace gr {
 
 /** Simple orthographic 2D camera (view-projection only). */
 class Camera2D {
    public:
     Camera2D();
     void SetOrtho(float l, float r, float b, float t);
+    void SetOrthoByHeight(float height, float aspect);
     void SetPosition(glm::vec2 pos);
     void SetZoom(float z);
     glm::mat4 ViewProj() const;
@@ -18,4 +19,4 @@ class Camera2D {
     float m_Zoom;
 };
 
-}  // namespace gramma
+}  // namespace gr

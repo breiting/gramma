@@ -1,7 +1,7 @@
 #include <glm/gtc/matrix_transform.hpp>
-#include <gramma/Camera2D.hpp>
+#include <gramma/view/Camera2D.hpp>
 
-namespace gramma {
+namespace gr {
 
 Camera2D::Camera2D() : m_Left(-1.6f), m_Right(1.6f), m_Bottom(-0.9f), m_Top(0.9f), m_Zoom(1.0f) {
 }
@@ -11,6 +11,15 @@ void Camera2D::SetOrtho(float l, float r, float b, float t) {
     m_Right = r;
     m_Bottom = b;
     m_Top = t;
+}
+
+void Camera2D::SetOrthoByHeight(float height, float aspect) {
+    float halfH = height * 0.5f;
+    float halfW = halfH * aspect;
+    m_Left = -halfW;
+    m_Right = +halfW;
+    m_Bottom = -halfH;
+    m_Top = +halfH;
 }
 
 void Camera2D::SetPosition(glm::vec2 pos) {
@@ -29,4 +38,4 @@ glm::mat4 Camera2D::ViewProj() const {
     return P * V;
 }
 
-}  // namespace gramma
+}  // namespace gr

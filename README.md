@@ -10,30 +10,6 @@ The goal is **clarity and simplicity**:
 - Reusable building blocks
 - Real-time rendering with OpenGL (GLFW + glad + GLM)
 
-## ✨ Features (current & planned)
-
-- **Core infrastructure**
-  - Window handling (GLFW)
-  - Time & delta time
-  - Basic input utilities
-
-- **Graphics**
-  - Shader wrapper (unlit / custom GLSL)
-  - Camera2D (orthographic, zoom/pan)
-  - Instanced rendering (particles)
-  - 2D textures (grids, plots)
-
-- **Architecture**
-  - `IApp` interface (`Init`, `Update(dt)`, `Render`)
-  - Clean separation: simulation ≠ rendering
-
-- **Examples (apps)**
-  - `HelloApp` (minimal triangle) ✅
-  - Particle systems (attraction/repulsion) ⏳
-  - Game of Life (grid texture) ⏳
-  - Fourier playground (plots) ⏳
-  - Crowd evacuation & social force models ⏳
-
 ## 🚀 Build & Run
 
 ### Requirements
