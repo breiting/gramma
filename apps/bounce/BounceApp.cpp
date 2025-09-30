@@ -20,8 +20,8 @@ bool BounceApp::Init(gr::AppContext& ctx) {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    m_Circles.init();
-    m_Lines.init();
+    m_Circles.Init();
+    m_Lines.Init();
     m_CircleShader.BuildCircle();
     m_LineShader.BuildLine();
 
@@ -38,7 +38,7 @@ bool BounceApp::Init(gr::AppContext& ctx) {
     }
 
     // ground line for rendering
-    m_Lines.set({{-10.f, m_World.groundY}, {10.f, m_World.groundY}});
+    m_Lines.Set({{-10.f, m_World.groundY}, {10.f, m_World.groundY}});
 
     // Set input callbacks
     onKeyPressed = [this](int key, int mods) {
@@ -84,11 +84,11 @@ void BounceApp::Render(gr::AppContext& ctx) {
     glm::mat4 vp = m_Camera.ViewProj();
 
     // circles
-    m_Circles.clear();
+    m_Circles.Clear();
     for (auto& b : m_World.bodies()) {
-        m_Circles.add(b.pos, 2.0f * b.radius);
+        m_Circles.Add(b.pos, 2.0f * b.radius);
     }
-    m_Circles.upload();
-    m_Lines.draw(m_LineShader, vp, 0.8f);
-    m_Circles.draw(m_CircleShader, vp, 0.95f);
+    m_Circles.Upload();
+    m_Lines.Draw(m_LineShader, vp, 0.8f);
+    m_Circles.Draw(m_CircleShader, vp, 0.95f);
 }

@@ -8,12 +8,12 @@
 
 namespace gr {
 
-class QuadBatch;
+class QuadShapes;
 
 /** HUD panel: rectangular container with border and background. */
 class Panel {
    public:
-    Panel(const glm::vec2& pos, const glm::vec2& size, QuadBatch& qb,
+    Panel(const glm::vec2& pos, const glm::vec2& size, QuadShapes& qb,
           const glm::vec4& bgColor = glm::vec4(0.1f, 0.1f, 0.1f, 0.8f),
           const glm::vec4& borderColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), float borderWidth = 2.0f);
 
@@ -25,15 +25,15 @@ class Panel {
 
     /** Get panel position. */
     const glm::vec2& GetPos() const {
-        return m_pos;
+        return m_Pos;
     }
 
    private:
-    glm::vec2 m_pos, m_size;
-    QuadBatch& m_quadBatch;
-    glm::vec4 m_bgColor, m_borderColor;
-    float m_borderWidth;
-    std::vector<std::unique_ptr<Element>> m_elements;
+    glm::vec2 m_Pos, m_Size;
+    QuadShapes& m_QuadShapes;
+    glm::vec4 m_BgColor, m_BorderColor;
+    float m_BorderWidth;
+    std::vector<std::unique_ptr<Element>> m_Elements;
 };
 
 }  // namespace gr

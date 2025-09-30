@@ -3,20 +3,20 @@
 
 namespace gr {
 
-class QuadBatch;
+class QuadShapes;
 
 /** Base class for HUD elements. */
 class Element {
    public:
-    Element(const glm::vec2& pos) : m_pos(pos) {
+    Element(const glm::vec2& pos) : m_Pos(pos) {
     }
     virtual ~Element() = default;
 
     /** Render the element. */
-    virtual void Render(QuadBatch& qb) const = 0;
+    virtual void Render(QuadShapes& qb) const = 0;
 
    protected:
-    glm::vec2 m_pos;  // relative to panel
+    glm::vec2 m_Pos;  // relative to panel
 };
 
 }  // namespace gr

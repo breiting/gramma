@@ -4,8 +4,8 @@
 
 #include <gramma/core/IApp.hpp>
 #include <gramma/view/Camera2D.hpp>
-#include <gramma/view/Mesh.hpp>
 #include <gramma/view/Shader.hpp>
+#include <gramma/view/TriangularMesh.hpp>
 
 class HelloApp : public gr::IApp {
    public:
@@ -18,7 +18,7 @@ class HelloApp : public gr::IApp {
     void Render(gr::AppContext& ctx) override;
 
    private:
-    gr::Mesh m_mesh;
-    gr::Shader m_shader;
-    gr::Camera2D m_cam;
+    gr::TriangularMesh m_Mesh;
+    gr::Shader m_Shader;
+    gr::Camera2D m_Cam;
 };

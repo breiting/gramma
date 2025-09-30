@@ -15,12 +15,12 @@ std::string HelloApp::Name() const {
 
 bool HelloApp::Init(gr::AppContext& ctx) {
     // Tiny triangle to verify pipeline
-    std::vector<float> tri = {-0.5f, -0.3f, 0.5f, -0.3f, 0.0f, 0.4f};
-    m_mesh.Create(tri, 2);
+    std::vector<float> tri = {-0.5f, -0.3f, 1, 1, 1, 1, 0.5f, -0.3f, 1, 1, 1, 1, 0.0f, 0.4f, 1, 1, 1, 1};
+    m_Mesh.Create(tri, 6);
 
-    m_cam.SetOrtho(-1.6f, 1.6f, -0.9f, 0.9f);
+    m_Cam.SetOrtho(-1.6f, 1.6f, -0.9f, 0.9f);
     try {
-        m_shader.BuildUnlit();
+        m_Shader.BuildUnlit();
     } catch (const std::exception& e) {
         std::cerr << "Shader build failed: " << e.what() << std::endl;
         return false;
@@ -33,9 +33,5 @@ void HelloApp::Update(gr::AppContext& ctx, double /*dt*/) {
 }
 
 void HelloApp::Render(gr::AppContext& ctx) {
-    m_shader.Bind();
-    m_shader.SetMat4("uMVP", m_cam.ViewProj());
-    m_shader.SetVec3("uColor", {1.0f, 1.0f, 1.0f});
-    m_mesh.Bind();
-    glDrawArrays(GL_TRIANGLES, 0, m_mesh.VertexCount());
+    m_Mesh.Draw(m_Shader, m_Cam.ViewProj(), 1.0f);
 }

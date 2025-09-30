@@ -3,7 +3,7 @@
 #include <vector>
 
 #include "Panel.hpp"
-#include "QuadBatch.hpp"
+#include "QuadShapes.hpp"
 #include "Shader.hpp"
 
 namespace gr {
@@ -28,15 +28,15 @@ class Hud {
     /** Clear all panels (for dynamic updates). */
     void ClearPanels();
 
-    /** Get the quad batch for creating panels. */
-    QuadBatch& GetQuadBatch() {
-        return m_quadBatch;
+    /** Get the quad shapes for creating panels. */
+    QuadShapes& GetQuadBatch() {
+        return m_QuadShapes;
     }
 
    private:
-    QuadBatch m_quadBatch;
-    Shader m_shader;
-    std::vector<std::unique_ptr<Panel>> m_panels;
+    QuadShapes m_QuadShapes;
+    Shader m_Shader;
+    std::vector<std::unique_ptr<Panel>> m_Panels;
 };
 
 }  // namespace gr

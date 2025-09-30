@@ -57,13 +57,13 @@ add_library(gramma
 		src/core/Window.cpp
 		src/model/World2D.cpp
 		src/view/Camera2D.cpp
-		src/view/CircleBatch.cpp
+		src/view/CircleShapes.cpp
 										# src/view/Font.cpp
 		src/view/Hud.cpp
-		src/view/LineBatch.cpp
-		src/view/Mesh.cpp
+		src/view/LineShape.cpp
+		src/view/TriangularMesh.cpp
 		src/view/Panel.cpp
-		src/view/QuadBatch.cpp
+		src/view/QuadShapes.cpp
 		src/view/Shader.cpp
 										# src/view/TextElement.cpp
 

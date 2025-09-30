@@ -5,9 +5,9 @@
 #include <gramma/core/IApp.hpp>
 #include <gramma/model/World2D.hpp>
 #include <gramma/view/Camera2D.hpp>
-#include <gramma/view/CircleBatch.hpp>
+#include <gramma/view/CircleShapes.hpp>
 #include <gramma/view/Font.hpp>
-#include <gramma/view/LineBatch.hpp>
+#include <gramma/view/LineShape.hpp>
 #include <gramma/view/Panel.hpp>
 #include <memory>
 
@@ -33,8 +33,8 @@ class BounceApp : public gr::IApp {
     Camera2D m_Camera;
 
     World2D m_World;
-    CircleBatch m_Circles;
-    LineBatch m_Lines;
+    CircleShapes m_Circles;
+    LineShape m_Lines;
     bool m_Quit{false};
 
     std::unique_ptr<Panel> m_PerfPanel;

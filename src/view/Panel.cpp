@@ -3,38 +3,38 @@
 
 namespace gr {
 
-Panel::Panel(const glm::vec2& pos, const glm::vec2& size, QuadBatch& qb, const glm::vec4& bgColor,
+Panel::Panel(const glm::vec2& pos, const glm::vec2& size, QuadShapes& qb, const glm::vec4& bgColor,
              const glm::vec4& borderColor, float borderWidth)
-    : m_pos(pos),
-      m_size(size),
-      m_quadBatch(qb),
-      m_bgColor(bgColor),
-      m_borderColor(borderColor),
-      m_borderWidth(borderWidth) {
+    : m_Pos(pos),
+      m_Size(size),
+      m_QuadShapes(qb),
+      m_BgColor(bgColor),
+      m_BorderColor(borderColor),
+      m_BorderWidth(borderWidth) {
 }
 
 void Panel::AddElement(std::unique_ptr<Element> element) {
-    m_elements.push_back(std::move(element));
+    m_Elements.push_back(std::move(element));
 }
 
 void Panel::Render() const {
     // Render background
-    m_quadBatch.AddQuad(m_pos, m_size, m_bgColor);
+    m_QuadShapes.AddQuad(m_Pos, m_Size, m_BgColor);
 
     // Render border (as thinner quads around edges)
-    float bw = m_borderWidth;
+    float bw = m_BorderWidth;
     // Top
-    m_quadBatch.AddQuad(m_pos + glm::vec2(0, m_size.y - bw), glm::vec2(m_size.x, bw), m_borderColor);
+    m_QuadShapes.AddQuad(m_Pos + glm::vec2(0, m_Size.y - bw), glm::vec2(m_Size.x, bw), m_BorderColor);
     // Bottom
-    m_quadBatch.AddQuad(m_pos, glm::vec2(m_size.x, bw), m_borderColor);
+    m_QuadShapes.AddQuad(m_Pos, glm::vec2(m_Size.x, bw), m_BorderColor);
     // Left
-    m_quadBatch.AddQuad(m_pos + glm::vec2(0, bw), glm::vec2(bw, m_size.y - 2 * bw), m_borderColor);
+    m_QuadShapes.AddQuad(m_Pos + glm::vec2(0, bw), glm::vec2(bw, m_Size.y - 2 * bw), m_BorderColor);
     // Right
-    m_quadBatch.AddQuad(m_pos + glm::vec2(m_size.x - bw, bw), glm::vec2(bw, m_size.y - 2 * bw), m_borderColor);
+    m_QuadShapes.AddQuad(m_Pos + glm::vec2(m_Size.x - bw, bw), glm::vec2(bw, m_Size.y - 2 * bw), m_BorderColor);
 
     // Render elements
-    for (const auto& elem : m_elements) {
-        elem->Render(m_quadBatch);
+    for (const auto& elem : m_Elements) {
+        elem->Render(m_QuadShapes);
     }
 }
 
