@@ -4,7 +4,7 @@
 
 #include "Element.hpp"
 #include "Font.hpp"
-#include "gramma/view/QuadShapes.hpp"
+#include "TexturedQuadShapes.hpp"
 
 namespace gr {
 
@@ -19,7 +19,7 @@ class TextElement : public Element {
         m_text = text;
     }
 
-    void Render(QuadShapes& qb) const override;
+    void Render(TexturedQuadShapes& qb) const override;
 
    private:
     std::string m_text;

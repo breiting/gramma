@@ -1,5 +1,6 @@
 #include <gramma/view/QuadShapes.hpp>
 #include <gramma/view/Shader.hpp>
+#include <gramma/view/Uniforms.hpp>
 
 namespace gr {
 
@@ -84,11 +85,11 @@ void QuadShapes::Upload() {
     glBufferData(GL_ARRAY_BUFFER, m_Vertices.size() * sizeof(float), m_Vertices.data(), GL_DYNAMIC_DRAW);
 }
 
-void QuadShapes::Draw(const Shader& shader, const glm::mat4& vp, float alpha) {
+void QuadShapes::Draw(const Shader& shader, const glm::mat4& vp, const glm::vec4& color) {
     if (m_QuadCount == 0) return;
     shader.Bind();
-    shader.SetMat4("uMVP", vp);
-    shader.SetFloat("uAlpha", alpha);
+    shader.SetMat4(Uniforms::MVP, vp);
+    shader.SetFloat("uAlpha", color.a);
     glBindVertexArray(m_Vao);
     glDrawArrays(GL_TRIANGLES, 0, m_QuadCount * 6);
 }

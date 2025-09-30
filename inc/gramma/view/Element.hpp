@@ -3,7 +3,7 @@
 
 namespace gr {
 
-class QuadShapes;
+class TexturedQuadShapes;
 
 /** Base class for HUD elements. */
 class Element {
@@ -13,7 +13,7 @@ class Element {
     virtual ~Element() = default;
 
     /** Render the element. */
-    virtual void Render(QuadShapes& qb) const = 0;
+    virtual void Render(TexturedQuadShapes& qb) const = 0;
 
    protected:
     glm::vec2 m_Pos;  // relative to panel

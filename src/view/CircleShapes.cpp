@@ -2,6 +2,7 @@
 
 #include <gramma/view/CircleShapes.hpp>
 #include <gramma/view/Shader.hpp>
+#include <gramma/view/Uniforms.hpp>
 
 namespace gr {
 
@@ -47,10 +48,10 @@ void CircleShapes::Upload() {
     glBufferData(GL_ARRAY_BUFFER, m_Data.size() * sizeof(Instance), m_Data.data(), GL_DYNAMIC_DRAW);
 }
 
-void CircleShapes::Draw(const Shader& shader, const glm::mat4& vp, float alpha) {
+void CircleShapes::Draw(const Shader& shader, const glm::mat4& vp, const glm::vec4& color) {
     shader.Bind();
-    shader.SetMat4("uVP", vp);
-    shader.SetFloat("uAlpha", alpha);
+    shader.SetMat4(Uniforms::MVP, vp);
+    shader.SetFloat("uAlpha", color.a);
     glBindVertexArray(m_Vao);
     glDrawArraysInstanced(GL_TRIANGLE_STRIP, 0, 4, (GLsizei)m_Data.size());
 }

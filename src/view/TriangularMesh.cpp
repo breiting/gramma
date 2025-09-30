@@ -1,5 +1,6 @@
 #include <gramma/view/Shader.hpp>
 #include <gramma/view/TriangularMesh.hpp>
+#include <gramma/view/Uniforms.hpp>
 
 namespace gr {
 
@@ -56,11 +57,11 @@ void TriangularMesh::Upload() {
     glBufferSubData(GL_ARRAY_BUFFER, 0, m_Vertices.size() * sizeof(float), m_Vertices.data());
 }
 
-void TriangularMesh::Draw(const Shader& shader, const glm::mat4& vp, float alpha) {
+void TriangularMesh::Draw(const Shader& shader, const glm::mat4& vp, const glm::vec4& color) {
     if (m_VertexCount == 0) return;
     shader.Bind();
-    shader.SetMat4("uVP", vp);
-    shader.SetFloat("uAlpha", alpha);
+    shader.SetMat4(Uniforms::MVP, vp);
+    shader.SetFloat("uAlpha", color.a);
     glBindVertexArray(m_Vao);
     glDrawArrays(GL_TRIANGLES, 0, m_VertexCount);  // Assume triangulated
 }

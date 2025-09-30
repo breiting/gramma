@@ -2,7 +2,7 @@
 #include <gramma/view/Panel.hpp>
 #include <gramma/view/TextElement.hpp>
 
-#include "gramma/view/QuadShapes.hpp"
+#include "gramma/view/TexturedQuadShapes.hpp"
 
 namespace gr {
 
@@ -10,7 +10,7 @@ TextElement::TextElement(const glm::vec2& pos, const std::string& text, const gl
     : Element(pos), m_text(text), m_color(color), m_font(font) {
 }
 
-void TextElement::Render(QuadShapes& qb) const {
+void TextElement::Render(TexturedQuadShapes& qb) const {
     if (!m_font) return;
 
     glm::vec2 currentPos = m_Pos;  // assume pos is relative to panel, but for simplicity, treat as screen pos
@@ -29,7 +29,10 @@ void TextElement::Render(QuadShapes& qb) const {
         // Render quad for char
         glm::vec2 size(data->x1 - data->x0, data->y1 - data->y0);
         glm::vec2 offset(data->xoff, data->yoff);
-        qb.AddQuad(currentPos + offset, size, m_color);
+        // uvRect: u0 = x0/512, v0 = y0/512, u1 = x1/512, v1 = y1/512
+        // glm::vec4 uvRect(data->x0 / 512.0f, data->y0 / 512.0f, data->x1 / 512.0f, data->y1 / 512.0f);
+        glm::vec4 uvRect(data->x0 / 512.0f, data->y1 / 512.0f, data->x1 / 512.0f, data->y0 / 512.0f);
+        qb.AddQuad(currentPos + offset, size, uvRect, m_color, tex);
 
         currentPos.x += data->xadvance;
     }

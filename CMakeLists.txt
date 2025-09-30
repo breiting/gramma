@@ -64,6 +64,7 @@ add_library(gramma
 		src/view/CircleShapes.cpp
 		src/view/Font.cpp
 		src/view/Hud.cpp
+		src/view/CircleShape.cpp
 		src/view/LineShape.cpp
 		src/view/Panel.cpp
 		src/view/QuadShapes.cpp
@@ -73,7 +74,7 @@ add_library(gramma
 		src/view/TextElement.cpp
 		src/view/TexturedQuadShapes.cpp
 		src/view/Texture.cpp
-		src/view/Image.cpp
+						#src/view/Image.cpp
 )
 
 

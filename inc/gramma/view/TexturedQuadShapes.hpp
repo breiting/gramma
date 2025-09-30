@@ -28,7 +28,8 @@ class TexturedQuadShapes {
     void AddQuad(const glm::vec2& pos, const glm::vec2& size, const glm::vec4& uvRect, const glm::vec4& color,
                  GLuint tex);
     void Upload();
-    void Draw(const Shader& coloredShader, const Shader& texturedShader, const glm::mat4& vp, float alpha = 1.0f);
+    void Draw(const Shader& coloredShader, const Shader& texturedShader, const glm::mat4& vp,
+              const glm::vec4& color = glm::vec4(1.0f));
 
    private:
     GLuint m_Vao = 0, m_Vbo = 0;

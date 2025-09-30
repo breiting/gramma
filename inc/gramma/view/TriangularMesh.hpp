@@ -23,7 +23,7 @@ class TriangularMesh : public IRenderable {
     void ApplyForces();                                            // placeholder for physics
     void Create(const std::vector<float>& vertices, int attribs);  // finalize mesh
     void Upload() override;
-    void Draw(const Shader& shader, const glm::mat4& vp, float alpha = 1.0f) override;
+    void Draw(const Shader& shader, const glm::mat4& vp, const glm::vec4& color = glm::vec4(1.0f)) override;
 
     /** Bind the VAO. */
     void Bind() const {

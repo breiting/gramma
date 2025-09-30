@@ -20,7 +20,7 @@ class CircleShapes : public IRenderable {
     void Clear() override;  // remove all instances
     void Add(const glm::vec2& pos, float diameter, const glm::vec4& color = glm::vec4(1.0f));
     void Upload() override;  // send to GPU
-    void Draw(const Shader& shader, const glm::mat4& vp, float alpha = 1.0f) override;
+    void Draw(const Shader& shader, const glm::mat4& vp, const glm::vec4& color = glm::vec4(1.0f)) override;
 
    private:
     unsigned m_Vao = 0, m_VboQuad = 0, m_VboInst = 0;

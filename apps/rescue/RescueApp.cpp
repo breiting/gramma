@@ -109,5 +109,5 @@ void RescueApp::Render(gr::AppContext& ctx) {
 
     // Render
     m_BodyShapes.Upload();
-    m_BodyShapes.Draw(m_Shader, m_Camera.ViewProj(), 1.0f);
+    m_BodyShapes.Draw(m_Shader, m_Camera.ViewProj(), glm::vec4{1.0f});
 }

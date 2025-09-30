@@ -1,6 +1,8 @@
 #include <gramma/view/Shader.hpp>
 #include <gramma/view/TexturedQuadShapes.hpp>
 
+#include "gramma/view/Uniforms.hpp"
+
 namespace gr {
 
 TexturedQuadShapes::~TexturedQuadShapes() {
@@ -63,7 +65,7 @@ void TexturedQuadShapes::Upload() {
 }
 
 void TexturedQuadShapes::Draw(const Shader& coloredShader, const Shader& texturedShader, const glm::mat4& vp,
-                              float alpha) {
+                              const glm::vec4& color) {
     if (m_VerticesPerTex.empty()) return;
     bool hasTextures = false;
     for (auto& kv : m_VerticesPerTex) {
@@ -74,13 +76,13 @@ void TexturedQuadShapes::Draw(const Shader& coloredShader, const Shader& texture
     }
     const Shader& shader = hasTextures ? texturedShader : coloredShader;
     shader.Bind();
-    shader.SetMat4("uMVP", vp);
+    shader.SetMat4(Uniforms::MVP, vp);
     if (hasTextures) {
-        shader.SetBool("uUseTexture", true);
+        shader.SetBool(Uniforms::USE_TEXTURE, true);
     } else {
-        shader.SetBool("uUseTexture", false);
+        shader.SetBool(Uniforms::USE_TEXTURE, false);
     }
-    shader.SetFloat("uAlpha", alpha);
+    shader.SetFloat("uAlpha", color.a);
     glBindVertexArray(m_Vao);
     size_t offset = 0;
     for (auto& kv : m_VerticesPerTex) {
@@ -89,7 +91,7 @@ void TexturedQuadShapes::Draw(const Shader& coloredShader, const Shader& texture
         if (count == 0) continue;
         if (tex != 0) {
             glBindTexture(GL_TEXTURE_2D, tex);
-            shader.SetInt("uTexture", 0);
+            shader.SetInt(Uniforms::TEXTURE, 0);
         }
         glDrawArrays(GL_TRIANGLES, static_cast<GLint>(offset), static_cast<GLsizei>(count * 6));
         offset += count * 6;

@@ -3,6 +3,8 @@
 #include <gramma/view/LineShape.hpp>
 #include <gramma/view/Shader.hpp>
 
+#include "gramma/view/Uniforms.hpp"
+
 namespace gr {
 
 void LineShape::Init() {
@@ -43,11 +45,11 @@ void LineShape::Upload() {
     // Already uploaded in Set
 }
 
-void LineShape::Draw(const Shader& shader, const glm::mat4& vp, float alpha) {
+void LineShape::Draw(const Shader& shader, const glm::mat4& vp, const glm::vec4& color) {
     if (m_Count <= 0) return;
     shader.Bind();
-    shader.SetMat4("uVP", vp);
-    shader.SetFloat("uAlpha", alpha);
+    shader.SetMat4(Uniforms::MVP, vp);
+    shader.SetFloat("uAlpha", color.a);
     glBindVertexArray(m_Vao);
     glDrawArrays(GL_LINES, 0, m_Count);
 }

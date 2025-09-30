@@ -88,6 +88,6 @@ void BounceApp::Render(gr::AppContext& ctx) {
         m_Circles.Add(b.pos, 2.0f * b.radius);
     }
     m_Circles.Upload();
-    m_Lines.Draw(m_LineShader, vp, 0.8f);
-    m_Circles.Draw(m_CircleShader, vp, 0.95f);
+    m_Lines.Draw(m_LineShader, vp, glm::vec4(1.0, 1.0, 1.0, 0.8));
+    m_Circles.Draw(m_CircleShader, vp, glm::vec4(1.0, 1.0, 1.0, 0.95));
 }

@@ -5,6 +5,7 @@ uniform bool uUseTexture;
 
 in vec2 vTex;
 in vec4 vCol;
+
 out vec4 fragColor;
 
 void main() {

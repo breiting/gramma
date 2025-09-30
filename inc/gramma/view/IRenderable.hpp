@@ -11,9 +11,9 @@ class IRenderable {
     virtual ~IRenderable() = default;
 
     virtual void Init() = 0;
-    virtual void Clear() = 0;
-    virtual void Upload() = 0;
-    virtual void Draw(const Shader& shader, const glm::mat4& vp, float alpha = 1.0f) = 0;
+    virtual void Clear(){};   // optional
+    virtual void Upload(){};  // optional
+    virtual void Draw(const Shader& shader, const glm::mat4& vp, const glm::vec4& color = glm::vec4(1.0f)) = 0;
 };
 
 }  // namespace gr

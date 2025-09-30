@@ -21,7 +21,7 @@ class QuadShapes : public IRenderable {
     void Clear() override;
     void AddQuad(const glm::vec2& pos, const glm::vec2& size, const glm::vec4& color);
     void Upload() override;
-    void Draw(const Shader& shader, const glm::mat4& vp, float alpha = 1.0f) override;
+    void Draw(const Shader& shader, const glm::mat4& vp, const glm::vec4& color = glm::vec4(1.0f)) override;
 
    private:
     GLuint m_Vao = 0, m_Vbo = 0;

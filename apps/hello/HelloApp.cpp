@@ -33,5 +33,5 @@ void HelloApp::Update(gr::AppContext& ctx, double /*dt*/) {
 }
 
 void HelloApp::Render(gr::AppContext& ctx) {
-    m_Mesh.Draw(m_Shader, m_Cam.ViewProj(), 1.0f);
+    m_Mesh.Draw(m_Shader, m_Cam.ViewProj(), glm::vec4{1.0f});
 }

@@ -5,11 +5,13 @@ layout(location = 1) in vec2 inTex;
 layout(location = 2) in vec4 inCol;
 
 uniform mat4 uMVP;
+uniform vec4 uColor;
+
 out vec2 vTex;
 out vec4 vCol;
 
 void main() {
   vTex = inTex;
-  vCol = inCol;
+  vCol = inCol * uColor;
   gl_Position = uMVP * vec4(inPos, 0.0, 1.0);
 }

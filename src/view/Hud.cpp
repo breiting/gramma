@@ -9,8 +9,9 @@ Hud::Hud() = default;
 Hud::~Hud() = default;
 
 void Hud::Init() {
-    m_QuadShapes.Init();
-    m_Shader.BuildUnlit();
+    m_TexturedQuadShapes.Init();
+    m_ColoredShader.BuildUnlit();
+    m_TexturedShader.BuildUnlit();
 }
 
 void Hud::AddPanel(std::unique_ptr<Panel> panel) {
@@ -18,15 +19,15 @@ void Hud::AddPanel(std::unique_ptr<Panel> panel) {
 }
 
 void Hud::Render(const AppContext& ctx) {
-    m_QuadShapes.Clear();
+    m_TexturedQuadShapes.Clear();
     for (const auto& panel : m_Panels) {
         panel->Render();
     }
-    m_QuadShapes.Upload();
+    m_TexturedQuadShapes.Upload();
 
     glm::mat4 proj = glm::ortho(0.0f, (float)ctx.GetWidth(), (float)ctx.GetHeight(), 0.0f);
 
-    m_QuadShapes.Draw(m_Shader, proj, 1.0f);
+    m_TexturedQuadShapes.Draw(m_ColoredShader, m_TexturedShader, proj, glm::vec4{1.0f});
 }
 
 void Hud::ClearPanels() {

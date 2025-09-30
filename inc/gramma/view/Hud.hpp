@@ -5,6 +5,7 @@
 #include "Panel.hpp"
 #include "QuadShapes.hpp"
 #include "Shader.hpp"
+#include "TexturedQuadShapes.hpp"
 
 namespace gr {
 
@@ -29,13 +30,19 @@ class Hud {
     void ClearPanels();
 
     /** Get the quad shapes for creating panels. */
-    QuadShapes& GetQuadBatch() {
-        return m_QuadShapes;
+    TexturedQuadShapes& GetQuadBatch() {
+        return m_TexturedQuadShapes;
+    }
+
+    /** Get the textured quad shapes for elements. */
+    TexturedQuadShapes& GetTexturedQuadBatch() {
+        return m_TexturedQuadShapes;
     }
 
    private:
-    QuadShapes m_QuadShapes;
-    Shader m_Shader;
+    TexturedQuadShapes m_TexturedQuadShapes;
+    Shader m_ColoredShader;
+    Shader m_TexturedShader;
     std::vector<std::unique_ptr<Panel>> m_Panels;
 };
 

@@ -8,12 +8,12 @@
 
 namespace gr {
 
-class QuadShapes;
+class TexturedQuadShapes;
 
 /** HUD panel: rectangular container with border and background. */
 class Panel {
    public:
-    Panel(const glm::vec2& pos, const glm::vec2& size, QuadShapes& qb,
+    Panel(const glm::vec2& pos, const glm::vec2& size, TexturedQuadShapes& qb,
           const glm::vec4& bgColor = glm::vec4(0.1f, 0.1f, 0.1f, 0.8f),
           const glm::vec4& borderColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), float borderWidth = 2.0f);
 
@@ -30,7 +30,7 @@ class Panel {
 
    private:
     glm::vec2 m_Pos, m_Size;
-    QuadShapes& m_QuadShapes;
+    TexturedQuadShapes& m_QuadShapes;
     glm::vec4 m_BgColor, m_BorderColor;
     float m_BorderWidth;
     std::vector<std::unique_ptr<Element>> m_Elements;
