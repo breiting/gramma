@@ -2,6 +2,7 @@
 #include <gramma/core/AppContext.hpp>
 #include <gramma/core/IApp.hpp>
 #include <gramma/core/Window.hpp>
+#include <gramma/view/Hud.hpp>
 #include <memory>
 #include <string>
 
@@ -24,6 +25,9 @@ class Runner {
         }
         double GetUpdateDt() override {
             return m_Runner->GetUpdateDt();
+        }
+        Hud* GetHud() override {
+            return m_Runner->GetHud();
         }
 
        private:
@@ -56,6 +60,7 @@ class Runner {
     gr::Window m_Window;
     std::unique_ptr<IApp> m_App;
     RunnerContext m_Context{this};
+    Hud m_Hud;
 
     double m_UpdateRate{60.0};
     double m_FrameDt{0.0};
@@ -67,10 +72,14 @@ class Runner {
     void RequestQuit();
     double GetFrameDt();
     double GetUpdateDt();
+    Hud* GetHud();
 
     void BeginFrame();
     void EndFrame();
     bool Poll();
+    Hud& GetHudRef() {
+        return m_Hud;
+    }
 };
 
 }  // namespace gr

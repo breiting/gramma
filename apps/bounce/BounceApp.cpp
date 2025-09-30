@@ -2,8 +2,11 @@
 
 #include <imgui.h>
 
+#include <cstdio>
 #include <cstdlib>
+#include <fstream>
 #include <gramma/core/Runner.hpp>
+#include <vector>
 
 #include "GLFW/glfw3.h"
 
@@ -43,7 +46,23 @@ bool BounceApp::Init(gr::AppContext& ctx) {
         }
     };
     onMouseButton = [this](int button, int action, int mods) { printf("%d\n", button); };
-    onMouseMove = [this](double x, double y) { printf("%3.2f %3.2f\n", x, y); };
+    // onMouseMove = [this](double x, double y) { printf("%3.2f %3.2f\n", x, y); };
+
+    // Create HUD panel
+    auto* hud = ctx.GetHud();
+    m_PerfPanel = std::make_unique<Panel>(glm::vec2(100, 100), glm::vec2(250, 80), hud->GetQuadBatch(),
+                                          glm::vec4(0.5, 0, 0, 0.7), glm::vec4(0.5, 1, 1, 1), 2.0f);
+
+    // TODO: Add text elements when font is fixed
+    // auto fpsText = std::make_unique<TextElement>(glm::vec2(10, 10), "FPS: 0", glm::vec4(1, 1, 1, 1), &m_font);
+    // m_fpsText = fpsText.get();
+    // m_perfPanel->AddElement(std::move(fpsText));
+
+    // auto upsText = std::make_unique<TextElement>(glm::vec2(10, 40), "UPS: 0", glm::vec4(1, 1, 1, 1), &m_font);
+    // m_upsText = upsText.get();
+    // m_perfPanel->AddElement(std::move(upsText));
+
+    hud->AddPanel(std::move(m_PerfPanel));
 
     return true;
 }
@@ -51,6 +70,8 @@ bool BounceApp::Init(gr::AppContext& ctx) {
 void BounceApp::Update(gr::AppContext& ctx, double dt) {
     // fixed step is fine here (or use dt)
     m_world.Step((float)dt);
+
+    // TODO: Update HUD text when font is fixed
 }
 
 void BounceApp::Render(gr::AppContext& ctx) {
@@ -69,12 +90,4 @@ void BounceApp::Render(gr::AppContext& ctx) {
     m_circles.upload();
     m_lines.draw(vp, 0.8f);
     m_circles.draw(vp, 0.95f);
-}
-
-void BounceApp::Ui(gr::AppContext& ctx) {
-    ImGui::Begin("Performance");
-    ImGui::Text("Update dt: %.3f ms (%.1f UPS)", ctx.GetUpdateDt() * 1000.0, 1.0 / ctx.GetUpdateDt());
-    ImGui::Text("Frame dt:  %.3f ms (%.1f FPS)", ctx.GetFrameDt() * 1000.0, 1.0 / ctx.GetFrameDt());
-    ImGui::Button("Reset");
-    ImGui::End();
 }

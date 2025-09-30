@@ -59,10 +59,15 @@ add_library(gramma
 		src/model/World2D.cpp
 		src/view/Camera2D.cpp
 		src/view/CircleBatch.cpp
+		# src/view/Font.cpp
 		src/view/Gui.cpp
+		src/view/Hud.cpp
 		src/view/LineBatch.cpp
 		src/view/Mesh.cpp
+		src/view/Panel.cpp
+		src/view/QuadBatch.cpp
 		src/view/Shader.cpp
+		# src/view/TextElement.cpp
 
 	${imgui_SOURCE_DIR}/imgui.cpp
 	${imgui_SOURCE_DIR}/imgui_draw.cpp
@@ -94,6 +99,8 @@ if(GRAMMA_BUILD_HELLO)
 	target_link_libraries(hello
 				PRIVATE gramma glm::glm
 		)
+	target_include_directories(hello PRIVATE ${CMAKE_SOURCE_DIR}/inc ${CMAKE_SOURCE_DIR}/extern/glad/include)
+	target_compile_features(hello PRIVATE cxx_std_17)
 endif()
 
 if(GRAMMA_BUILD_BOUNCE)
@@ -104,4 +111,6 @@ if(GRAMMA_BUILD_BOUNCE)
 	target_link_libraries(bounce
 				PRIVATE gramma glm::glm
 		)
+	target_include_directories(bounce PRIVATE ${CMAKE_SOURCE_DIR}/inc ${CMAKE_SOURCE_DIR}/extern/glad/include)
+	target_compile_features(bounce PRIVATE cxx_std_17)
 endif()

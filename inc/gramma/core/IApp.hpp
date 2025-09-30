@@ -32,11 +32,6 @@ class IApp {
      */
     virtual void Render(AppContext& ctx) = 0;
 
-    /** Render the UI.
-     * @param ctx The application context.
-     */
-    virtual void Ui(AppContext& ctx) = 0;
-
     // Optional input handlers
     std::function<void(int, int)> onKeyPressed;
     std::function<void(int, int, int)> onMouseButton;

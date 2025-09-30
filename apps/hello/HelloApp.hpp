@@ -16,7 +16,6 @@ class HelloApp : public gr::IApp {
     void Update(gr::AppContext& ctx, double /*dt*/) override;
 
     void Render(gr::AppContext& ctx) override;
-    void Ui(gr::AppContext& ctx) override;
 
    private:
     gr::Mesh m_mesh;

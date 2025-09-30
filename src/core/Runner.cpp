@@ -33,10 +33,6 @@ void Runner::Init(std::unique_ptr<IApp> app, int width, int height, const std::s
 void Runner::Run() {
     if (!m_App) return;
 
-    Gui gui;
-    // m_Gui.SetFontDirectory(fontDir);
-    m_Window.RegisterGui(gui);
-
     const double dtUpdate = 1.0 / m_UpdateRate;
     double accumulator = 0.0;
     double lastTime = gr::Now();
@@ -55,10 +51,8 @@ void Runner::Run() {
         }
 
         BeginFrame();
-        gui.Begin();
         m_App->Render(m_Context);
-        m_App->Ui(m_Context);
-        gui.End();
+        m_Hud.Render(m_Context);
         EndFrame();
     }
 }
@@ -96,6 +90,10 @@ double Runner::Aspect() const {
 
 void Runner::RequestQuit() {
     m_Quit = true;
+}
+
+Hud* Runner::GetHud() {
+    return &m_Hud;
 }
 
 }  // namespace gr

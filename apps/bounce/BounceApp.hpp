@@ -6,8 +6,12 @@
 #include <gramma/model/World2D.hpp>
 #include <gramma/view/Camera2D.hpp>
 #include <gramma/view/CircleBatch.hpp>
+#include <gramma/view/Font.hpp>
 #include <gramma/view/LineBatch.hpp>
-#include <gramma/view/Shader.hpp>
+#include <gramma/view/Panel.hpp>
+#include <memory>
+
+#include "../../inc/gramma/view/Shader.hpp"
 
 using namespace gr;
 
@@ -21,7 +25,6 @@ class BounceApp : public gr::IApp {
     void Update(AppContext& ctx, double /*dt*/) override;
 
     void Render(AppContext& ctx) override;
-    void Ui(AppContext& ctx) override;
 
    private:
     GLuint m_vao = 0, m_vbo = 0;
@@ -32,4 +35,10 @@ class BounceApp : public gr::IApp {
     CircleBatch m_circles;
     LineBatch m_lines;
     bool m_Quit{false};
+
+    std::unique_ptr<Panel> m_PerfPanel;
+    // TODO: Add text elements when font is fixed
+    // TextElement* m_fpsText;
+    // TextElement* m_upsText;
+    // Font m_font;
 };
