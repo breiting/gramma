@@ -32,6 +32,8 @@ bool Window::Create(const CreateInfo& ci) {
     glfwGetFramebufferSize(m_Window, &m_FramebufferWidth, &m_FramebufferHeight);
     glViewport(0, 0, m_FramebufferWidth, m_FramebufferHeight);
 
+    InitGlfwCallbacks();
+
     return true;
 }
 

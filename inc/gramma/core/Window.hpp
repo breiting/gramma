@@ -44,6 +44,7 @@ class Window {
         m_MouseMoveCallback = cb;
     }
 
+   private:
     void InitGlfwCallbacks();
 
    private:

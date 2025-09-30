@@ -21,15 +21,13 @@ void Runner::Init(std::unique_ptr<IApp> app, int width, int height, const std::s
 
     m_App = std::move(app);
 
-    m_Window.SetKeyPressedCallback(m_App->onKeyPressed);
-    m_Window.SetMouseButtonCallback(m_App->onMouseButton);
-    m_Window.SetMouseMoveCallback(m_App->onMouseMove);
-
-    m_Window.InitGlfwCallbacks();
-
     if (!m_App->Init(m_Context)) {
         throw std::runtime_error("Application initialization failed");
     }
+
+    m_Window.SetKeyPressedCallback(m_App->onKeyPressed);
+    m_Window.SetMouseButtonCallback(m_App->onMouseButton);
+    m_Window.SetMouseMoveCallback(m_App->onMouseMove);
 }
 
 void Runner::Run() {
