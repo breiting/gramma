@@ -32,7 +32,7 @@ bool RescueApp::Init(gr::AppContext& ctx) {
     m_Simulation->Init();
 
     // Setup camera
-    m_Camera.SetOrthoByWidth(roomWidth, ctx.Aspect());
+    m_Camera.SetOrthoByWidth(roomWidth + 10, ctx.Aspect());
 
     // Setup shapes
     m_BodyShapes.Init();
