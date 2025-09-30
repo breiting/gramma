@@ -21,11 +21,7 @@ class BounceApp : public gr::IApp {
     void Update(AppContext& ctx, double /*dt*/) override;
 
     void Render(AppContext& ctx) override;
-    void Ui(gr::AppContext& ctx) override;
-
-    void HandleKeyPressedEvent(int key, int mods) override;
-    void HandleMouseButtonEvent(int button, int action, int mods) override;
-    void HandleMouseMoveEvent(double x, double y) override;
+    void Ui(AppContext& ctx) override;
 
    private:
     GLuint m_vao = 0, m_vbo = 0;

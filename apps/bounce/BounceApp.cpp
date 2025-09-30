@@ -13,7 +13,7 @@ std::string BounceApp::Name() const {
     return "BallBounce";
 }
 
-bool BounceApp::Init(gr::AppContext &ctx) {
+bool BounceApp::Init(gr::AppContext& ctx) {
     // View
     m_cam.SetOrthoByHeight(10, ctx.Aspect());
     glEnable(GL_BLEND);
@@ -35,27 +35,25 @@ bool BounceApp::Init(gr::AppContext &ctx) {
 
     // ground line for rendering
     m_lines.set({{-10.f, m_world.groundY}, {10.f, m_world.groundY}});
+
+    // Set input callbacks
+    onKeyPressed = [this](int key, int mods) {
+        if (key == GLFW_KEY_ESCAPE) {
+            m_Quit = true;
+        }
+    };
+    onMouseButton = [this](int button, int action, int mods) { printf("%d\n", button); };
+    onMouseMove = [this](double x, double y) { printf("%3.2f %3.2f\n", x, y); };
+
     return true;
 }
 
-void BounceApp::HandleKeyPressedEvent(int key, int mods) {
-    if (key == GLFW_KEY_ESCAPE) {
-        m_Quit = true;
-    }
-}
-void BounceApp::HandleMouseButtonEvent(int button, int action, int mods) {
-    printf("%d\n", button);
-}
-void BounceApp::HandleMouseMoveEvent(double x, double y) {
-    printf("%3.2f %3.2f\n", x, y);
-}
-
-void BounceApp::Update(gr::AppContext &ctx, double dt) {
+void BounceApp::Update(gr::AppContext& ctx, double dt) {
     // fixed step is fine here (or use dt)
     m_world.Step((float)dt);
 }
 
-void BounceApp::Render(gr::AppContext &ctx) {
+void BounceApp::Render(gr::AppContext& ctx) {
     if (m_Quit) {
         ctx.RequestQuit();
         return;
@@ -65,7 +63,7 @@ void BounceApp::Render(gr::AppContext &ctx) {
 
     // circles
     m_circles.clear();
-    for (auto &b : m_world.bodies()) {
+    for (auto& b : m_world.bodies()) {
         m_circles.add(b.pos, 2.0f * b.radius);
     }
     m_circles.upload();
@@ -73,7 +71,7 @@ void BounceApp::Render(gr::AppContext &ctx) {
     m_circles.draw(vp, 0.95f);
 }
 
-void BounceApp::Ui(gr::AppContext &ctx) {
+void BounceApp::Ui(gr::AppContext& ctx) {
     ImGui::Begin("Performance");
     ImGui::Text("Update dt: %.3f ms (%.1f UPS)", ctx.GetUpdateDt() * 1000.0, 1.0 / ctx.GetUpdateDt());
     ImGui::Text("Frame dt:  %.3f ms (%.1f FPS)", ctx.GetFrameDt() * 1000.0, 1.0 / ctx.GetFrameDt());

@@ -7,7 +7,6 @@
 #include <functional>
 #include <string>
 
-#include "gramma/core/IApp.hpp"
 #include "gramma/view/Gui.hpp"
 
 namespace gr {
@@ -33,28 +32,27 @@ class Window {
 
     void RegisterGui(Gui& gui);
 
-    void SetKeyPressedHandler(IKeyPressedHandler* h) {
-        m_KeyPressedHandler = h;
+    void SetKeyPressedCallback(std::function<void(int, int)> cb) {
+        m_KeyPressedCallback = cb;
     }
 
-    void SetMouseButtonHandler(IMouseButtonHandler* h) {
-        m_MouseButtonHandler = h;
+    void SetMouseButtonCallback(std::function<void(int, int, int)> cb) {
+        m_MouseButtonCallback = cb;
     }
 
-    void SetMouseMoveHandler(IMouseMoveHandler* h) {
-        m_MouseMoveHandler = h;
+    void SetMouseMoveCallback(std::function<void(double, double)> cb) {
+        m_MouseMoveCallback = cb;
     }
 
-   private:
-    void InstallGlfwCallbacks();
+    void InitGlfwCallbacks();
 
    private:
     GLFWwindow* m_Window;
 
-    // Handler
-    IKeyPressedHandler* m_KeyPressedHandler = nullptr;
-    IMouseButtonHandler* m_MouseButtonHandler = nullptr;
-    IMouseMoveHandler* m_MouseMoveHandler = nullptr;
+    // Callbacks
+    std::function<void(int, int)> m_KeyPressedCallback;
+    std::function<void(int, int, int)> m_MouseButtonCallback;
+    std::function<void(double, double)> m_MouseMoveCallback;
 
     int m_FramebufferWidth;
     int m_FramebufferHeight;

@@ -4,9 +4,6 @@
 
 namespace gr {
 
-void World2D::Reset(uint32_t seed) {
-}
-
 void World2D::Step(double dt) {
     for (auto& b : m_bodies) {
         integrate(b, dt);

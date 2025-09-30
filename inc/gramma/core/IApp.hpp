@@ -1,45 +1,46 @@
 #pragma once
+#include <functional>
 #include <string>
 
 namespace gr {
 
 class AppContext;
 
-class IKeyPressedHandler {
-   public:
-    virtual void HandleKeyPressedEvent(int key, int mods) = 0;
-};
-
-class IMouseButtonHandler {
-   public:
-    virtual void HandleMouseButtonEvent(int button, int action, int mods) = 0;
-};
-
-class IMouseMoveHandler {
-   public:
-    virtual void HandleMouseMoveEvent(double x, double y) = 0;
-};
-
 /** Minimal application interface.
  */
-class IApp : public IKeyPressedHandler, public IMouseButtonHandler, public IMouseMoveHandler {
+class IApp {
    public:
     virtual ~IApp() = default;
+
+    /** @return The name of the application. */
     virtual std::string Name() const = 0;
+
+    /** Initialize the application.
+     * @param ctx The application context.
+     * @return true if initialization succeeded.
+     */
     virtual bool Init(AppContext& ctx) = 0;
+
+    /** Update the application state.
+     * @param ctx The application context.
+     * @param dt Time delta since last update.
+     */
     virtual void Update(AppContext& ctx, double dt) = 0;
+
+    /** Render the application.
+     * @param ctx The application context.
+     */
     virtual void Render(AppContext& ctx) = 0;
+
+    /** Render the UI.
+     * @param ctx The application context.
+     */
     virtual void Ui(AppContext& ctx) = 0;
 
-    void HandleKeyPressedEvent(int key, int mods) override {
-        // no implementation
-    }
-    void HandleMouseButtonEvent(int button, int action, int mods) override {
-        // no implementation
-    }
-    void HandleMouseMoveEvent(double x, double y) override {
-        // no implementation
-    }
+    // Optional input handlers
+    std::function<void(int, int)> onKeyPressed;
+    std::function<void(int, int, int)> onMouseButton;
+    std::function<void(double, double)> onMouseMove;
 };
 
 }  // namespace gr

@@ -1,8 +1,6 @@
 #include <gramma/core/Window.hpp>
 #include <stdexcept>
 
-#include "imgui_impl_glfw.h"
-
 namespace gr {
 
 bool Window::Create(const CreateInfo& ci) {
@@ -34,8 +32,6 @@ bool Window::Create(const CreateInfo& ci) {
     glfwGetFramebufferSize(m_Window, &m_FramebufferWidth, &m_FramebufferHeight);
     glViewport(0, 0, m_FramebufferWidth, m_FramebufferHeight);
 
-    InstallGlfwCallbacks();
-
     return true;
 }
 
@@ -47,24 +43,18 @@ void Window::Destroy() {
     glfwTerminate();
 }
 
-void Window::InstallGlfwCallbacks() {
+void Window::InitGlfwCallbacks() {
     glfwSetWindowUserPointer(m_Window, this);
 
     glfwSetKeyCallback(m_Window, [](GLFWwindow* w, int key, int sc, int action, int mods) {
         auto* self = static_cast<Window*>(glfwGetWindowUserPointer(w));
-        if (!self) return;
-
-        if (self->m_KeyPressedHandler && action == GLFW_PRESS) {
-            self->m_KeyPressedHandler->HandleKeyPressedEvent(key, mods);
-        }
+        if (!self || !self->m_KeyPressedCallback || action != GLFW_PRESS) return;
+        self->m_KeyPressedCallback(key, mods);
     });
     glfwSetMouseButtonCallback(m_Window, [](GLFWwindow* w, int button, int action, int mods) {
         auto* self = static_cast<Window*>(glfwGetWindowUserPointer(w));
-        if (!self) return;
-
-        if (self->m_MouseButtonHandler) {
-            self->m_MouseButtonHandler->HandleMouseButtonEvent(button, action, mods);
-        }
+        if (!self || !self->m_MouseButtonCallback) return;
+        self->m_MouseButtonCallback(button, action, mods);
     });
 
     glfwSetScrollCallback(m_Window, [](GLFWwindow* w, double xoff, double yoff) {
@@ -75,10 +65,8 @@ void Window::InstallGlfwCallbacks() {
 
     glfwSetCursorPosCallback(m_Window, [](GLFWwindow* w, double x, double y) {
         auto* self = static_cast<Window*>(glfwGetWindowUserPointer(w));
-        if (!self) return;
-        if (self->m_MouseMoveHandler) {
-            self->m_MouseMoveHandler->HandleMouseMoveEvent(x, y);
-        }
+        if (!self || !self->m_MouseMoveCallback) return;
+        self->m_MouseMoveCallback(x, y);
     });
 }
 

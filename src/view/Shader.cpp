@@ -13,7 +13,7 @@ static GLuint compile(GLenum type, const std::string& src) {
     if (!ok) {
         char log[2048];
         glGetShaderInfoLog(s, 2048, nullptr, log);
-        std::cerr << "Shader: " << log << "\n";
+        throw std::runtime_error(std::string("Shader compilation failed: ") + log);
     }
     return s;
 }
@@ -27,7 +27,9 @@ static GLuint link(GLuint vs, GLuint fs) {
     if (!ok) {
         char log[2048];
         glGetProgramInfoLog(p, 2048, nullptr, log);
-        std::cerr << "Link: " << log << "\n";
+        glDeleteShader(vs);
+        glDeleteShader(fs);
+        throw std::runtime_error(std::string("Shader linking failed: ") + log);
     }
     glDeleteShader(vs);
     glDeleteShader(fs);
@@ -38,11 +40,13 @@ Shader::~Shader() {
     if (m_id) glDeleteProgram(m_id);
 }
 
-bool Shader::Build(const std::string& vs, const std::string& fs) {
+void Shader::Build(const std::string& vs, const std::string& fs) {
     GLuint v = compile(GL_VERTEX_SHADER, vs);
     GLuint f = compile(GL_FRAGMENT_SHADER, fs);
     m_id = link(v, f);
-    return m_id != 0;
+    if (!m_id) {
+        throw std::runtime_error("Failed to create shader program");
+    }
 }
 
 void Shader::SetMat4(const char* name, const glm::mat4& m) const {
@@ -58,7 +62,7 @@ void Shader::SetFloat(const char* name, float v) const {
     glUniform1f(loc, v);
 }
 
-bool Shader::BuildUnlit() {
+void Shader::BuildUnlit() {
     const std::string vs = R"GLSL(
     #version 330 core
     layout(location=0) in vec2 inPos;
@@ -73,7 +77,7 @@ bool Shader::BuildUnlit() {
     uniform vec3 uColor;
     void main(){ fragColor = vec4(uColor,1.0); }
   )GLSL";
-    return Build(vs, fs);
+    Build(vs, fs);
 }
 
 }  // namespace gr

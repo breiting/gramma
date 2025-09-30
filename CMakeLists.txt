@@ -56,11 +56,12 @@ add_library(gramma
 		src/core/Runner.cpp
 		src/core/Time.cpp
 		src/core/Window.cpp
-		src/model/World2d.cpp
+		src/model/World2D.cpp
 		src/view/Camera2D.cpp
 		src/view/CircleBatch.cpp
 		src/view/Gui.cpp
 		src/view/LineBatch.cpp
+		src/view/Mesh.cpp
 		src/view/Shader.cpp
 
 	${imgui_SOURCE_DIR}/imgui.cpp
@@ -75,6 +76,7 @@ target_link_libraries(gramma
 PUBLIC
 	glfw glad glm::glm
 )
+target_compile_features(gramma PUBLIC cxx_std_17)
 
 target_include_directories(gramma
 PUBLIC

@@ -12,20 +12,24 @@ Runner::~Runner() {
     m_Window.Destroy();
 }
 
-bool Runner::Init(std::unique_ptr<IApp> app, int width, int height, const std::string& title, int msaa) {
-    if (!app) return false;
+void Runner::Init(std::unique_ptr<IApp> app, int width, int height, const std::string& title, int msaa) {
+    if (!app) throw std::runtime_error("Invalid app");
 
-    if (!m_Window.Create({width, height, title, msaa})) return false;
+    if (!m_Window.Create({width, height, title, msaa})) throw std::runtime_error("Window creation failed");
 
     m_Quit = false;
 
     m_App = std::move(app);
 
-    m_Window.SetKeyPressedHandler(m_App.get());
-    m_Window.SetMouseButtonHandler(m_App.get());
-    m_Window.SetMouseMoveHandler(m_App.get());
+    m_Window.SetKeyPressedCallback(m_App->onKeyPressed);
+    m_Window.SetMouseButtonCallback(m_App->onMouseButton);
+    m_Window.SetMouseMoveCallback(m_App->onMouseMove);
 
-    return m_App->Init(*this);
+    m_Window.InitGlfwCallbacks();
+
+    if (!m_App->Init(m_Context)) {
+        throw std::runtime_error("Application initialization failed");
+    }
 }
 
 void Runner::Run() {
@@ -48,14 +52,14 @@ void Runner::Run() {
         // Only update according to given update rate
         while (accumulator >= dtUpdate) {
             m_UpdateDt = dtUpdate;
-            m_App->Update(*this, dtUpdate);
+            m_App->Update(m_Context, dtUpdate);
             accumulator -= dtUpdate;
         }
 
         BeginFrame();
         gui.Begin();
-        m_App->Render(*this);
-        m_App->Ui(*this);
+        m_App->Render(m_Context);
+        m_App->Ui(m_Context);
         gui.End();
         EndFrame();
     }
@@ -91,6 +95,7 @@ void Runner::EndFrame() {
 double Runner::Aspect() const {
     return m_Window.Aspect();
 }
+
 void Runner::RequestQuit() {
     m_Quit = true;
 }
