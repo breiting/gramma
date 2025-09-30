@@ -24,11 +24,10 @@ void Hud::Render(const AppContext& ctx) {
     }
     m_quadBatch.Upload();
 
-    m_shader.Bind();
     glm::mat4 proj = glm::ortho(0.0f, (float)ctx.GetWidth(), (float)ctx.GetHeight(), 0.0f);
     m_shader.SetMat4("uMVP", proj);
 
-    m_quadBatch.Draw();
+    m_quadBatch.Draw(m_shader);
 }
 
 void Hud::ClearPanels() {

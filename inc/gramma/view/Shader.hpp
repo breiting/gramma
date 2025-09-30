@@ -22,6 +22,8 @@ class Shader {
     // Load and build a pre-defined shader
     void BuildPhong();
     void BuildUnlit();
+    void BuildCircle();
+    void BuildLine();
 
     // Set data to shader
     void SetMat3(const std::string& name, const glm::mat3& m) const;

@@ -1,69 +1,11 @@
 #include <glad.h>
 
 #include <gramma/view/CircleBatch.hpp>
-#include <iostream>
-#include <vector>
+#include <gramma/view/Shader.hpp>
 
 namespace gr {
 
-static GLuint mkShader(GLenum t, const char* s) {
-    GLuint sh = glCreateShader(t);
-    glShaderSource(sh, 1, &s, nullptr);
-    glCompileShader(sh);
-    GLint ok;
-    glGetShaderiv(sh, GL_COMPILE_STATUS, &ok);
-    if (!ok) {
-        char log[2048];
-        glGetShaderInfoLog(sh, 2048, nullptr, log);
-        std::cerr << log << "\n";
-    }
-    return sh;
-}
-static GLuint mkProg(const char* vs, const char* fs) {
-    GLuint p = glCreateProgram();
-    GLuint v = mkShader(GL_VERTEX_SHADER, vs), f = mkShader(GL_FRAGMENT_SHADER, fs);
-    glAttachShader(p, v);
-    glAttachShader(p, f);
-    glLinkProgram(p);
-    GLint ok;
-    glGetProgramiv(p, GL_LINK_STATUS, &ok);
-    if (!ok) {
-        char log[2048];
-        glGetProgramInfoLog(p, 2048, nullptr, log);
-        std::cerr << log << "\n";
-    }
-    glDeleteShader(v);
-    glDeleteShader(f);
-    return p;
-}
-
 bool CircleBatch::init() {
-    const char* VS = R"GLSL(
-    #version 330 core
-    layout(location=0) in vec2 inLocal;       // quad corners in [-1,1]
-    layout(location=1) in vec2 inPos;         // world position (m)
-    layout(location=2) in float inSize;       // diameter (m)
-    uniform mat4 uVP;
-    out vec2 vLocal;
-    void main(){
-      vec2 world = inPos + 0.5 * inSize * inLocal;
-      gl_Position = uVP * vec4(world, 0.0, 1.0);
-      vLocal = inLocal;
-    }
-  )GLSL";
-    const char* FS = R"GLSL(
-    #version 330 core
-    in vec2 vLocal;
-    out vec4 fragColor;
-    uniform float uAlpha;
-    void main(){
-      float r = length(vLocal);                 // quad is [-1,1] → radius = 1
-      float a = smoothstep(1.0, 0.9, r);        // soft edge
-      fragColor = vec4(1.0,1.0,1.0, a * uAlpha);
-    }
-  )GLSL";
-    m_prog = mkProg(VS, FS);
-
     // quad geometry
     float quad[8] = {-1.f, -1.f, 1.f, -1.f, -1.f, 1.f, 1.f, 1.f};
     glGenVertexArrays(1, &m_vao);
@@ -103,10 +45,10 @@ void CircleBatch::upload() {
     glBufferData(GL_ARRAY_BUFFER, m_data.size() * sizeof(Instance), m_data.data(), GL_DYNAMIC_DRAW);
 }
 
-void CircleBatch::draw(const glm::mat4& vp, float alpha) const {
-    glUseProgram(m_prog);
-    glUniformMatrix4fv(glGetUniformLocation(m_prog, "uVP"), 1, GL_FALSE, &vp[0][0]);
-    glUniform1f(glGetUniformLocation(m_prog, "uAlpha"), alpha);
+void CircleBatch::draw(const Shader& shader, const glm::mat4& vp, float alpha) const {
+    shader.Bind();
+    shader.SetMat4("uVP", vp);
+    shader.SetFloat("uAlpha", alpha);
     glBindVertexArray(m_vao);
     glDrawArraysInstanced(GL_TRIANGLE_STRIP, 0, 4, (GLsizei)m_data.size());
 }

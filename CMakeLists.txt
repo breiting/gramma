@@ -80,6 +80,10 @@ embed_text_to_header("${SHADER_SRC_DIR}/phong.vert"  "${GEN_INC_DIR}/assets/phon
 embed_text_to_header("${SHADER_SRC_DIR}/phong.frag"  "${GEN_INC_DIR}/assets/phong_frag.h"  phong_frag_glsl)
 embed_text_to_header("${SHADER_SRC_DIR}/unlit.vert"  "${GEN_INC_DIR}/assets/unlit_vert.h"  unlit_vert_glsl)
 embed_text_to_header("${SHADER_SRC_DIR}/unlit.frag"  "${GEN_INC_DIR}/assets/unlit_frag.h"  unlit_frag_glsl)
+embed_text_to_header("${SHADER_SRC_DIR}/circle.vert" "${GEN_INC_DIR}/assets/circle_vert.h" circle_vert_glsl)
+embed_text_to_header("${SHADER_SRC_DIR}/circle.frag" "${GEN_INC_DIR}/assets/circle_frag.h" circle_frag_glsl)
+embed_text_to_header("${SHADER_SRC_DIR}/line.vert"   "${GEN_INC_DIR}/assets/line_vert.h"   line_vert_glsl)
+embed_text_to_header("${SHADER_SRC_DIR}/line.frag"   "${GEN_INC_DIR}/assets/line_frag.h"   line_frag_glsl)
 
 
 target_link_libraries(gramma

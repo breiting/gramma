@@ -5,6 +5,8 @@
 
 namespace gr {
 
+class Shader;
+
 /** Instanced circles in world units (meters). */
 class CircleBatch {
    public:
@@ -16,10 +18,10 @@ class CircleBatch {
     void clear();  // remove all instances
     void add(const glm::vec2& pos, float diameter);
     void upload();  // send to GPU
-    void draw(const glm::mat4& vp, float alpha = 1.0f) const;
+    void draw(const Shader& shader, const glm::mat4& vp, float alpha = 1.0f) const;
 
    private:
-    unsigned m_vao = 0, m_vboQuad = 0, m_vboInst = 0, m_prog = 0;
+    unsigned m_vao = 0, m_vboQuad = 0, m_vboInst = 0;
     std::vector<Instance> m_data;
 };
 

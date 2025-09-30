@@ -1,4 +1,5 @@
 #include <gramma/view/QuadBatch.hpp>
+#include <gramma/view/Shader.hpp>
 
 namespace gr {
 
@@ -25,6 +26,7 @@ void QuadBatch::Clear() {
 }
 
 void QuadBatch::AddQuad(const glm::vec2& pos, const glm::vec2& size, const glm::vec4& color) {
+    // Triangle 1: Bottom-left, Bottom-right, Top-right
     // Bottom-left
     m_vertices.push_back(pos.x);
     m_vertices.push_back(pos.y);
@@ -35,6 +37,23 @@ void QuadBatch::AddQuad(const glm::vec2& pos, const glm::vec2& size, const glm::
 
     // Bottom-right
     m_vertices.push_back(pos.x + size.x);
+    m_vertices.push_back(pos.y);
+    m_vertices.push_back(color.r);
+    m_vertices.push_back(color.g);
+    m_vertices.push_back(color.b);
+    m_vertices.push_back(color.a);
+
+    // Top-right
+    m_vertices.push_back(pos.x + size.x);
+    m_vertices.push_back(pos.y + size.y);
+    m_vertices.push_back(color.r);
+    m_vertices.push_back(color.g);
+    m_vertices.push_back(color.b);
+    m_vertices.push_back(color.a);
+
+    // Triangle 2: Bottom-left, Top-right, Top-left
+    // Bottom-left
+    m_vertices.push_back(pos.x);
     m_vertices.push_back(pos.y);
     m_vertices.push_back(color.r);
     m_vertices.push_back(color.g);
@@ -65,10 +84,11 @@ void QuadBatch::Upload() {
     glBufferData(GL_ARRAY_BUFFER, m_vertices.size() * sizeof(float), m_vertices.data(), GL_DYNAMIC_DRAW);
 }
 
-void QuadBatch::Draw() const {
+void QuadBatch::Draw(const Shader& shader) const {
     if (m_quadCount == 0) return;
+    shader.Bind();
     glBindVertexArray(m_vao);
-    glDrawArrays(GL_QUADS, 0, m_quadCount * 4);
+    glDrawArrays(GL_TRIANGLES, 0, m_quadCount * 6);
 }
 
 }  // namespace gr

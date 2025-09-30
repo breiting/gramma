@@ -21,6 +21,8 @@ bool BounceApp::Init(gr::AppContext& ctx) {
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     m_circles.init();
     m_lines.init();
+    m_circleShader.BuildCircle();
+    m_lineShader.BuildLine();
 
     // Model
     m_world.gravity = {0.f, -9.81f};
@@ -86,6 +88,6 @@ void BounceApp::Render(gr::AppContext& ctx) {
         m_circles.add(b.pos, 2.0f * b.radius);
     }
     m_circles.upload();
-    m_lines.draw(vp, 0.8f);
-    m_circles.draw(vp, 0.95f);
+    m_lines.draw(m_lineShader, vp, 0.8f);
+    m_circles.draw(m_circleShader, vp, 0.95f);
 }

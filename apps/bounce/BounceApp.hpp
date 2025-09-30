@@ -28,7 +28,8 @@ class BounceApp : public gr::IApp {
 
    private:
     GLuint m_vao = 0, m_vbo = 0;
-    Shader m_shader;
+    Shader m_circleShader;
+    Shader m_lineShader;
     Camera2D m_cam;
 
     World2D m_world;

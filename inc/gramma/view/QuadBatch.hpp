@@ -7,6 +7,8 @@
 
 namespace gr {
 
+class Shader;
+
 /** Simple batch for drawing filled quads (rectangles). */
 class QuadBatch {
    public:
@@ -17,7 +19,7 @@ class QuadBatch {
     void Clear();
     void AddQuad(const glm::vec2& pos, const glm::vec2& size, const glm::vec4& color);
     void Upload();
-    void Draw() const;
+    void Draw(const Shader& shader) const;
 
    private:
     GLuint m_vao = 0, m_vbo = 0;

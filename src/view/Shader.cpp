@@ -2,6 +2,10 @@
 #include <gramma/view/Shader.hpp>
 #include <iostream>
 
+#include "assets/circle_frag.h"
+#include "assets/circle_vert.h"
+#include "assets/line_frag.h"
+#include "assets/line_vert.h"
 #include "assets/phong_frag.h"
 #include "assets/phong_vert.h"
 #include "assets/unlit_frag.h"
@@ -90,6 +94,14 @@ void Shader::BuildPhong() {
 
 void Shader::BuildUnlit() {
     CompileShader(unlit_vert_glsl, unlit_frag_glsl);
+}
+
+void Shader::BuildCircle() {
+    CompileShader(circle_vert_glsl, circle_frag_glsl);
+}
+
+void Shader::BuildLine() {
+    CompileShader(line_vert_glsl, line_frag_glsl);
 }
 
 }  // namespace gr
