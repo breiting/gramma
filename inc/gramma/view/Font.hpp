@@ -3,6 +3,7 @@
 #include <stb_truetype.h>
 
 #include <unordered_map>
+#include <vector>
 
 namespace gr {
 
@@ -12,8 +13,8 @@ class Font {
     Font();
     ~Font();
 
-    /** Load font from TTF data. */
-    bool Load(const unsigned char* ttfData, int size, float fontSize);
+    /** Load font from TTF file path. */
+    bool Load(const std::string& path, float fontSize);
 
     /** Get texture ID for a character. */
     GLuint GetCharTexture(char c);
@@ -28,6 +29,7 @@ class Font {
 
    private:
     stbtt_fontinfo m_fontInfo;
+    std::vector<unsigned char> m_ttfBuffer;
     const unsigned char* m_ttfData;
     std::unordered_map<char, GLuint> m_charTextures;
     std::unordered_map<char, stbtt_bakedchar> m_charData;

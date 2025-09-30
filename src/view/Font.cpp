@@ -1,3 +1,4 @@
+#include <fstream>
 #include <gramma/view/Font.hpp>
 #include <iostream>
 
@@ -11,10 +12,22 @@ Font::~Font() {
     }
 }
 
-bool Font::Load(const unsigned char* ttfData, int size, float fontSize) {
+bool Font::Load(const std::string& path, float fontSize) {
     m_fontSize = fontSize;
-    m_ttfData = ttfData;
-    if (!stbtt_InitFont(&m_fontInfo, ttfData, stbtt_GetFontOffsetForIndex(ttfData, 0))) {
+    std::ifstream file(path, std::ios::binary | std::ios::ate);
+    if (!file) {
+        std::cerr << "Failed to open font file: " << path << "\n";
+        return false;
+    }
+    std::streamsize size = file.tellg();
+    file.seekg(0, std::ios::beg);
+    m_ttfBuffer.resize(size);
+    if (!file.read(reinterpret_cast<char*>(m_ttfBuffer.data()), size)) {
+        std::cerr << "Failed to read font file\n";
+        return false;
+    }
+    m_ttfData = m_ttfBuffer.data();
+    if (!stbtt_InitFont(&m_fontInfo, m_ttfData, stbtt_GetFontOffsetForIndex(m_ttfData, 0))) {
         std::cerr << "Failed to load font\n";
         return false;
     }

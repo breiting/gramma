@@ -49,17 +49,18 @@ bool BounceApp::Init(gr::AppContext& ctx) {
     onMouseButton = [this](int button, int action, int mods) { printf("%d\n", button); };
     // onMouseMove = [this](double x, double y) { printf("%3.2f %3.2f\n", x, y); };
 
+    // Load font
+    if (!m_font.Load("../assets/fonts/Roboto-Medium.ttf", 24.0f)) {
+        return false;
+    }
+
     // Create HUD panel
     auto* hud = ctx.GetHud();
     m_PerfPanel = std::make_unique<Panel>(glm::vec2(10, 10), glm::vec2(250, 80), hud->GetQuadBatch(),
                                           glm::vec4(0.5, 0, 0, 0.7), glm::vec4(0.5, 1, 1, 1), 2.0f);
 
-    m_fpsText = std::make_unique<TextElement>(glm::vec2(10, 10), "FPS: 0", glm::vec4(1, 1, 1, 1), &m_font);
+    m_fpsText = std::make_unique<TextElement>(glm::vec2(20, 20), "Bernhard", glm::vec4(1, 1, 1, 1), &m_font);
     m_PerfPanel->AddElement(std::move(m_fpsText));
-
-    // auto upsText = std::make_unique<TextElement>(glm::vec2(10, 40), "UPS: 0", glm::vec4(1, 1, 1, 1), &m_font);
-    // m_upsText = upsText.get();
-    // m_perfPanel->AddElement(std::move(upsText));
 
     hud->AddPanel(std::move(m_PerfPanel));
 
