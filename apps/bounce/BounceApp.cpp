@@ -1,7 +1,5 @@
 #include "BounceApp.hpp"
 
-#include <imgui.h>
-
 #include <cstdio>
 #include <cstdlib>
 #include <fstream>
@@ -50,7 +48,7 @@ bool BounceApp::Init(gr::AppContext& ctx) {
 
     // Create HUD panel
     auto* hud = ctx.GetHud();
-    m_PerfPanel = std::make_unique<Panel>(glm::vec2(100, 100), glm::vec2(250, 80), hud->GetQuadBatch(),
+    m_PerfPanel = std::make_unique<Panel>(glm::vec2(10, 10), glm::vec2(250, 80), hud->GetQuadBatch(),
                                           glm::vec4(0.5, 0, 0, 0.7), glm::vec4(0.5, 1, 1, 1), 2.0f);
 
     // TODO: Add text elements when font is fixed

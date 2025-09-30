@@ -4,6 +4,7 @@
 
 #include "Panel.hpp"
 #include "QuadBatch.hpp"
+#include "Shader.hpp"
 
 namespace gr {
 
@@ -34,6 +35,7 @@ class Hud {
 
    private:
     QuadBatch m_quadBatch;
+    Shader m_shader;
     std::vector<std::unique_ptr<Panel>> m_panels;
 };
 

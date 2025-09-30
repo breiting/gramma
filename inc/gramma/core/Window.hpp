@@ -7,8 +7,6 @@
 #include <functional>
 #include <string>
 
-#include "gramma/view/Gui.hpp"
-
 namespace gr {
 
 /** Thin GLFW window wrapper with basic frame control. */
@@ -29,8 +27,12 @@ class Window {
     void EndFrame();    // swap buffers
 
     float Aspect() const;
-
-    void RegisterGui(Gui& gui);
+    int GetWidth() const {
+        return m_FramebufferWidth;
+    }
+    int GetHeight() const {
+        return m_FramebufferHeight;
+    }
 
     void SetKeyPressedCallback(std::function<void(int, int)> cb) {
         m_KeyPressedCallback = cb;

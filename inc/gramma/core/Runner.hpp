@@ -17,6 +17,12 @@ class Runner {
         double Aspect() const override {
             return m_Runner->Aspect();
         }
+        int GetWidth() const override {
+            return m_Runner->GetWidth();
+        }
+        int GetHeight() const override {
+            return m_Runner->GetHeight();
+        }
         void RequestQuit() override {
             m_Runner->RequestQuit();
         }
@@ -69,6 +75,8 @@ class Runner {
     bool m_Quit{false};
 
     double Aspect() const;
+    int GetWidth() const;
+    int GetHeight() const;
     void RequestQuit();
     double GetFrameDt();
     double GetUpdateDt();

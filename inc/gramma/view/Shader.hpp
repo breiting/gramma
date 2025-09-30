@@ -7,55 +7,36 @@
 
 namespace gr {
 
-/** Minimal shader wrapper (unlit). */
 class Shader {
    public:
     Shader() = default;
     ~Shader();
 
-    /** Build shader from source strings.
-     * @param vs Vertex shader source.
-     * @param fs Fragment shader source.
-     * @throws std::runtime_error if compilation or linking fails.
-     */
-    void Build(const std::string& vs, const std::string& fs);
-
-    /** Bind the shader. */
-    void Bind() const {
-        glUseProgram(m_id);
+    unsigned Id() const {
+        return m_Id;
     }
 
-    /** @return The OpenGL program ID. */
-    GLuint Id() const {
-        return m_id;
-    }
+    // Activate/use shader
+    void Bind() const;
 
-    // convenience setters
-    /** Set a mat4 uniform.
-     * @param name Uniform name.
-     * @param m Matrix value.
-     */
-    void SetMat4(const char* name, const glm::mat4& m) const;
-
-    /** Set a vec3 uniform.
-     * @param name Uniform name.
-     * @param v Vector value.
-     */
-    void SetVec3(const char* name, const glm::vec3& v) const;
-
-    /** Set a float uniform.
-     * @param name Uniform name.
-     * @param v Float value.
-     */
-    void SetFloat(const char* name, float v) const;
-
-    /** Build a default unlit shader.
-     * @throws std::runtime_error if build fails.
-     */
+    // Load and build a pre-defined shader
+    void BuildPhong();
     void BuildUnlit();
 
+    // Set data to shader
+    void SetMat3(const std::string& name, const glm::mat3& m) const;
+    void SetMat4(const std::string& name, const glm::mat4& matrix) const;
+    void SetVec3(const std::string& name, const glm::vec3& value) const;
+    void SetFloat(const std::string& name, float value) const;
+    void SetBool(const std::string& name, bool value) const;
+
+    unsigned int GetInt(const std::string& name) const;
+
    private:
-    GLuint m_id = 0;
+    void CompileShader(const std::string& vertexCode, const std::string& fragmentCode);
+
+   private:
+    GLuint m_Id;
 };
 
 }  // namespace gr

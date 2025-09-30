@@ -1,83 +1,95 @@
+#include <glm/gtc/type_ptr.hpp>
 #include <gramma/view/Shader.hpp>
 #include <iostream>
 
+#include "assets/phong_frag.h"
+#include "assets/phong_vert.h"
+#include "assets/unlit_frag.h"
+#include "assets/unlit_vert.h"
+
 namespace gr {
 
-static GLuint compile(GLenum type, const std::string& src) {
-    GLuint s = glCreateShader(type);
-    const char* c = src.c_str();
-    glShaderSource(s, 1, &c, nullptr);
-    glCompileShader(s);
-    GLint ok = 0;
-    glGetShaderiv(s, GL_COMPILE_STATUS, &ok);
-    if (!ok) {
-        char log[2048];
-        glGetShaderInfoLog(s, 2048, nullptr, log);
-        throw std::runtime_error(std::string("Shader compilation failed: ") + log);
-    }
-    return s;
-}
-static GLuint link(GLuint vs, GLuint fs) {
-    GLuint p = glCreateProgram();
-    glAttachShader(p, vs);
-    glAttachShader(p, fs);
-    glLinkProgram(p);
-    GLint ok = 0;
-    glGetProgramiv(p, GL_LINK_STATUS, &ok);
-    if (!ok) {
-        char log[2048];
-        glGetProgramInfoLog(p, 2048, nullptr, log);
-        glDeleteShader(vs);
-        glDeleteShader(fs);
-        throw std::runtime_error(std::string("Shader linking failed: ") + log);
-    }
-    glDeleteShader(vs);
-    glDeleteShader(fs);
-    return p;
-}
-
 Shader::~Shader() {
-    if (m_id) glDeleteProgram(m_id);
+    if (m_Id) glDeleteProgram(m_Id);
 }
 
-void Shader::Build(const std::string& vs, const std::string& fs) {
-    GLuint v = compile(GL_VERTEX_SHADER, vs);
-    GLuint f = compile(GL_FRAGMENT_SHADER, fs);
-    m_id = link(v, f);
-    if (!m_id) {
-        throw std::runtime_error("Failed to create shader program");
+void Shader::CompileShader(const std::string& vertexCode, const std::string& fragmentCode) {
+    const char* vShaderCode = vertexCode.c_str();
+    const char* fShaderCode = fragmentCode.c_str();
+
+    unsigned int vertex, fragment;
+    int success;
+    char infoLog[512];
+
+    // Vertex Shader
+    vertex = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(vertex, 1, &vShaderCode, nullptr);
+    glCompileShader(vertex);
+    glGetShaderiv(vertex, GL_COMPILE_STATUS, &success);
+    if (!success) {
+        glGetShaderInfoLog(vertex, 512, nullptr, infoLog);
+        std::cerr << "Error compiling vertex shader: " << infoLog << std::endl;
     }
+
+    // Fragment Shader
+    fragment = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fragment, 1, &fShaderCode, nullptr);
+    glCompileShader(fragment);
+    glGetShaderiv(fragment, GL_COMPILE_STATUS, &success);
+    if (!success) {
+        glGetShaderInfoLog(fragment, 512, nullptr, infoLog);
+        std::cerr << "Error compiling fragment shader: " << infoLog << std::endl;
+    }
+
+    // Shader-Programm creation
+    m_Id = glCreateProgram();
+    glAttachShader(m_Id, vertex);
+    glAttachShader(m_Id, fragment);
+    glLinkProgram(m_Id);
+    glGetProgramiv(m_Id, GL_LINK_STATUS, &success);
+    if (!success) {
+        glGetProgramInfoLog(m_Id, 512, nullptr, infoLog);
+        std::cerr << "Error binding shader: " << infoLog << std::endl;
+    }
+
+    glDeleteShader(vertex);
+    glDeleteShader(fragment);
 }
 
-void Shader::SetMat4(const char* name, const glm::mat4& m) const {
-    GLint loc = glGetUniformLocation(m_id, name);
-    glUniformMatrix4fv(loc, 1, GL_FALSE, &m[0][0]);
+void Shader::Bind() const {
+    glUseProgram(m_Id);
 }
-void Shader::SetVec3(const char* name, const glm::vec3& v) const {
-    GLint loc = glGetUniformLocation(m_id, name);
-    glUniform3fv(loc, 1, &v[0]);
+
+void Shader::SetMat3(const std::string& name, const glm::mat3& matrix) const {
+    glUniformMatrix3fv(glGetUniformLocation(m_Id, name.c_str()), 1, GL_FALSE, &matrix[0][0]);
 }
-void Shader::SetFloat(const char* name, float v) const {
-    GLint loc = glGetUniformLocation(m_id, name);
-    glUniform1f(loc, v);
+
+void Shader::SetMat4(const std::string& name, const glm::mat4& matrix) const {
+    glUniformMatrix4fv(glGetUniformLocation(m_Id, name.c_str()), 1, GL_FALSE, &matrix[0][0]);
+}
+
+void Shader::SetVec3(const std::string& name, const glm::vec3& value) const {
+    glUniform3fv(glGetUniformLocation(m_Id, name.c_str()), 1, &value[0]);
+}
+
+void Shader::SetFloat(const std::string& name, float value) const {
+    glUniform1f(glGetUniformLocation(m_Id, name.c_str()), value);
+}
+
+void Shader::SetBool(const std::string& name, bool value) const {
+    glUniform1f(glGetUniformLocation(m_Id, name.c_str()), value);
+}
+
+unsigned int Shader::GetInt(const std::string& name) const {
+    return glGetUniformLocation(m_Id, name.c_str());
+}
+
+void Shader::BuildPhong() {
+    CompileShader(phong_vert_glsl, phong_frag_glsl);
 }
 
 void Shader::BuildUnlit() {
-    const std::string vs = R"GLSL(
-    #version 330 core
-    layout(location=0) in vec2 inPos;
-    uniform mat4 uMVP;
-    void main(){
-      gl_Position = uMVP * vec4(inPos,0,1);
-    }
-  )GLSL";
-    const std::string fs = R"GLSL(
-    #version 330 core
-    out vec4 fragColor;
-    uniform vec3 uColor;
-    void main(){ fragColor = vec4(uColor,1.0); }
-  )GLSL";
-    Build(vs, fs);
+    CompileShader(unlit_vert_glsl, unlit_frag_glsl);
 }
 
 }  // namespace gr

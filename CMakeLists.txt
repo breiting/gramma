@@ -7,6 +7,14 @@ set (CMAKE_EXPORT_COMPILE_COMMANDS 1)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# Load compiler settings target
+include(cmake/CompilerSettings.cmake)
+
+# Load embed text functionality and create assets folder
+include(cmake/EmbedText.cmake)
+file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/generated/assets")
+
+
 # Options
 option(GRAMMA_BUILD_HELLO "Build hello app" ON)
 option(GRAMMA_BUILD_BOUNCE "Build bouncing app" ON)
@@ -35,15 +43,6 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(glfw)
 
-# Dear ImGui
-FetchContent_Declare(imgui
-		GIT_REPOSITORY https://github.com/ocornut/imgui.git
-		GIT_TAG        v1.92.3
-)
-FetchContent_MakeAvailable(imgui)
-
-
-
 # glad (local)
 add_library(glad STATIC extern/glad/src/gl.cpp)
 target_include_directories(glad PUBLIC extern/glad/include)
@@ -59,24 +58,30 @@ add_library(gramma
 		src/model/World2D.cpp
 		src/view/Camera2D.cpp
 		src/view/CircleBatch.cpp
-		# src/view/Font.cpp
-		src/view/Gui.cpp
+										# src/view/Font.cpp
 		src/view/Hud.cpp
 		src/view/LineBatch.cpp
 		src/view/Mesh.cpp
 		src/view/Panel.cpp
 		src/view/QuadBatch.cpp
 		src/view/Shader.cpp
-		# src/view/TextElement.cpp
-
-	${imgui_SOURCE_DIR}/imgui.cpp
-	${imgui_SOURCE_DIR}/imgui_draw.cpp
-	${imgui_SOURCE_DIR}/imgui_tables.cpp
-	${imgui_SOURCE_DIR}/imgui_widgets.cpp
-	${imgui_SOURCE_DIR}/backends/imgui_impl_glfw.cpp
-	${imgui_SOURCE_DIR}/backends/imgui_impl_opengl3.cpp
+										# src/view/TextElement.cpp
 
 )
+
+
+# -------------------------
+# Shaders (embed to headers)
+# -------------------------
+set(SHADER_SRC_DIR "${CMAKE_SOURCE_DIR}/assets")
+set(GEN_INC_DIR    "${CMAKE_BINARY_DIR}/generated")
+
+embed_text_to_header("${SHADER_SRC_DIR}/phong.vert"  "${GEN_INC_DIR}/assets/phong_vert.h"  phong_vert_glsl)
+embed_text_to_header("${SHADER_SRC_DIR}/phong.frag"  "${GEN_INC_DIR}/assets/phong_frag.h"  phong_frag_glsl)
+embed_text_to_header("${SHADER_SRC_DIR}/unlit.vert"  "${GEN_INC_DIR}/assets/unlit_vert.h"  unlit_vert_glsl)
+embed_text_to_header("${SHADER_SRC_DIR}/unlit.frag"  "${GEN_INC_DIR}/assets/unlit_frag.h"  unlit_frag_glsl)
+
+
 target_link_libraries(gramma
 PUBLIC
 	glfw glad glm::glm
@@ -86,8 +91,7 @@ target_compile_features(gramma PUBLIC cxx_std_17)
 target_include_directories(gramma
 PUBLIC
 	inc
-	${imgui_SOURCE_DIR}
-	${imgui_SOURCE_DIR}/backends
+	${GEN_INC_DIR}
 )
 
 # Apps

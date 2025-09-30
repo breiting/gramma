@@ -1,3 +1,4 @@
+#include <glm/gtc/matrix_transform.hpp>
 #include <gramma/core/AppContext.hpp>
 #include <gramma/view/Hud.hpp>
 
@@ -9,6 +10,7 @@ Hud::~Hud() = default;
 
 void Hud::Init() {
     m_quadBatch.Init();
+    m_shader.BuildUnlit();
 }
 
 void Hud::AddPanel(std::unique_ptr<Panel> panel) {
@@ -21,8 +23,11 @@ void Hud::Render(const AppContext& ctx) {
         panel->Render();
     }
     m_quadBatch.Upload();
-    // Bind a simple shader for quads (assume unlit)
-    // For now, assume Shader is set up
+
+    m_shader.Bind();
+    glm::mat4 proj = glm::ortho(0.0f, (float)ctx.GetWidth(), (float)ctx.GetHeight(), 0.0f);
+    m_shader.SetMat4("uMVP", proj);
+
     m_quadBatch.Draw();
 }
 

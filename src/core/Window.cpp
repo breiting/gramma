@@ -82,10 +82,6 @@ bool Window::Poll() {
     return true;
 }
 
-void Window::RegisterGui(Gui& gui) {
-    gui.Initialize(m_Window);
-}
-
 float Window::Aspect() const {
     return float(m_FramebufferWidth) / float(m_FramebufferHeight);
 }

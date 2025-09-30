@@ -14,6 +14,12 @@ class AppContext {
     /** @return The aspect ratio of the window. */
     virtual double Aspect() const = 0;
 
+    /** @return The window width in pixels. */
+    virtual int GetWidth() const = 0;
+
+    /** @return The window height in pixels. */
+    virtual int GetHeight() const = 0;
+
     /** Request the application to quit. */
     virtual void RequestQuit() = 0;
 

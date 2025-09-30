@@ -2,7 +2,6 @@
 
 #include <gramma/core/Runner.hpp>
 #include <gramma/core/Time.hpp>
-#include <gramma/view/Gui.hpp>
 
 namespace gr {
 
@@ -24,6 +23,8 @@ void Runner::Init(std::unique_ptr<IApp> app, int width, int height, const std::s
     if (!m_App->Init(m_Context)) {
         throw std::runtime_error("Application initialization failed");
     }
+
+    m_Hud.Init();
 
     m_Window.SetKeyPressedCallback(m_App->onKeyPressed);
     m_Window.SetMouseButtonCallback(m_App->onMouseButton);
@@ -86,6 +87,14 @@ void Runner::EndFrame() {
 
 double Runner::Aspect() const {
     return m_Window.Aspect();
+}
+
+int Runner::GetWidth() const {
+    return m_Window.GetWidth();
+}
+
+int Runner::GetHeight() const {
+    return m_Window.GetHeight();
 }
 
 void Runner::RequestQuit() {
