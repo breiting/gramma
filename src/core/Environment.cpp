@@ -4,6 +4,8 @@
 #include <gramma/model/RandomWalkTask.hpp>
 #include <gramma/model/SeekFoodTask.hpp>
 #include <gramma/model/Task.hpp>
+#include <iomanip>
+#include <iostream>
 
 namespace gr {
 
@@ -27,6 +29,45 @@ void Environment::AddFoodSource(std::shared_ptr<FoodSource> food) {
     m_FoodViews.push_back(std::move(view));
 }
 
+void Environment::Stats() const {
+    size_t numAgents = m_Agents.size();
+    size_t numFood = m_FoodSources.size();
+
+    // Agents: Durchschnittlicher Hunger & Exercise
+    float avgHunger = 0.0f;
+    float avgExercise = 0.0f;
+    int hungerCount = 0, exerciseCount = 0;
+
+    for (const auto& a : m_Agents) {
+        for (const auto& n : a->GetNeeds()) {
+            if (n->Name() == "Hunger") {
+                avgHunger += n->Priority();
+                hungerCount++;
+            } else if (n->Name() == "Exercise") {
+                avgExercise += n->Priority();
+                exerciseCount++;
+            }
+        }
+    }
+    if (hungerCount > 0) avgHunger /= hungerCount;
+    if (exerciseCount > 0) avgExercise /= exerciseCount;
+
+    // Food: Durchschnittliche Nutrition
+    float avgFood = 0.0f;
+    for (const auto& f : m_FoodSources) {
+        avgFood += f->GetNutrition();
+    }
+    if (numFood > 0) avgFood /= numFood;
+
+    // Ausgabe formatiert
+    std::cout << "=== Environment Stats ===\n"
+              << "Agents: " << numAgents << "  |  FoodSources: " << numFood << "\n"
+              << "Avg Hunger:   " << std::fixed << std::setprecision(2) << avgHunger
+              << "  |  Avg Exercise: " << avgExercise << "\n"
+              << "Avg FoodNut:  " << avgFood << "\n"
+              << "-------------------------\n";
+}
+
 void Environment::Update(float dt) {
     // Update FoodSources
     for (auto& f : m_FoodSources) {
@@ -35,8 +76,30 @@ void Environment::Update(float dt) {
 
     // Update Agents
     for (auto& a : m_Agents) {
-        a->EvaluateNeeds(m_FoodSources, dt);
-        a->Update(dt);
+        if (a->GetState() != AgentState::Dead) {
+            a->EvaluateNeeds(m_FoodSources, dt);
+            a->Update(dt);
+        }
+    }
+
+    // Delete dead agents
+    for (size_t i = 0; i < m_Agents.size();) {
+        if (m_Agents[i]->GetState() == AgentState::Dead) {
+            m_Agents.erase(m_Agents.begin() + i);
+            m_AgentViews.erase(m_AgentViews.begin() + i);
+        } else {
+            ++i;
+        }
+    }
+
+    // Delete empty food sources
+    for (size_t i = 0; i < m_FoodSources.size();) {
+        if (m_FoodSources[i]->GetNutrition() <= 0.0f) {
+            m_FoodSources.erase(m_FoodSources.begin() + i);
+            m_FoodViews.erase(m_FoodViews.begin() + i);
+        } else {
+            ++i;
+        }
     }
 }
 

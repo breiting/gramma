@@ -35,7 +35,7 @@ bool SimApp::Init(gr::AppContext& ctx) {
     AgentFactory factory;
     for (int i = 0; i < 20; ++i) {
         auto agent = factory.CreateRandomAgent(envHeight);
-        agent->AddNeed(std::make_unique<gr::HungerNeed>());
+        agent->AddNeed(std::make_unique<gr::HungerNeed>(0.1));
         agent->AddNeed(std::make_unique<gr::ExerciseNeed>());
         m_Env->AddAgent(std::move(agent));
     }
@@ -63,6 +63,7 @@ void SimApp::Update(gr::AppContext& /*ctx*/, double dt) {
     float currentTime = Now();
     if (currentTime - lastPrint >= 1.0f) {
         std::cout << "Time: " << currentTime << "s, dt=" << dt << std::endl;
+        m_Env->Stats();
         lastPrint = currentTime;
     }
     m_Env->Update(static_cast<float>(dt));

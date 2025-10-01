@@ -23,6 +23,8 @@ class Environment {
     void Update(float dt);
     void Render(const glm::mat4& vp);
 
+    void Stats() const;
+
     const std::vector<std::unique_ptr<Agent>>& GetAgents() const;
     std::vector<std::shared_ptr<FoodSource>> GetFoodSources();
 

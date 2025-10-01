@@ -60,6 +60,14 @@ void Agent::EvaluateNeeds(std::vector<std::shared_ptr<FoodSource>> foodSources, 
         }
     }
 
+    // Die
+    for (auto& n : m_Needs) {
+        if (n->Name() == "Hunger" && n->Priority() >= 1.0f) {
+            m_State = AgentState::Dead;
+            return;
+        }
+    }
+
     if (chosenNeed && m_State == AgentState::Idle) {
         if (chosenNeed->Name() == "Hunger") {
             std::shared_ptr<FoodSource> best = nullptr;

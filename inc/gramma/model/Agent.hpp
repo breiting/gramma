@@ -12,6 +12,7 @@ namespace gr {
 enum class AgentState {
     Idle,
     Executing,
+    Dead,
 };
 
 /** Represents an agent (person) in the simulation */
