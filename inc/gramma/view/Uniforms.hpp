@@ -20,5 +20,6 @@ inline constexpr const char* INNER_RADIUS = "uInnerRadius";  // float: used by a
 inline constexpr const char* OUTER_RADIUS = "uOuterRadius";  // float: used by agent shaders
 inline constexpr const char* THICKNESS = "uThickness";       // float: line thickness / outline width
 inline constexpr const char* BLEND_WIDTH = "uBlendWidth";    // float: Anti-alias Blending width (world-coordinates)
+inline constexpr const char* HEADING = "uHeading";           // float: Heading/Orientation information (radians)
 
 }  // namespace gr::Uniforms

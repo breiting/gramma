@@ -8,6 +8,7 @@ namespace gr {
 struct Agent {
     glm::vec2 Position;   // Current position (meters)
     glm::vec2 Velocity;   // Current velocity (m/s)
+    float Heading;        // Orientation (0 = north, 90 = east, ...)
     AgentTraits Traits;   // Agent traits (age, speed, ...)
     int chosenExitIndex;  // TODO
 };

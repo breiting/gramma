@@ -48,6 +48,7 @@ void AgentView::Draw(const Agent& agent, const glm::mat4& vp) {
     m_Shader.SetVec4(Uniforms::GLOW_COLOR, glm::vec4(1.0, 0.2, 0.2, 1.0));
     m_Shader.SetFloat(Uniforms::THICKNESS, 0.1f);
     m_Shader.SetFloat(Uniforms::TIME, glfwGetTime());
+    m_Shader.SetFloat(Uniforms::HEADING, glm::radians(agent.Heading));
 
     glBindVertexArray(m_Vao);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);

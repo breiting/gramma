@@ -19,8 +19,8 @@ bool SimApp::Init(gr::AppContext& ctx) {
     std::cout << "Initializing SimApp..." << std::endl;
 
     // Define room and exit
-    constexpr float roomWidth = 5.0;
-    constexpr float roomHeight = 2.0;
+    constexpr float roomWidth = 2.0;
+    constexpr float roomHeight = 1.0;
     Room room;
     room.Position = glm::vec2(-roomWidth / 2.0, -roomHeight / 2.0);
     room.Size = glm::vec2(roomWidth, roomHeight);
@@ -45,6 +45,7 @@ bool SimApp::Init(gr::AppContext& ctx) {
             m_Quit = true;
         } else if (key == GLFW_KEY_S) {
             m_Restart = true;
+            m_Agent.Position.x += 0.1;
         }
     };
 
