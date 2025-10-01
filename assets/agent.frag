@@ -8,6 +8,7 @@ uniform float uThickness;
 uniform float uTime;
 uniform float uBlendWidth;
 uniform float uHeading;
+uniform float uFOV;
 
 uniform vec4  uColor;
 uniform vec4  uGlowColor;
@@ -18,23 +19,28 @@ void main() {
 
     float dist = length(vUV);
 
-    // Body
+    // Body with heading (FOV)
     if (dist < uInnerRadius) {
         float alpha = 1.0;
         if (dist > uInnerRadius - uBlendWidth) {
             alpha = smoothstep(uInnerRadius, uInnerRadius - uBlendWidth, dist);
         }
 
-		// Direction (Heading)
-		vec2 dir = normalize(vUV);
-    	vec2 head = vec2(sin(uHeading), cos(uHeading)); // heading vector (0 = north)
-    	float d = dot(dir, head);           // cos(theta)
-    	if (d > cos(radians(30.0))) {       // 15° nose
-    	    FragColor = vec4(0.0, 0.0, 0.0, alpha); // small black nose
-    	} else {
-    	    FragColor = vec4(uColor.rgb, uColor.a * alpha);
-    	}
-    	return;
+        vec2 dir = normalize(vUV);
+        vec2 head = vec2(sin(uHeading), cos(uHeading));
+
+        float d = dot(dir, head);
+        float ang = acos(clamp(d, -1.0, 1.0));
+
+        float fovRad = radians(uFOV);
+        float fovEdge = radians(3.0); // 3° smoothing
+        float mask = 1.0 - smoothstep(fovRad - fovEdge, fovRad, ang);
+
+        vec3 baseCol = uColor.rgb;
+        vec3 col = mix(baseCol, uGlowColor.rgb, mask);
+
+        FragColor = vec4(col, uColor.a * alpha);
+        return;
     }
 
     // Glow

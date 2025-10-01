@@ -21,5 +21,6 @@ inline constexpr const char* OUTER_RADIUS = "uOuterRadius";  // float: used by a
 inline constexpr const char* THICKNESS = "uThickness";       // float: line thickness / outline width
 inline constexpr const char* BLEND_WIDTH = "uBlendWidth";    // float: Anti-alias Blending width (world-coordinates)
 inline constexpr const char* HEADING = "uHeading";           // float: Heading/Orientation information (radians)
+inline constexpr const char* FOV = "uFOV";                   // float: Field Of View
 
 }  // namespace gr::Uniforms
