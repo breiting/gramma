@@ -16,11 +16,11 @@ class SimApp : public gr::IApp {
 
    private:
     gr::Camera2D m_Camera;
-    gr::AgentView m_AgentView;
     gr::RoomView m_RoomView;
 
     std::unique_ptr<gr::Room> m_Room;
-    gr::Agent m_Agent;
+    std::vector<std::unique_ptr<gr::Agent> > m_Agents;
+    std::vector<std::unique_ptr<gr::AgentView> > m_AgentViews;
 
     bool m_Restart{false};
     bool m_Quit{false};

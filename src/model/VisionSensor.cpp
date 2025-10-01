@@ -3,7 +3,6 @@
 #include <gramma/model/Agent.hpp>
 #include <gramma/model/Room.hpp>
 #include <gramma/model/VisionSensor.hpp>
-#include <limits>
 
 namespace gr {
 
@@ -14,17 +13,16 @@ void VisionSensor::Update(const Agent& agent, const Room& room) {
     m_Hits.clear();
 
     float halfFovRad = glm::radians(m_FOV * 0.5f);
-    float headingRad = glm::radians(agent.Heading);
+    float headingRad = glm::radians(agent.GetHeading());
 
     for (int i = 0; i < m_NumRays; ++i) {
-        // berechne Winkel für diesen Ray
         float t = (m_NumRays == 1) ? 0.0f : (float(i) / (m_NumRays - 1));
         float angle = headingRad - halfFovRad + t * (2.0f * halfFovRad);
 
         glm::vec2 dir = glm::normalize(glm::vec2(std::sin(angle), std::cos(angle)));
 
         float closest = m_Range;
-        glm::vec2 hitPos = agent.Position + dir * m_Range;
+        glm::vec2 hitPos = agent.GetPosition() + dir * m_Range;
 
         // Wände checken
         for (size_t j = 0; j < room.GetContour().size(); ++j) {
@@ -32,10 +30,10 @@ void VisionSensor::Update(const Agent& agent, const Room& room) {
             glm::vec2 b = room.GetContour()[(j + 1) % room.GetContour().size()];
 
             float lambda;
-            if (IntersectRaySegment(agent.Position, dir, a, b, lambda)) {
+            if (IntersectRaySegment(agent.GetPosition(), dir, a, b, lambda)) {
                 if (lambda < closest) {
                     closest = lambda;
-                    hitPos = agent.Position + dir * lambda;
+                    hitPos = agent.GetPosition() + dir * lambda;
                 }
             }
         }

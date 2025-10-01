@@ -3,34 +3,62 @@
 #include <gramma/model/AgentTraits.hpp>
 #include <gramma/model/ISensor.hpp>
 #include <gramma/model/Task.hpp>
+#include <vector>
 
 namespace gr {
+
+class Room;
 
 enum class AgentState {
     Idle,
     Executing,
 };
 
-/** Represents an agent (person) */
+/** Represents an agent (person) in the simulation */
 class Agent {
    public:
-    Agent() = default;
+    Agent(const glm::vec2& initialPosition, float headingDeg, const AgentTraits& traits);
+
     virtual ~Agent() = default;
 
+    // --- Simulation API ---
     void AssignTask(TaskPtr task);
     void Update(float dt, const Room* room);
+
+    // --- Sensor Management ---
     void AttachSensor(SensorPtr sensor);
     const std::vector<SensorPtr>& GetSensors() const;
 
-   public:
-    glm::vec2 Position{0.0, 0.0};         // Current position (meters)
-    glm::vec2 Velocity{0.0, 0.0};         // Current velocity (m/s)
-    float Heading = 0.0f;                 // Orientation (0 = north, 90 = east, ...)
-    AgentTraits Traits;                   // Agent traits (age, speed, ...)
-    AgentState State = AgentState::Idle;  // The current state of the agent
-    int chosenExitIndex;                  // TODO: remove
+    // --- State Management ---
+    void SetState(AgentState state);
+    AgentState GetState() const;
+
+    // --- Accessors ---
+    const glm::vec2& GetPosition() const;
+    void SetPosition(const glm::vec2& pos);
+
+    float GetHeading() const;
+    void SetHeading(float headingDeg);
+
+    float GetDesiredSpeed() const;
+    void SetDesiredSpeed(float speed);
+
+    const glm::vec2& GetVelocity() const;  // derived from Heading + DesiredSpeed
+    const AgentTraits& GetTraits() const;
+    void SetTraits(const AgentTraits& traits);
 
    private:
+    void UpdateKinematics(float dt);
+
+   private:
+    glm::vec2 m_Position;
+    glm::vec2 m_Velocity;
+    float m_Heading;       // in degrees, 0 = north
+    float m_DesiredSpeed;  // m/s
+
+    AgentTraits m_Traits;
+    AgentState m_State;
+
     TaskPtr m_CurrentTask;
     std::vector<SensorPtr> m_Sensors;
 };

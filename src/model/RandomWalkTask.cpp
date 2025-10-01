@@ -3,24 +3,22 @@
 
 namespace gr {
 
-RandomWalkTask::RandomWalkTask(float duration) : m_Duration(duration) {
+RandomWalkTask::RandomWalkTask(float duration) : m_Duration(duration), m_Elapsed(0.0f) {
 }
 
 void RandomWalkTask::Start(Agent& agent) {
     float angleDeg = static_cast<float>(rand() % 360);
-    agent.Heading = angleDeg;
-
-    float angleRad = glm::radians(angleDeg);
-    agent.Velocity = glm::vec2(sin(angleRad), cos(angleRad)) * agent.Traits.speedPref;
+    agent.SetHeading(angleDeg);
+    agent.SetDesiredSpeed(agent.GetTraits().speedPref);
 }
 
 void RandomWalkTask::Update(Agent& agent, float dt) {
     m_Elapsed += dt;
     if (m_Elapsed > m_Duration) return;
 
-    agent.Position += agent.Velocity * dt;
+    // Bewegung erfolgt über Agent::UpdateKinematics in Agent::Update()
 
-    // Search for vision sensors
+    // Vision-Sensor prüfen
     for (auto& sensor : agent.GetSensors()) {
         auto* vision = dynamic_cast<VisionSensor*>(sensor.get());
         if (!vision) continue;
@@ -28,16 +26,17 @@ void RandomWalkTask::Update(Agent& agent, float dt) {
         const auto& hits = vision->GetHits();
         if (hits.empty()) continue;
 
-        // zentraler Ray = Mitte der Liste
+        // Zentraler Ray
         const VisionHit& centerHit = hits[hits.size() / 2];
 
         // Wand zu nah?
-        if (!centerHit.isAgent && centerHit.distance < agent.Traits.comfortRadius * 1.2f) {
-            // Heading um 180° drehen
-            agent.Heading = std::fmod(agent.Heading + (rand() % 180), 360.0f);
+        if (!centerHit.isAgent && centerHit.distance < agent.GetTraits().comfortRadius * 1.2f) {
+            // Heading zufällig in neuen Bereich drehen
+            float turnAngle = static_cast<float>((rand() % 180) - 90);  // -90° bis +90°
+            agent.SetHeading(std::fmod(agent.GetHeading() + turnAngle + 360.0f, 360.0f));
 
-            float angleRad = glm::radians(agent.Heading);
-            agent.Velocity = glm::vec2(std::sin(angleRad), std::cos(angleRad)) * agent.Traits.speedPref;
+            // Geschwindigkeit beibehalten
+            agent.SetDesiredSpeed(agent.GetTraits().speedPref);
 
             break;  // nur einmal pro Frame reagieren
         }

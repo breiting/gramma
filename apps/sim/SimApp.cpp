@@ -9,7 +9,7 @@
 
 #include "gramma/core/Time.hpp"
 #include "gramma/model/Agent.hpp"
-#include "gramma/model/AgentTraits.hpp"
+#include "gramma/model/AgentFactory.hpp"
 #include "gramma/model/VisionSensor.hpp"
 
 using namespace gr;
@@ -35,20 +35,17 @@ bool SimApp::Init(gr::AppContext& ctx) {
     m_Camera.SetOrthoByHeight(roomHeight + border, ctx.Aspect());
 
     // Setup Agent
-    AgentTraits traits;
-    traits.age = gr::AgeClass::Teenager;
-    traits.bodyRadius = 0.25;
-    traits.comfortRadius = 0.5;
-    traits.speedPref = 1.5f;  // m/s
+    AgentFactory factory;
+    for (int i = 0; i < 2; ++i) {
+        auto agent = factory.CreateRandomAgent(1.0);
+        agent->AttachSensor(std::make_unique<VisionSensor>(1, 30, 1));
+        m_Agents.push_back(std::move(agent));
 
-    m_Agent.Position = {0.0, 0.0};
-    m_Agent.Traits = traits;
-    m_Agent.State = gr::AgentState::Idle;
+        auto view = std::make_unique<AgentView>();
+        view->Init();
+        m_AgentViews.push_back(std::move(view));
+    }
 
-    m_Agent.AttachSensor(std::make_unique<VisionSensor>(1, 30, 1));
-
-    // Init views
-    m_AgentView.Init();
     m_RoomView.Init();
 
     onKeyPressed = [this](int key, int /*mods*/) {
@@ -57,7 +54,9 @@ bool SimApp::Init(gr::AppContext& ctx) {
         } else if (key == GLFW_KEY_S) {
             m_Restart = true;
         } else if (key == GLFW_KEY_R) {
-            m_Agent.AssignTask(std::make_unique<RandomWalkTask>(50.0f));
+            for (auto& a : m_Agents) {
+                a->AssignTask(std::make_unique<RandomWalkTask>(50.0f));
+            }
         }
     };
 
@@ -72,7 +71,9 @@ void SimApp::Update(gr::AppContext& /*ctx*/, double dt) {
         std::cout << "Time: " << currentTime << "s, dt=" << dt << std::endl;
         lastPrint = currentTime;
     }
-    m_Agent.Update(dt, m_Room.get());
+    for (auto& a : m_Agents) {
+        a->Update(dt, m_Room.get());
+    }
 }
 
 void SimApp::Render(gr::AppContext& ctx) {
@@ -81,6 +82,8 @@ void SimApp::Render(gr::AppContext& ctx) {
         return;
     }
 
-    m_AgentView.Draw(m_Agent, m_Camera.ViewProj());
+    for (size_t i = 0; i < m_Agents.size(); i++) {
+        m_AgentViews[i]->Draw(m_Agents[i].get(), m_Camera.ViewProj());
+    }
     m_RoomView.Draw(m_Room.get(), m_Camera.ViewProj());
 }

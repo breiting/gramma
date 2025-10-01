@@ -10,7 +10,7 @@ class AgentView {
     ~AgentView();
 
     void Init();
-    void Draw(const Agent& agent, const glm::mat4& vp);
+    void Draw(const Agent* agent, const glm::mat4& vp);
 
    private:
     Shader m_Shader;
