@@ -10,6 +10,7 @@
 #include "gramma/core/Time.hpp"
 #include "gramma/model/Agent.hpp"
 #include "gramma/model/AgentTraits.hpp"
+#include "gramma/model/VisionSensor.hpp"
 
 using namespace gr;
 
@@ -44,6 +45,8 @@ bool SimApp::Init(gr::AppContext& ctx) {
     m_Agent.Traits = traits;
     m_Agent.State = gr::AgentState::Idle;
 
+    m_Agent.AttachSensor(std::make_unique<VisionSensor>(1, 30, 1));
+
     // Init views
     m_AgentView.Init();
     m_RoomView.Init();
@@ -54,7 +57,7 @@ bool SimApp::Init(gr::AppContext& ctx) {
         } else if (key == GLFW_KEY_S) {
             m_Restart = true;
         } else if (key == GLFW_KEY_R) {
-            m_Agent.AssignTask(std::make_unique<RandomWalkTask>(5.0f));
+            m_Agent.AssignTask(std::make_unique<RandomWalkTask>(50.0f));
         }
     };
 
@@ -69,7 +72,7 @@ void SimApp::Update(gr::AppContext& /*ctx*/, double dt) {
         std::cout << "Time: " << currentTime << "s, dt=" << dt << std::endl;
         lastPrint = currentTime;
     }
-    m_Agent.Update(dt);
+    m_Agent.Update(dt, m_Room.get());
 }
 
 void SimApp::Render(gr::AppContext& ctx) {

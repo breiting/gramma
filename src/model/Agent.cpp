@@ -10,7 +10,11 @@ void Agent::AssignTask(TaskPtr task) {
     }
 }
 
-void Agent::Update(float dt) {
+void Agent::Update(float dt, const Room* room) {
+    if (!room) return;
+    for (auto& s : m_Sensors) {
+        s->Update(*this, *room);
+    }
     if (State == AgentState::Executing && m_CurrentTask) {
         m_CurrentTask->Update(*this, dt);
         if (m_CurrentTask->IsFinished()) {
@@ -19,4 +23,13 @@ void Agent::Update(float dt) {
         }
     }
 }
+
+void Agent::AttachSensor(SensorPtr sensor) {
+    m_Sensors.push_back(std::move(sensor));
+}
+
+const std::vector<SensorPtr>& Agent::GetSensors() const {
+    return m_Sensors;
+}
+
 }  // namespace gr

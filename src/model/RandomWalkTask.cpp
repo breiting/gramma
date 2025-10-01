@@ -1,4 +1,5 @@
 #include <gramma/model/RandomWalkTask.hpp>
+#include <gramma/model/VisionSensor.hpp>
 
 namespace gr {
 
@@ -18,6 +19,29 @@ void RandomWalkTask::Update(Agent& agent, float dt) {
     if (m_Elapsed > m_Duration) return;
 
     agent.Position += agent.Velocity * dt;
+
+    // Search for vision sensors
+    for (auto& sensor : agent.GetSensors()) {
+        auto* vision = dynamic_cast<VisionSensor*>(sensor.get());
+        if (!vision) continue;
+
+        const auto& hits = vision->GetHits();
+        if (hits.empty()) continue;
+
+        // zentraler Ray = Mitte der Liste
+        const VisionHit& centerHit = hits[hits.size() / 2];
+
+        // Wand zu nah?
+        if (!centerHit.isAgent && centerHit.distance < agent.Traits.comfortRadius * 1.2f) {
+            // Heading um 180° drehen
+            agent.Heading = std::fmod(agent.Heading + 180.0f, 360.0f);
+
+            float angleRad = glm::radians(agent.Heading);
+            agent.Velocity = glm::vec2(std::sin(angleRad), std::cos(angleRad)) * agent.Traits.speedPref;
+
+            break;  // nur einmal pro Frame reagieren
+        }
+    }
 }
 
 bool RandomWalkTask::IsFinished() const {

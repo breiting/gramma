@@ -1,6 +1,7 @@
 #pragma once
 #include <glm/vec2.hpp>
 #include <gramma/model/AgentTraits.hpp>
+#include <gramma/model/ISensor.hpp>
 #include <gramma/model/Task.hpp>
 
 namespace gr {
@@ -17,7 +18,9 @@ class Agent {
     virtual ~Agent() = default;
 
     void AssignTask(TaskPtr task);
-    void Update(float dt);
+    void Update(float dt, const Room* room);
+    void AttachSensor(SensorPtr sensor);
+    const std::vector<SensorPtr>& GetSensors() const;
 
    public:
     glm::vec2 Position{0.0, 0.0};         // Current position (meters)
@@ -29,6 +32,7 @@ class Agent {
 
    private:
     TaskPtr m_CurrentTask;
+    std::vector<SensorPtr> m_Sensors;
 };
 
 }  // namespace gr
