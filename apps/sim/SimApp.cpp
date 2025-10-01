@@ -24,8 +24,8 @@ bool SimApp::Init(gr::AppContext& ctx) {
 
     // Room
     constexpr float border = 1.0;
-    constexpr float envWidth = 100.0;
-    constexpr float envHeight = 60.0;
+    constexpr float envWidth = 50.0;
+    constexpr float envHeight = 30.0;
 
     m_Env = std::make_unique<gr::Environment>(-envWidth / 2.0, envWidth / 2.0, -envHeight / 2.0, envHeight / 2.0);
 
@@ -40,10 +40,10 @@ bool SimApp::Init(gr::AppContext& ctx) {
         m_Env->AddAgent(std::move(agent));
     }
 
-    for (int i = 0; i < 5; ++i) {
+    for (int i = 0; i < 10; ++i) {
         glm::vec2 pos = {(float)(rand() % int(envWidth) - envWidth / 2.0),
                          (float)(rand() % int(envHeight) - envHeight / 2.0)};
-        m_Env->AddFoodSource(std::make_shared<gr::FoodSource>(pos));
+        m_Env->AddFoodSource(std::make_shared<gr::FoodSource>(pos, 1.0, 0.1));
     }
 
     onKeyPressed = [this](int key, int /*mods*/) {
