@@ -20,8 +20,18 @@ static glm::vec4 AgeColor(AgeClass age) {
     return {1.0f, 1.0f, 1.0f, 1.0f};  // fallback white
 }
 
+AgentView::~AgentView() {
+    if (m_Vao) {
+        glDeleteVertexArrays(1, &m_Vao);
+    }
+}
+
 void AgentView::Init() {
     m_Shader.BuildAgent();
+
+    glGenVertexArrays(1, &m_Vao);
+    glBindVertexArray(m_Vao);
+    glBindVertexArray(0);
 }
 
 void AgentView::Draw(const Agent& agent, const glm::mat4& vp) {
@@ -36,7 +46,9 @@ void AgentView::Draw(const Agent& agent, const glm::mat4& vp) {
     m_Shader.SetVec4(Uniforms::COLOR, AgeColor(traits.age));
     m_Shader.SetFloat(Uniforms::TIME, glfwGetTime());
 
+    glBindVertexArray(m_Vao);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    glBindVertexArray(0);
 }
 
 }  // namespace gr

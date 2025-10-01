@@ -36,11 +36,11 @@ bool SimApp::Init(gr::AppContext& ctx) {
     m_Agent.Position = {0.0, 0.0};
     AgentTraits traits;
     traits.age = gr::AgeClass::Teenager;
-    traits.bodyRadius = 0.2;
-    traits.comfortRadius = 0.8;
+    traits.bodyRadius = 1.2;
+    traits.comfortRadius = 1.8;
     m_Agent.Traits = traits;
 
-    onKeyPressed = [this](int key, int mods) {
+    onKeyPressed = [this](int key, int /*mods*/) {
         if (key == GLFW_KEY_ESCAPE) {
             m_Quit = true;
         } else if (key == GLFW_KEY_S) {
@@ -52,7 +52,7 @@ bool SimApp::Init(gr::AppContext& ctx) {
     return true;
 }
 
-void SimApp::Update(gr::AppContext& ctx, double dt) {
+void SimApp::Update(gr::AppContext& /*ctx*/, double dt) {
     static float lastPrint = 0.0f;
     float currentTime = Now();
     if (currentTime - lastPrint >= 1.0f) {

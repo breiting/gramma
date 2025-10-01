@@ -7,12 +7,14 @@ namespace gr {
 class AgentView {
    public:
     AgentView() = default;
+    ~AgentView();
 
     void Init();
     void Draw(const Agent& agent, const glm::mat4& vp);
 
    private:
     Shader m_Shader;
+    unsigned int m_Vao;
 };
 
 }  // namespace gr

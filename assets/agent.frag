@@ -10,7 +10,8 @@ uniform float uTime;
 out vec4 FragColor;
 
 void main() {
-    float dist = length(vUV) * uOuterRadius;
+
+    float dist = length(vUV);
 
     // Body
     if (dist < uInnerRadius) {
@@ -21,7 +22,7 @@ void main() {
     // Glow
     if (dist < uOuterRadius) {
         float glow = 1.0 - (dist - uInnerRadius) / (uOuterRadius - uInnerRadius);
-        float pulse = 0.5 + 0.5 * sin(2.0 * 3.14159 * 2.0 * uTime); // 2 Hz
+        float pulse = 0.5 + 0.5 * sin(2.0 * 3.14159 * 1.0 /*Hz*/ * uTime); // 1 Hz
         FragColor = vec4(uColor.rgb, uColor.a * glow * 0.6 * pulse);
         return;
     }
