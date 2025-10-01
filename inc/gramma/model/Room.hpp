@@ -7,9 +7,9 @@ namespace gr {
 
 /** Represents a room in the evacuation simulation. */
 struct Room {
-    glm::vec2 Pos;            // Bottom-left position of the room (meters)
+    glm::vec2 Position;       // Bottom-left position of the room (meters)
     glm::vec2 Size;           // Size of the room (width, height in meters)
-    std::vector<Exit> exits;  // Exits in the room
+    std::vector<Exit> Exits;  // Exits in the room
 };
 
 }  // namespace gr

@@ -30,17 +30,6 @@ void LineShape::Set(const std::vector<glm::vec2>& pts) {
     glBufferData(GL_ARRAY_BUFFER, m_Count * 2 * sizeof(float), pts.data(), GL_DYNAMIC_DRAW);
 }
 
-void LineShape::AddCircleOutline(const glm::vec2& center, float radius, int segments) {
-    for (int i = 0; i < segments; ++i) {
-        float angle = 2.0f * 3.14159265359f * i / segments;
-        glm::vec2 point = center + radius * glm::vec2(cos(angle), sin(angle));
-        m_Points.push_back(point);
-    }
-    // Close the circle
-    m_Points.push_back(m_Points[m_Points.size() - segments]);
-    m_Count = (int)m_Points.size();
-}
-
 void LineShape::Upload() {
     // Already uploaded in Set
 }

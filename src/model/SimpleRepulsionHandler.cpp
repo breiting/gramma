@@ -1,4 +1,3 @@
-#define GLM_ENABLE_EXPERIMENTAL
 #include <glm/geometric.hpp>
 #include <gramma/model/SimpleRepulsionHandler.hpp>
 
@@ -12,13 +11,13 @@ void SimpleRepulsionHandler::HandleCollisions(std::vector<Agent>& agents) const 
         for (size_t j = i + 1; j < agents.size(); ++j) {
             Agent& a = agents[i];
             Agent& b = agents[j];
-            glm::vec2 diff = a.Pos - b.Pos;
+            glm::vec2 diff = a.Position - b.Position;
             float dist = glm::length(diff);
-            float minDist = a.traits.comfortRadius + b.traits.comfortRadius;
+            float minDist = a.Traits.comfortRadius + b.Traits.comfortRadius;
             if (dist < minDist && dist > 0.0f) {
                 glm::vec2 repulsion = glm::normalize(diff) * (minDist - dist) * m_RepulsionStrength;
-                a.Vel += repulsion;
-                b.Vel -= repulsion;
+                a.Velocity += repulsion;
+                b.Velocity -= repulsion;
             }
         }
     }

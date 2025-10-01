@@ -14,7 +14,9 @@ inline constexpr const char* USE_TEXTURE = "uUseTexture";  // texture available?
 inline constexpr const char* TIME = "uTime";  // float: elapsed time in seconds
 
 // Special (optional)
-inline constexpr const char* RADIUS = "uRadius";        // float: used by circle shaders
-inline constexpr const char* THICKNESS = "uThickness";  // float: line thickness / outline width
+inline constexpr const char* POSITION = "uPos";              // vec2: position
+inline constexpr const char* INNER_RADIUS = "uInnerRadius";  // float: used by agent shaders
+inline constexpr const char* OUTER_RADIUS = "uOuterRadius";  // float: used by agent shaders
+inline constexpr const char* THICKNESS = "uThickness";       // float: line thickness / outline width
 
 }  // namespace gr::Uniforms

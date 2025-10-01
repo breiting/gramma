@@ -1,4 +1,3 @@
-#define GLM_ENABLE_EXPERIMENTAL
 #include <array>
 #include <glm/geometric.hpp>
 #include <gramma/model/Simulation.hpp>
@@ -22,14 +21,14 @@ void Simulation::Init() {
 
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::uniform_real_distribution<float> posX(m_Room.Pos.x, m_Room.Pos.x + m_Room.Size.x);
-    std::uniform_real_distribution<float> posY(m_Room.Pos.y, m_Room.Pos.y + m_Room.Size.y);
+    std::uniform_real_distribution<float> posX(m_Room.Position.x, m_Room.Position.x + m_Room.Size.x);
+    std::uniform_real_distribution<float> posY(m_Room.Position.y, m_Room.Position.y + m_Room.Size.y);
 
     for (int i = 0; i < m_NumAgents; ++i) {
         Agent agent;
-        agent.Pos = glm::vec2(posX(gen), posY(gen));
-        agent.Vel = glm::vec2(0.0f);
-        agent.traits = RandomTraits();
+        agent.Position = glm::vec2(posX(gen), posY(gen));
+        agent.Velocity = glm::vec2(0.0f);
+        agent.Traits = RandomTraits();
         agent.chosenExitIndex = -1;
         m_Agents.push_back(agent);
     }
@@ -38,13 +37,13 @@ void Simulation::Init() {
 void Simulation::Step(float dt) {
     m_ElapsedTime += dt;
 
-    // Choose exits for agents
+    // Choose Exits for agents
     for (auto& agent : m_Agents) {
         if (agent.chosenExitIndex == -1) {
             float minDist = std::numeric_limits<float>::max();
             int bestIndex = -1;
-            for (size_t i = 0; i < m_Room.exits.size(); ++i) {
-                float dist = glm::distance(agent.Pos, m_Room.exits[i].Pos);
+            for (size_t i = 0; i < m_Room.Exits.size(); ++i) {
+                float dist = glm::distance(agent.Position, m_Room.Exits[i].Position);
                 if (dist < minDist) {
                     minDist = dist;
                     bestIndex = static_cast<int>(i);
@@ -56,9 +55,9 @@ void Simulation::Step(float dt) {
 
     // Compute desired velocities
     for (auto& agent : m_Agents) {
-        const Exit& exit = m_Room.exits[agent.chosenExitIndex];
-        glm::vec2 desiredVel = m_NavStrategy->ComputeDesiredVelocity(agent, exit);
-        agent.Vel = desiredVel;  // for simplicity, set directly
+        const Exit& exit = m_Room.Exits[agent.chosenExitIndex];
+        glm::vec2 desiredVelocity = m_NavStrategy->ComputeDesiredVelocity(agent, exit);
+        agent.Velocity = desiredVelocity;  // for simplicity, set directly
     }
 
     // Handle collisions
@@ -66,17 +65,17 @@ void Simulation::Step(float dt) {
 
     // Update positions
     for (auto& agent : m_Agents) {
-        agent.Pos += agent.Vel * dt;
+        agent.Position += agent.Velocity * dt;
     }
 
     // Check for exit
     m_Agents.erase(std::remove_if(m_Agents.begin(), m_Agents.end(),
                                   [this](const Agent& agent) {
-                                      const Exit& exit = m_Room.exits[agent.chosenExitIndex];
-                                      return agent.Pos.x >= exit.Pos.x - exit.Size.x / 2 &&
-                                             agent.Pos.x <= exit.Pos.x + exit.Size.x / 2 &&
-                                             agent.Pos.y >= exit.Pos.y - exit.Size.y / 2 &&
-                                             agent.Pos.y <= exit.Pos.y + exit.Size.y / 2;
+                                      const Exit& exit = m_Room.Exits[agent.chosenExitIndex];
+                                      return agent.Position.x >= exit.Position.x - exit.Size.x / 2 &&
+                                             agent.Position.x <= exit.Position.x + exit.Size.x / 2 &&
+                                             agent.Position.y >= exit.Position.y - exit.Size.y / 2 &&
+                                             agent.Position.y <= exit.Position.y + exit.Size.y / 2;
                                   }),
                    m_Agents.end());
 }
@@ -100,7 +99,7 @@ float Simulation::GetElapsedTime() const {
 std::array<int, 4> Simulation::GetAgeCounts() const {
     std::array<int, 4> counts = {0, 0, 0, 0};
     for (const auto& agent : m_Agents) {
-        counts[static_cast<int>(agent.traits.age)]++;
+        counts[static_cast<int>(agent.Traits.age)]++;
     }
     return counts;
 }

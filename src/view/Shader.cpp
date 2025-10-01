@@ -2,14 +2,12 @@
 #include <gramma/view/Shader.hpp>
 #include <iostream>
 
+#include "assets/agent_frag.h"
+#include "assets/agent_vert.h"
 #include "assets/basic_frag.h"
 #include "assets/basic_vert.h"
-#include "assets/circle_frag.h"
-#include "assets/circle_vert.h"
 #include "assets/line_frag.h"
 #include "assets/line_vert.h"
-#include "assets/ring_frag.h"
-#include "assets/ring_vert.h"
 #include "assets/unlit_frag.h"
 #include "assets/unlit_vert.h"
 
@@ -74,6 +72,10 @@ void Shader::SetMat4(const std::string& name, const glm::mat4& matrix) const {
     glUniformMatrix4fv(glGetUniformLocation(m_Id, name.c_str()), 1, GL_FALSE, &matrix[0][0]);
 }
 
+void Shader::SetVec2(const std::string& name, const glm::vec2& value) const {
+    glUniform2fv(glGetUniformLocation(m_Id, name.c_str()), 1, &value[0]);
+}
+
 void Shader::SetVec3(const std::string& name, const glm::vec3& value) const {
     glUniform3fv(glGetUniformLocation(m_Id, name.c_str()), 1, &value[0]);
 }
@@ -98,20 +100,16 @@ unsigned int Shader::GetInt(const std::string& name) const {
     return glGetUniformLocation(m_Id, name.c_str());
 }
 
-void Shader::BuildRing() {
-    CompileShader(ring_vert_glsl, ring_frag_glsl);
-}
-
 void Shader::BuildUnlit() {
     CompileShader(unlit_vert_glsl, unlit_frag_glsl);
 }
 
-void Shader::BuildBasic() {
-    CompileShader(basic_vert_glsl, basic_frag_glsl);
+void Shader::BuildAgent() {
+    CompileShader(agent_vert_glsl, agent_frag_glsl);
 }
 
-void Shader::BuildCircle() {
-    CompileShader(circle_vert_glsl, circle_frag_glsl);
+void Shader::BuildBasic() {
+    CompileShader(basic_vert_glsl, basic_frag_glsl);
 }
 
 void Shader::BuildLine() {

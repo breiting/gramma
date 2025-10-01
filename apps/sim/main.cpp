@@ -1,18 +1,16 @@
-#include <gramma/core/IApp.hpp>
 #include <gramma/core/Runner.hpp>
-#include <gramma/core/Window.hpp>
 #include <iostream>
 #include <memory>
 
-#include "HelloApp.hpp"
+#include "SimApp.hpp"
 
 using namespace gr;
 
 int main() {
-    auto app = std::make_unique<HelloApp>();
+    auto app = std::make_unique<SimApp>();
     Runner runner;
     try {
-        runner.Init(std::move(app), 1280, 720, "gramma — Hello", 4);
+        runner.Init(std::move(app), 1280, 720, "Simulation", 4);
     } catch (const std::exception& e) {
         std::cerr << "Error: " << e.what() << std::endl;
         return -1;

@@ -14,12 +14,9 @@ include(cmake/CompilerSettings.cmake)
 include(cmake/EmbedText.cmake)
 file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/generated/assets")
 
-
 # Options
-option(GRAMMA_BUILD_HELLO "Build hello app" ON)
-option(GRAMMA_BUILD_BOUNCE "Build bouncing app" ON)
-option(GRAMMA_BUILD_RESCUE "Build rescue app" ON)
-
+option(GRAMMA_BUILD_SIM "Build sim app" ON)
+option(GRAMMA_BUILD_RESCUE "Build rescue app" OFF)
 
 # -------- Dependencies (fetch once, available everywhere) --------
 include(FetchContent)
@@ -56,26 +53,17 @@ add_library(gramma
 		src/core/Runner.cpp
 		src/core/Time.cpp
 		src/core/Window.cpp
-		src/model/World2D.cpp
+
 		src/model/GreedyExitStrategy.cpp
 		src/model/SimpleRepulsionHandler.cpp
 		src/model/Simulation.cpp
+
 		src/view/Camera2D.cpp
-		src/view/CircleShapes.cpp
-		src/view/Font.cpp
-		src/view/Hud.cpp
-		src/view/CircleShape.cpp
-		src/view/GlowAgentView.cpp
+		src/view/AgentView.cpp
 		src/view/LineShape.cpp
-		src/view/Panel.cpp
-		src/view/QuadShapes.cpp
 		src/view/Shader.cpp
-		src/view/LineShape.cpp
-		src/view/TriangularMesh.cpp
-		src/view/TextElement.cpp
-		src/view/TexturedQuadShapes.cpp
 		src/view/Texture.cpp
-												#src/view/Image.cpp
+		src/view/TriangularMesh.cpp
 )
 
 
@@ -85,17 +73,17 @@ add_library(gramma
 set(SHADER_SRC_DIR "${CMAKE_SOURCE_DIR}/assets")
 set(GEN_INC_DIR    "${CMAKE_BINARY_DIR}/generated")
 
-embed_text_to_header("${SHADER_SRC_DIR}/ring.vert"  "${GEN_INC_DIR}/assets/ring_vert.h"  ring_vert_glsl)
-embed_text_to_header("${SHADER_SRC_DIR}/ring.frag"  "${GEN_INC_DIR}/assets/ring_frag.h"  ring_frag_glsl)
+embed_text_to_header("${SHADER_SRC_DIR}/agent.vert"  "${GEN_INC_DIR}/assets/agent_vert.h"  agent_vert_glsl)
+embed_text_to_header("${SHADER_SRC_DIR}/agent.frag"  "${GEN_INC_DIR}/assets/agent_frag.h"  agent_frag_glsl)
+
 embed_text_to_header("${SHADER_SRC_DIR}/unlit.vert"  "${GEN_INC_DIR}/assets/unlit_vert.h"  unlit_vert_glsl)
 embed_text_to_header("${SHADER_SRC_DIR}/unlit.frag"  "${GEN_INC_DIR}/assets/unlit_frag.h"  unlit_frag_glsl)
+
 embed_text_to_header("${SHADER_SRC_DIR}/basic.vert"  "${GEN_INC_DIR}/assets/basic_vert.h"  basic_vert_glsl)
 embed_text_to_header("${SHADER_SRC_DIR}/basic.frag"  "${GEN_INC_DIR}/assets/basic_frag.h"  basic_frag_glsl)
-embed_text_to_header("${SHADER_SRC_DIR}/circle.vert" "${GEN_INC_DIR}/assets/circle_vert.h" circle_vert_glsl)
-embed_text_to_header("${SHADER_SRC_DIR}/circle.frag" "${GEN_INC_DIR}/assets/circle_frag.h" circle_frag_glsl)
+
 embed_text_to_header("${SHADER_SRC_DIR}/line.vert"   "${GEN_INC_DIR}/assets/line_vert.h"   line_vert_glsl)
 embed_text_to_header("${SHADER_SRC_DIR}/line.frag"   "${GEN_INC_DIR}/assets/line_frag.h"   line_frag_glsl)
-
 
 target_link_libraries(gramma
 PUBLIC
@@ -112,28 +100,16 @@ PUBLIC
 )
 
 # Apps
-if(GRAMMA_BUILD_HELLO)
-	add_executable(hello
-				apps/hello/main.cpp
-				apps/hello/HelloApp.cpp
+if(GRAMMA_BUILD_SIM)
+	add_executable(sim
+				apps/sim/main.cpp
+				apps/sim/SimApp.cpp
 		)
-	target_link_libraries(hello
+	target_link_libraries(sim
 				PRIVATE gramma glm::glm
 		)
-	target_include_directories(hello PRIVATE ${CMAKE_SOURCE_DIR}/inc ${CMAKE_SOURCE_DIR}/extern/glad/include)
-	target_compile_features(hello PRIVATE cxx_std_17)
-endif()
-
-if(GRAMMA_BUILD_BOUNCE)
-	add_executable(bounce
-				apps/bounce/main.cpp
-				apps/bounce/BounceApp.cpp
-		)
-	target_link_libraries(bounce
-				PRIVATE gramma glm::glm
-		)
-	target_include_directories(bounce PRIVATE ${CMAKE_SOURCE_DIR}/inc ${CMAKE_SOURCE_DIR}/extern/glad/include)
-	target_compile_features(bounce PRIVATE cxx_std_17)
+	target_include_directories(sim PRIVATE ${CMAKE_SOURCE_DIR}/inc ${CMAKE_SOURCE_DIR}/extern/glad/include)
+	target_compile_features(sim PRIVATE cxx_std_17)
 endif()
 
 if(GRAMMA_BUILD_RESCUE)

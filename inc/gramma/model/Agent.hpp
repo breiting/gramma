@@ -6,10 +6,10 @@ namespace gr {
 
 /** Represents an agent (person) in the evacuation simulation. */
 struct Agent {
-    glm::vec2 Pos;        // Current position (meters)
-    glm::vec2 Vel;        // Current velocity (m/s)
-    AgentTraits traits;   // Agent traits (age, radii, speed)
-    int chosenExitIndex;  // Index of chosen exit (-1 if none)
+    glm::vec2 Position;   // Current position (meters)
+    glm::vec2 Velocity;   // Current velocity (m/s)
+    AgentTraits Traits;   // Agent traits (age, speed, ...)
+    int chosenExitIndex;  // TODO
 };
 
 }  // namespace gr

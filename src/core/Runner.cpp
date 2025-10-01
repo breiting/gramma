@@ -24,8 +24,6 @@ void Runner::Init(std::unique_ptr<IApp> app, int width, int height, const std::s
         throw std::runtime_error("Application initialization failed");
     }
 
-    m_Hud.Init();
-
     m_Window.SetKeyPressedCallback(m_App->onKeyPressed);
     m_Window.SetMouseButtonCallback(m_App->onMouseButton);
     m_Window.SetMouseMoveCallback(m_App->onMouseMove);
@@ -53,7 +51,6 @@ void Runner::Run() {
 
         BeginFrame();
         m_App->Render(m_Context);
-        m_Hud.Render(m_Context);
         EndFrame();
     }
 }
@@ -99,10 +96,6 @@ int Runner::GetHeight() const {
 
 void Runner::RequestQuit() {
     m_Quit = true;
-}
-
-Hud* Runner::GetHud() {
-    return &m_Hud;
 }
 
 }  // namespace gr

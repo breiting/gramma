@@ -2,8 +2,6 @@
 
 namespace gr {
 
-class Hud;
-
 /** Simple interface which allows the app to interact with other components.
  * The runner typically implements this class.
  */
@@ -28,9 +26,6 @@ class AppContext {
 
     /** @return The time delta since the last update. */
     virtual double GetUpdateDt() = 0;
-
-    /** @return Pointer to HUD for adding panels. */
-    virtual Hud* GetHud() = 0;
 };
 
 }  // namespace gr
