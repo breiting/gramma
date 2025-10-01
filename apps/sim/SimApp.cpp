@@ -3,10 +3,12 @@
 #include <GLFW/glfw3.h>
 
 #include <gramma/core/AppContext.hpp>
+#include <gramma/model/RandomWalkTask.hpp>
 #include <gramma/model/Room.hpp>
 #include <iostream>
 
 #include "gramma/core/Time.hpp"
+#include "gramma/model/Agent.hpp"
 #include "gramma/model/AgentTraits.hpp"
 
 using namespace gr;
@@ -18,34 +20,41 @@ std::string SimApp::Name() const {
 bool SimApp::Init(gr::AppContext& ctx) {
     std::cout << "Initializing SimApp..." << std::endl;
 
-    // Define room and exit
-    constexpr float roomWidth = 2.0;
-    constexpr float roomHeight = 1.0;
-    Room room;
-    room.Position = glm::vec2(-roomWidth / 2.0, -roomHeight / 2.0);
-    room.Size = glm::vec2(roomWidth, roomHeight);
-
-    room.Exits.push_back({glm::vec2(roomWidth / 2.0f, 0.0f), glm::vec2(0.1f, 1.0f)});   // Right exit
-    room.Exits.push_back({glm::vec2(-roomWidth / 2.0f, 0.0f), glm::vec2(0.1f, 1.0f)});  // Left exit
+    // Room
+    constexpr float border = 0.5;
+    constexpr float roomWidth = 10.0;
+    constexpr float roomHeight = 6.0;
+    std::vector<glm::vec2> contour = {{-roomWidth / 2.0, -roomHeight / 2.0},  //
+                                      {roomWidth / 2.0, -roomHeight / 2.0},   //
+                                      {roomWidth / 2.0, roomHeight / 2.0},    //
+                                      {-roomWidth / 2.0, roomHeight / 2.0}};
+    m_Room = std::make_unique<Room>(contour);
 
     // Setup camera
-    m_Camera.SetOrthoByWidth(roomWidth + 10, ctx.Aspect());
+    m_Camera.SetOrthoByHeight(roomHeight + border, ctx.Aspect());
 
     // Setup Agent
-    m_AgentView.Init();
-    m_Agent.Position = {0.0, 0.0};
     AgentTraits traits;
     traits.age = gr::AgeClass::Teenager;
     traits.bodyRadius = 0.25;
     traits.comfortRadius = 0.5;
+    traits.speedPref = 1.5f;  // m/s
+
+    m_Agent.Position = {0.0, 0.0};
     m_Agent.Traits = traits;
+    m_Agent.State = gr::AgentState::Idle;
+
+    // Init views
+    m_AgentView.Init();
+    m_RoomView.Init();
 
     onKeyPressed = [this](int key, int /*mods*/) {
         if (key == GLFW_KEY_ESCAPE) {
             m_Quit = true;
         } else if (key == GLFW_KEY_S) {
             m_Restart = true;
-            m_Agent.Position.x += 0.1;
+        } else if (key == GLFW_KEY_R) {
+            m_Agent.AssignTask(std::make_unique<RandomWalkTask>(5.0f));
         }
     };
 
@@ -60,6 +69,7 @@ void SimApp::Update(gr::AppContext& /*ctx*/, double dt) {
         std::cout << "Time: " << currentTime << "s, dt=" << dt << std::endl;
         lastPrint = currentTime;
     }
+    m_Agent.Update(dt);
 }
 
 void SimApp::Render(gr::AppContext& ctx) {
@@ -69,4 +79,5 @@ void SimApp::Render(gr::AppContext& ctx) {
     }
 
     m_AgentView.Draw(m_Agent, m_Camera.ViewProj());
+    m_RoomView.Draw(m_Room.get(), m_Camera.ViewProj());
 }

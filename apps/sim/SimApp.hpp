@@ -3,6 +3,7 @@
 #include <gramma/core/IApp.hpp>
 #include <gramma/view/AgentView.hpp>
 #include <gramma/view/Camera2D.hpp>
+#include <gramma/view/RoomView.hpp>
 
 class SimApp : public gr::IApp {
    public:
@@ -16,6 +17,9 @@ class SimApp : public gr::IApp {
    private:
     gr::Camera2D m_Camera;
     gr::AgentView m_AgentView;
+    gr::RoomView m_RoomView;
+
+    std::unique_ptr<gr::Room> m_Room;
     gr::Agent m_Agent;
 
     bool m_Restart{false};

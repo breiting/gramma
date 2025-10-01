@@ -6,10 +6,16 @@
 namespace gr {
 
 /** Represents a room in the evacuation simulation. */
-struct Room {
-    glm::vec2 Position;       // Bottom-left position of the room (meters)
-    glm::vec2 Size;           // Size of the room (width, height in meters)
-    std::vector<Exit> Exits;  // Exits in the room
+class Room {
+   public:
+    Room(const std::vector<glm::vec2>& contour);
+
+    const std::vector<glm::vec2>& GetContour() const;
+
+   private:
+    std::vector<glm::vec2> m_Contour;
+    float m_Thickness;
+    std::vector<Exit> m_Exits;  // Exits in the room
 };
 
 }  // namespace gr

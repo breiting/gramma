@@ -40,7 +40,7 @@ void LineShape::Draw(const Shader& shader, const glm::mat4& vp, const glm::vec4&
     shader.SetMat4(Uniforms::MVP, vp);
     shader.SetFloat("uAlpha", color.a);
     glBindVertexArray(m_Vao);
-    glDrawArrays(GL_LINES, 0, m_Count);
+    glDrawArrays(GL_LINE_LOOP, 0, m_Count);
 }
 
 }  // namespace gr
