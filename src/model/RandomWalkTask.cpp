@@ -34,7 +34,7 @@ void RandomWalkTask::Update(Agent& agent, float dt) {
         // Wand zu nah?
         if (!centerHit.isAgent && centerHit.distance < agent.Traits.comfortRadius * 1.2f) {
             // Heading um 180° drehen
-            agent.Heading = std::fmod(agent.Heading + 180.0f, 360.0f);
+            agent.Heading = std::fmod(agent.Heading + (rand() % 180), 360.0f);
 
             float angleRad = glm::radians(agent.Heading);
             agent.Velocity = glm::vec2(std::sin(angleRad), std::cos(angleRad)) * agent.Traits.speedPref;
