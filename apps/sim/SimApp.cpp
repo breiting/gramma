@@ -19,8 +19,8 @@ bool SimApp::Init(gr::AppContext& ctx) {
     std::cout << "Initializing SimApp..." << std::endl;
 
     // Define room and exit
-    constexpr float roomWidth = 50.0;
-    constexpr float roomHeight = 20.0;
+    constexpr float roomWidth = 5.0;
+    constexpr float roomHeight = 2.0;
     Room room;
     room.Position = glm::vec2(-roomWidth / 2.0, -roomHeight / 2.0);
     room.Size = glm::vec2(roomWidth, roomHeight);
@@ -36,8 +36,8 @@ bool SimApp::Init(gr::AppContext& ctx) {
     m_Agent.Position = {0.0, 0.0};
     AgentTraits traits;
     traits.age = gr::AgeClass::Teenager;
-    traits.bodyRadius = 1.2;
-    traits.comfortRadius = 1.8;
+    traits.bodyRadius = 0.2;
+    traits.comfortRadius = 0.8;
     m_Agent.Traits = traits;
 
     onKeyPressed = [this](int key, int /*mods*/) {
