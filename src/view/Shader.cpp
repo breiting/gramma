@@ -6,6 +6,8 @@
 #include "assets/agent_vert.h"
 #include "assets/basic_frag.h"
 #include "assets/basic_vert.h"
+#include "assets/food_frag.h"
+#include "assets/food_vert.h"
 #include "assets/line_frag.h"
 #include "assets/line_vert.h"
 #include "assets/unlit_frag.h"
@@ -102,6 +104,10 @@ unsigned int Shader::GetInt(const std::string& name) const {
 
 void Shader::BuildUnlit() {
     CompileShader(unlit_vert_glsl, unlit_frag_glsl);
+}
+
+void Shader::BuildFood() {
+    CompileShader(food_vert_glsl, food_frag_glsl);
 }
 
 void Shader::BuildAgent() {

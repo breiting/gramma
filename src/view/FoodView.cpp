@@ -5,7 +5,7 @@
 namespace gr {
 
 void FoodView::Init() {
-    m_Shader.BuildAgent();  // angenommen: du hast sowas wie einen CircleShader
+    m_Shader.BuildFood();
     glGenVertexArrays(1, &m_VAO);
     glGenBuffers(1, &m_VBO);
 }
@@ -15,11 +15,13 @@ void FoodView::Draw(const FoodSource* food, const glm::mat4& vp) {
     m_Shader.SetMat4("uMVP", vp);
     m_Shader.SetVec2("uPos", food->GetPosition());
 
-    float baseRadius = 0.5f;                                    // fixed scale
-    float radius = baseRadius * (0.5f + food->GetNutrition());  // skaliert mit Nutrition
+    // Nutrition beeinflusst Größe
+    float baseRadius = 0.6f;  // "volle" FoodSource
+    float radius = baseRadius * (0.2f + 0.8f * food->GetNutrition());
     m_Shader.SetFloat("uRadius", radius);
 
-    m_Shader.SetVec4("uColor", {0.2f, 0.8f, 0.2f, 1.0f});
+    m_Shader.SetFloat("uBlendWidth", 0.05f);               // dünner soften Rand
+    m_Shader.SetVec4("uColor", {0.2f, 0.8f, 0.2f, 1.0f});  // grün
 
     glBindVertexArray(m_VAO);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);

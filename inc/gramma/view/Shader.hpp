@@ -22,6 +22,7 @@ class Shader {
     // Load and build a pre-defined shader
     void BuildBasic();
     void BuildAgent();
+    void BuildFood();
     void BuildLine();
     void BuildUnlit();
 
