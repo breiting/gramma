@@ -36,8 +36,8 @@ bool SimApp::Init(gr::AppContext& ctx) {
     m_Agent.Position = {0.0, 0.0};
     AgentTraits traits;
     traits.age = gr::AgeClass::Teenager;
-    traits.bodyRadius = 0.2;
-    traits.comfortRadius = 0.8;
+    traits.bodyRadius = 0.25;
+    traits.comfortRadius = 0.5;
     m_Agent.Traits = traits;
 
     onKeyPressed = [this](int key, int /*mods*/) {

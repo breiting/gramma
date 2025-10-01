@@ -28,12 +28,23 @@ void main() {
     }
 
     // Glow
-    if (dist > uOuterRadius - uThickness && dist < uOuterRadius) {
-        float glow = smoothstep(uOuterRadius, uOuterRadius - uThickness, dist);
+    float inner = uOuterRadius - uThickness;
+    float outer = uOuterRadius;
+
+    if (dist >= inner && dist <= outer) {
+        // Smooth inner border
+        float maskIn  = smoothstep(inner, inner + uBlendWidth, dist);
+        // Smooth outer border
+        float maskOut = smoothstep(outer, outer - uBlendWidth, dist);
+
+        float ringAlpha = maskIn * maskOut;
+
+        // Pulsation
         float pulse = 0.5 + 0.5 * sin(2.0 * 3.14159 * 0.5 /*Hz*/ * uTime);
-        FragColor = vec4(uGlowColor.rgb, uGlowColor.a * glow * 0.8 * pulse);
+
+        FragColor = vec4(uGlowColor.rgb, uGlowColor.a * ringAlpha * pulse);
         return;
     }
 
-	discard;
+    discard;
 }
