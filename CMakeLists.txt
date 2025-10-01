@@ -56,11 +56,12 @@ add_library(gramma
 
 		src/model/Agent.cpp
 		src/model/AgentFactory.cpp
-		src/model/GreedyExitStrategy.cpp
+		src/model/FoodSource.cpp
+		src/model/HungerNeed.cpp
 		src/model/RandomWalkTask.cpp
 		src/model/Room.cpp
+		src/model/SeekFoodTask.cpp
 		src/model/VisionSensor.cpp
-														# src/model/Simulation.cpp
 
 		src/view/Camera2D.cpp
 		src/view/AgentView.cpp

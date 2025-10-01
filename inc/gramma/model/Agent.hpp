@@ -1,6 +1,8 @@
 #pragma once
 #include <glm/vec2.hpp>
 #include <gramma/model/AgentTraits.hpp>
+#include <gramma/model/FoodSource.hpp>
+#include <gramma/model/INeed.hpp>
 #include <gramma/model/ISensor.hpp>
 #include <gramma/model/Task.hpp>
 #include <vector>
@@ -28,6 +30,10 @@ class Agent {
     // --- Sensor Management ---
     void AttachSensor(SensorPtr sensor);
     const std::vector<SensorPtr>& GetSensors() const;
+
+    // --- Need Management ---
+    void AddNeed(std::unique_ptr<INeed> need);
+    void EvaluateNeeds(const std::vector<FoodSource>& foodSources);
 
     // --- State Management ---
     void SetState(AgentState state);
@@ -61,6 +67,7 @@ class Agent {
 
     TaskPtr m_CurrentTask;
     std::vector<SensorPtr> m_Sensors;
+    std::vector<std::unique_ptr<INeed>> m_Needs;
 };
 
 }  // namespace gr

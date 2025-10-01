@@ -3,6 +3,7 @@
 #include <glm/gtc/constants.hpp>
 #include <gramma/model/Agent.hpp>
 #include <gramma/model/Room.hpp>
+#include <gramma/model/SeekFoodTask.hpp>
 
 namespace gr {
 
@@ -40,6 +41,41 @@ void Agent::Update(float dt, const Room* room) {
 
     // Kinematics
     UpdateKinematics(dt);
+}
+
+void Agent::AddNeed(std::unique_ptr<INeed> need) {
+    m_Needs.push_back(std::move(need));
+}
+
+void Agent::EvaluateNeeds(const std::vector<FoodSource>& foodSources) {
+    float bestPriority = 0.0f;
+    INeed* chosenNeed = nullptr;
+
+    for (auto& n : m_Needs) {
+        n->Update(1.0f);  // dt kann von außen kommen
+        if (n->Priority() > bestPriority) {
+            bestPriority = n->Priority();
+            chosenNeed = n.get();
+        }
+    }
+
+    if (chosenNeed && m_State == AgentState::Idle) {
+        if (chosenNeed->Name() == "Hunger") {
+            // Suche nächstgelegene Futterquelle
+            const FoodSource* best = nullptr;
+            float bestDist = 9999.0f;
+            for (const auto& fs : foodSources) {
+                float d = glm::length(fs.GetPosition() - m_Position);
+                if (d < bestDist) {
+                    bestDist = d;
+                    best = &fs;
+                }
+            }
+            if (best) {
+                AssignTask(std::make_unique<SeekFoodTask>(best));
+            }
+        }
+    }
 }
 
 void Agent::AttachSensor(SensorPtr sensor) {
