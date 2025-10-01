@@ -2,6 +2,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/constants.hpp>
 #include <gramma/model/Agent.hpp>
+#include <gramma/model/RandomWalkTask.hpp>
 #include <gramma/model/Room.hpp>
 #include <gramma/model/SeekFoodTask.hpp>
 
@@ -24,35 +25,35 @@ void Agent::AssignTask(TaskPtr task) {
     }
 }
 
-void Agent::Update(float dt, const Room* room) {
+void Agent::Update(float dt) {
     // Sensors
-    for (auto& s : m_Sensors) {
-        s->Update(*this, *room);
-    }
+    // for (auto& s : m_Sensors) {
+    //     s->Update(*this);
+    // }
 
-    // Task
     if (m_State == AgentState::Executing && m_CurrentTask) {
         m_CurrentTask->Update(*this, dt);
         if (m_CurrentTask->IsFinished()) {
-            SetState(AgentState::Idle);
+            m_State = AgentState::Idle;
             m_CurrentTask.reset();
         }
     }
-
-    // Kinematics
-    UpdateKinematics(dt);
 }
 
 void Agent::AddNeed(std::unique_ptr<INeed> need) {
     m_Needs.push_back(std::move(need));
 }
 
-void Agent::EvaluateNeeds(const std::vector<FoodSource>& foodSources) {
+const std::vector<std::unique_ptr<INeed>>& Agent::GetNeeds() const {
+    return m_Needs;
+}
+
+void Agent::EvaluateNeeds(std::vector<std::shared_ptr<FoodSource>> foodSources, float dt) {
     float bestPriority = 0.0f;
     INeed* chosenNeed = nullptr;
 
     for (auto& n : m_Needs) {
-        n->Update(1.0f);  // dt kann von außen kommen
+        n->Update(dt);
         if (n->Priority() > bestPriority) {
             bestPriority = n->Priority();
             chosenNeed = n.get();
@@ -61,19 +62,20 @@ void Agent::EvaluateNeeds(const std::vector<FoodSource>& foodSources) {
 
     if (chosenNeed && m_State == AgentState::Idle) {
         if (chosenNeed->Name() == "Hunger") {
-            // Suche nächstgelegene Futterquelle
-            const FoodSource* best = nullptr;
+            std::shared_ptr<FoodSource> best = nullptr;
             float bestDist = 9999.0f;
             for (const auto& fs : foodSources) {
-                float d = glm::length(fs.GetPosition() - m_Position);
+                float d = glm::length(fs->GetPosition() - m_Position);
                 if (d < bestDist) {
                     bestDist = d;
-                    best = &fs;
+                    best = fs;
                 }
             }
             if (best) {
                 AssignTask(std::make_unique<SeekFoodTask>(best));
             }
+        } else if (chosenNeed->Name() == "Exercise") {
+            AssignTask(std::make_unique<RandomWalkTask>(5.0f));
         }
     }
 }

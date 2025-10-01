@@ -1,5 +1,6 @@
 #pragma once
 
+#include <gramma/core/Environment.hpp>
 #include <gramma/core/IApp.hpp>
 #include <gramma/view/AgentView.hpp>
 #include <gramma/view/Camera2D.hpp>
@@ -16,11 +17,8 @@ class SimApp : public gr::IApp {
 
    private:
     gr::Camera2D m_Camera;
-    gr::RoomView m_RoomView;
 
-    std::unique_ptr<gr::Room> m_Room;
-    std::vector<std::unique_ptr<gr::Agent> > m_Agents;
-    std::vector<std::unique_ptr<gr::AgentView> > m_AgentViews;
+    std::unique_ptr<gr::Environment> m_Env;
 
     bool m_Restart{false};
     bool m_Quit{false};

@@ -9,8 +9,6 @@
 
 namespace gr {
 
-class Room;
-
 enum class AgentState {
     Idle,
     Executing,
@@ -25,7 +23,7 @@ class Agent {
 
     // --- Simulation API ---
     void AssignTask(TaskPtr task);
-    void Update(float dt, const Room* room);
+    void Update(float dt);
 
     // --- Sensor Management ---
     void AttachSensor(SensorPtr sensor);
@@ -33,7 +31,8 @@ class Agent {
 
     // --- Need Management ---
     void AddNeed(std::unique_ptr<INeed> need);
-    void EvaluateNeeds(const std::vector<FoodSource>& foodSources);
+    const std::vector<std::unique_ptr<INeed>>& GetNeeds() const;
+    void EvaluateNeeds(std::vector<std::shared_ptr<FoodSource>> foodSources, float dt);
 
     // --- State Management ---
     void SetState(AgentState state);

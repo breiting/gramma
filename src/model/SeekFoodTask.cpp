@@ -5,7 +5,7 @@
 
 namespace gr {
 
-SeekFoodTask::SeekFoodTask(const FoodSource* target) : m_Target(target) {
+SeekFoodTask::SeekFoodTask(std::shared_ptr<FoodSource> target) : m_Target(target) {
 }
 
 void SeekFoodTask::Start(Agent& agent) {
@@ -30,7 +30,15 @@ void SeekFoodTask::Update(Agent& agent, float dt) {
     float dist = glm::length(dir);
 
     if (dist < agent.GetTraits().bodyRadius * 2.0f) {
-        // "Essen erreicht"
+        // Agent konsumiert Food
+        float eaten = m_Target->Consume(0.3f);  // 30% pro "Biss"
+        if (eaten > 0.0f) {
+            for (auto& n : agent.GetNeeds()) {
+                if (n->Name() == "Hunger") {
+                    n->Reset();  // satt
+                }
+            }
+        }
         m_Finished = true;
         return;
     }

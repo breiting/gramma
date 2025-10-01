@@ -1,3 +1,5 @@
+#include <glm/glm.hpp>
+#include <gramma/model/ExerciseNeed.hpp>
 #include <gramma/model/RandomWalkTask.hpp>
 #include <gramma/model/VisionSensor.hpp>
 
@@ -16,7 +18,18 @@ void RandomWalkTask::Update(Agent& agent, float dt) {
     m_Elapsed += dt;
     if (m_Elapsed > m_Duration) return;
 
-    // Bewegung erfolgt über Agent::UpdateKinematics in Agent::Update()
+    // Bewegung
+    float angleRad = glm::radians(agent.GetHeading());
+    glm::vec2 velocity = glm::vec2(std::sin(angleRad), std::cos(angleRad)) * agent.GetDesiredSpeed();
+    agent.SetPosition(agent.GetPosition() + velocity * dt);
+
+    // ExerciseNeed reduzieren
+    for (auto& n : agent.GetNeeds()) {
+        if (n->Name() == "Exercise") {
+            auto* ex = dynamic_cast<ExerciseNeed*>(n.get());
+            if (ex) ex->Decrease(dt);
+        }
+    }
 
     // Vision-Sensor prüfen
     for (auto& sensor : agent.GetSensors()) {

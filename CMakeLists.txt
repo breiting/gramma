@@ -53,11 +53,13 @@ add_library(gramma
 		src/core/Runner.cpp
 		src/core/Time.cpp
 		src/core/Window.cpp
+		src/core/Environment.cpp
 
 		src/model/Agent.cpp
 		src/model/AgentFactory.cpp
 		src/model/FoodSource.cpp
 		src/model/HungerNeed.cpp
+		src/model/ExerciseNeed.cpp
 		src/model/RandomWalkTask.cpp
 		src/model/Room.cpp
 		src/model/SeekFoodTask.cpp
@@ -65,6 +67,7 @@ add_library(gramma
 
 		src/view/Camera2D.cpp
 		src/view/AgentView.cpp
+		src/view/FoodView.cpp
 		src/view/RoomView.cpp
 		src/view/LineShape.cpp
 		src/view/Shader.cpp
