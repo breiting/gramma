@@ -7,6 +7,7 @@ EnvironmentView::EnvironmentView() {
 }
 
 void EnvironmentView::Init() {
+    m_AgentBatchView.Init();
     m_Shader.BuildLine();
     m_Bounds.Init();
 }
@@ -14,24 +15,7 @@ void EnvironmentView::Init() {
 void EnvironmentView::SyncWithEnvironment(Environment* env) {
     if (!env) return;
 
-    // --- AgentViews ---
-    for (auto& agentPtr : env->GetAgents()) {
-        Agent* agent = agentPtr.get();
-        if (m_AgentViews.find(agent) == m_AgentViews.end()) {
-            auto view = std::make_unique<AgentView>();
-            view->Init();
-            m_AgentViews[agent] = std::move(view);
-        }
-    }
-    for (auto it = m_AgentViews.begin(); it != m_AgentViews.end();) {
-        bool stillExists = std::any_of(env->GetAgents().begin(), env->GetAgents().end(),
-                                       [&](const std::unique_ptr<Agent>& ag) { return ag.get() == it->first; });
-        if (!stillExists) {
-            it = m_AgentViews.erase(it);
-        } else {
-            it++;
-        }
-    }
+    m_AgentBatchView.UpdateInstances(env->GetAgents());
 
     // --- FoodViews ---
     for (auto& foodPtr : env->GetFoodSources()) {
@@ -69,13 +53,7 @@ void EnvironmentView::Draw(Environment* env, const Camera2D& cam) {
     }
 
     // --- Agents ---
-    for (auto& agentPtr : env->GetAgents()) {
-        Agent* agent = agentPtr.get();
-        auto it = m_AgentViews.find(agent);
-        if (it != m_AgentViews.end()) {
-            it->second->Draw(agent, vp);
-        }
-    }
+    m_AgentBatchView.Draw(vp);
 
     // --- FoodSources zeichnen ---
     for (auto& foodPtr : env->GetFoodSources()) {

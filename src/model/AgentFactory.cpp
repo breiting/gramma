@@ -17,7 +17,7 @@ std::unique_ptr<Agent> AgentFactory::CreateRandomAgent(float diameter) {
     auto agent = std::make_unique<Agent>(pos, heading, traits);
 
     // Add sensors
-    agent->AttachSensor(std::make_unique<VisionSensor>(10.0, 120.0, 9));
+    agent->AttachSensor(std::make_unique<VisionSensor>(1.0, 60.0, 3));
 
     return agent;
 }

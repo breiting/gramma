@@ -1,37 +1,38 @@
 #pragma once
 #include <glm/vec2.hpp>
+#include <gramma/model/Agent.hpp>
+#include <gramma/model/Environment.hpp>
 #include <gramma/model/ISensor.hpp>
+#include <memory>
 #include <vector>
 
 namespace gr {
 
-class Agent;
-class Environment;
-
 struct VisionHit {
-    Agent* targetAgent = nullptr;  // nullptr, wenn es ein Bound war
-    glm::vec2 hitPos;
+    const Agent* targetAgent = nullptr;
+    glm::vec2 dir{0.0f};
     float distance = 0.0f;
+    bool isAgent = true;
 };
 
 class VisionSensor : public ISensor {
    public:
-    VisionSensor(float range, float fovDeg, int numRays);
+    VisionSensor(float range, float fov, int rays);
 
-    void Update(const Agent& self, const Environment& env);
+    void Update(const Agent& self, const Environment& env) override;
+
     const std::vector<VisionHit>& GetHits() const {
         return m_Hits;
     }
 
    private:
     float m_Range;
-    float m_FOV;
+    float m_Fov;
     int m_NumRays;
 
     std::vector<VisionHit> m_Hits;
-
-    bool RayIntersectsAgent(const Agent& self, Agent& other, float rayAngle, VisionHit& outHit) const;
-    bool RayIntersectsBounds(const glm::vec2& origin, float rayAngle, const Environment& env, VisionHit& outHit) const;
 };
+
+using VisionSensorPtr = std::unique_ptr<VisionSensor>;
 
 }  // namespace gr

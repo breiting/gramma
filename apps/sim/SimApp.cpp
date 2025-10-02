@@ -12,9 +12,11 @@
 #include <gramma/model/RandomWalkTask.hpp>
 #include <gramma/model/Room.hpp>
 #include <gramma/model/VisionSensor.hpp>
+#include <gramma/util/TimeMeasureGuard.hpp>
 #include <iostream>
 
 using namespace gr;
+using namespace std;
 
 std::string SimApp::Name() const {
     return "SimApp";
@@ -82,17 +84,22 @@ bool SimApp::Init(gr::AppContext& ctx) {
 }
 
 void SimApp::Update(gr::AppContext& /*ctx*/, double dt) {
-    static float lastPrint = 0.0f;
-    float currentTime = Now();
-    if (currentTime - lastPrint >= 1.0f) {
-        std::cout << "Time: " << currentTime << "s, dt=" << dt << std::endl;
-        m_Env->Stats();
-        lastPrint = currentTime;
+    TimeMeasureGuard guard("Update");
+
+    bool drawStats = false;
+    if (drawStats) {
+        static float lastPrint = 0.0f;
+        float currentTime = Now();
+        if (currentTime - lastPrint >= 1.0f) {
+            std::cout << "Time: " << currentTime << "s, dt=" << dt << std::endl;
+            m_Env->Stats();
+            lastPrint = currentTime;
+        }
     }
 
     if (m_SeedAgents) {
         AgentFactory factory;
-        for (int i = 0; i < 20; ++i) {
+        for (int i = 0; i < 50; ++i) {
             auto agent = factory.CreateRandomAgent(5);
             agent->AddNeed(std::make_unique<gr::HungerNeed>(0.2));
             agent->AddNeed(std::make_unique<gr::ExerciseNeed>());
@@ -115,6 +122,7 @@ void SimApp::Update(gr::AppContext& /*ctx*/, double dt) {
 }
 
 void SimApp::Render(gr::AppContext& ctx) {
+    TimeMeasureGuard guard("Render");
     if (m_Quit) {
         ctx.RequestQuit();
         return;

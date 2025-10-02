@@ -4,6 +4,8 @@
 
 #include "assets/agent_frag.h"
 #include "assets/agent_vert.h"
+#include "assets/agentbatch_frag.h"
+#include "assets/agentbatch_vert.h"
 #include "assets/basic_frag.h"
 #include "assets/basic_vert.h"
 #include "assets/food_frag.h"
@@ -112,6 +114,10 @@ void Shader::BuildFood() {
 
 void Shader::BuildAgent() {
     CompileShader(agent_vert_glsl, agent_frag_glsl);
+}
+
+void Shader::BuildAgentBatch() {
+    CompileShader(agentbatch_vert_glsl, agentbatch_frag_glsl);
 }
 
 void Shader::BuildBasic() {

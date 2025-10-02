@@ -47,9 +47,9 @@ void Environment::Update(float dt) {
     }
 
     // Physics
-    if (m_CollisionHandler) {
-        m_CollisionHandler->Resolve(*this);
-    }
+    // if (m_CollisionHandler) {
+    //     m_CollisionHandler->Resolve(*this);
+    // }
 
     // Delete dead agents
     m_Agents.erase(std::remove_if(m_Agents.begin(), m_Agents.end(),

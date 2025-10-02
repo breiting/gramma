@@ -69,6 +69,7 @@ add_library(gramma
 
 		src/view/Camera2D.cpp
 		src/view/AgentView.cpp
+		src/view/AgentBatchView.cpp
 		src/view/FoodView.cpp
 		src/view/EnvironmentView.cpp
 		src/view/RoomView.cpp
@@ -87,6 +88,9 @@ set(GEN_INC_DIR    "${CMAKE_BINARY_DIR}/generated")
 
 embed_text_to_header("${SHADER_SRC_DIR}/agent.vert"  "${GEN_INC_DIR}/assets/agent_vert.h"  agent_vert_glsl)
 embed_text_to_header("${SHADER_SRC_DIR}/agent.frag"  "${GEN_INC_DIR}/assets/agent_frag.h"  agent_frag_glsl)
+
+embed_text_to_header("${SHADER_SRC_DIR}/agentbatch.vert"  "${GEN_INC_DIR}/assets/agentbatch_vert.h"  agentbatch_vert_glsl)
+embed_text_to_header("${SHADER_SRC_DIR}/agentbatch.frag"  "${GEN_INC_DIR}/assets/agentbatch_frag.h"  agentbatch_frag_glsl)
 
 embed_text_to_header("${SHADER_SRC_DIR}/food.vert"  "${GEN_INC_DIR}/assets/food_vert.h"  food_vert_glsl)
 embed_text_to_header("${SHADER_SRC_DIR}/food.frag"  "${GEN_INC_DIR}/assets/food_frag.h"  food_frag_glsl)

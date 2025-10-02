@@ -85,6 +85,10 @@ class Environment {
         return m_Ymax - m_Ymin;
     }
 
+    const Agent* GetAgent(size_t idx) const {
+        return m_Agents[idx].get();
+    }
+
    private:
     float m_Xmin, m_Xmax, m_Ymin, m_Ymax;
 

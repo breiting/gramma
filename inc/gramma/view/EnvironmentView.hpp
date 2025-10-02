@@ -1,6 +1,6 @@
 #pragma once
 #include <gramma/model/Environment.hpp>
-#include <gramma/view/AgentView.hpp>
+#include <gramma/view/AgentBatchView.hpp>
 #include <gramma/view/Camera2D.hpp>
 #include <gramma/view/FoodView.hpp>
 #include <gramma/view/LineShape.hpp>
@@ -26,7 +26,7 @@ class EnvironmentView {
     LineShape m_Bounds;
     Shader m_Shader;
 
-    std::unordered_map<Agent*, std::unique_ptr<AgentView>> m_AgentViews;
+    AgentBatchView m_AgentBatchView;
     std::unordered_map<FoodSource*, std::unique_ptr<FoodView>> m_FoodViews;
 };
 
