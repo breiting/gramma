@@ -54,6 +54,10 @@ class Window {
         m_ScrollCallback = cb;
     }
 
+    GLFWwindow* GetNativeWindow() {
+        return m_Window;
+    }
+
    private:
     void InitGlfwCallbacks();
 

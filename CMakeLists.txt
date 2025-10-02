@@ -41,9 +41,53 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(glfw)
 
+FetchContent_Declare(
+		imgui
+		GIT_REPOSITORY https://github.com/ocornut/imgui.git
+		GIT_TAG v1.92.3
+)
+
+FetchContent_MakeAvailable(imgui)
+
 # glad (local)
 add_library(glad STATIC extern/glad/src/gl.cpp)
 target_include_directories(glad PUBLIC extern/glad/include)
+
+
+# IMGUI
+set(IMGUI_SRC
+		${imgui_SOURCE_DIR}/imgui.cpp
+		${imgui_SOURCE_DIR}/imgui_draw.cpp
+		${imgui_SOURCE_DIR}/imgui_tables.cpp
+		${imgui_SOURCE_DIR}/imgui_widgets.cpp
+		${imgui_SOURCE_DIR}/backends/imgui_impl_glfw.cpp
+		${imgui_SOURCE_DIR}/backends/imgui_impl_opengl3.cpp
+)
+
+add_library(imgui STATIC ${IMGUI_SRC})
+target_include_directories(imgui PUBLIC
+				${imgui_SOURCE_DIR}
+				${imgui_SOURCE_DIR}/backends
+)
+
+target_link_libraries(imgui PUBLIC glfw)
+
+# GUI Layer
+add_library(gramma_ui
+		src/ui/ImGuiLayer.cpp
+)
+
+target_include_directories(gramma_ui
+PUBLIC inc
+${imgui_SOURCE_DIR}
+${imgui_SOURCE_DIR}/backends
+)
+
+target_link_libraries(gramma_ui
+		PUBLIC imgui
+		PRIVATE glfw glad
+)
+
 
 # Common include dir
 include_directories(${CMAKE_SOURCE_DIR}/inc)
@@ -131,7 +175,7 @@ if(GRAMMA_BUILD_SIM)
 				apps/sim/SegregationApp.cpp
 		)
 	target_link_libraries(sim
-				PRIVATE gramma glm::glm
+				PRIVATE gramma glm::glm gramma_ui
 		)
 	target_include_directories(sim PRIVATE ${CMAKE_SOURCE_DIR}/inc ${CMAKE_SOURCE_DIR}/extern/glad/include)
 	target_compile_features(sim PRIVATE cxx_std_17)
@@ -143,7 +187,7 @@ if(GRAMMA_BUILD_RESCUE)
 				apps/rescue/RescueApp.cpp
 		)
 	target_link_libraries(rescue
-				PRIVATE gramma glm::glm
+				PRIVATE gramma glm::glm gramma_ui
 		)
 	target_include_directories(rescue PRIVATE ${CMAKE_SOURCE_DIR}/inc ${CMAKE_SOURCE_DIR}/extern/glad/include)
 	target_compile_features(rescue PRIVATE cxx_std_17)

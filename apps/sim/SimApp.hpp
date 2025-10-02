@@ -2,6 +2,7 @@
 
 #include <gramma/core/IApp.hpp>
 #include <gramma/model/Environment.hpp>
+#include <gramma/ui/IGuiLayer.hpp>
 #include <gramma/view/AgentView.hpp>
 #include <gramma/view/Camera2D.hpp>
 #include <gramma/view/EnvironmentView.hpp>
@@ -21,6 +22,8 @@ class SimApp : public gr::IApp {
 
     std::unique_ptr<gr::Environment> m_Env;
     gr::EnvironmentView m_EnvView;
+
+    std::unique_ptr<gr::IGuiLayer> m_Gui;
 
     bool m_SeedAgents{false};
     bool m_SeedFood{false};

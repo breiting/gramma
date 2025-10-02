@@ -1,9 +1,11 @@
 #include "SimApp.hpp"
 
 #include <GLFW/glfw3.h>
+#include <imgui.h>
 
 #include <gramma/core/AppContext.hpp>
 #include <gramma/core/Time.hpp>
+#include <gramma/core/Window.hpp>
 #include <gramma/model/Agent.hpp>
 #include <gramma/model/ExerciseNeed.hpp>
 #include <gramma/model/HungerNeed.hpp>
@@ -12,6 +14,7 @@
 #include <gramma/model/Room.hpp>
 #include <gramma/model/SimAgentFactory.hpp>
 #include <gramma/model/VisionSensor.hpp>
+#include <gramma/ui/ImGuiLayer.hpp>
 #include <iostream>
 
 using namespace gr;
@@ -50,6 +53,8 @@ bool SimApp::Init(gr::AppContext& ctx) {
     m_Env->SetCollisionHandler(std::make_unique<KDTreeCollisionHandler>());
 
     m_EnvView.Init();
+
+    m_Gui = std::make_unique<ImGuiLayer>(ctx.GetWindow().GetNativeWindow());
 
     // Setup camera
     m_Camera.SetOrthoByHeight(envHeight + border, ctx.Aspect());
@@ -122,6 +127,16 @@ void SimApp::Render(gr::AppContext& ctx) {
         ctx.RequestQuit();
         return;
     }
+
+    m_Gui->BeginFrame();
+
+    // Dein Panel
+    ImGui::Begin("Environment Stats");
+    ImGui::Text("Agents: %zu", m_Env->GetAgents().size());
+    ImGui::Text("FoodSources: %zu", m_Env->GetFoodSources().size());
+    ImGui::End();
+
+    m_Gui->EndFrame();
 
     m_EnvView.Draw(m_Env.get(), m_Camera);
 }

@@ -100,4 +100,8 @@ void Runner::RequestQuit() {
     m_Quit = true;
 }
 
+Window& Runner::GetWindow() {
+    return m_Window;
+}
+
 }  // namespace gr

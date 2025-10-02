@@ -32,6 +32,10 @@ class Runner {
             return m_Runner->GetUpdateDt();
         }
 
+        Window& GetWindow() override {
+            return m_Runner->GetWindow();
+        }
+
        private:
         Runner* m_Runner;
     };
@@ -75,6 +79,7 @@ class Runner {
     void RequestQuit();
     double GetFrameDt();
     double GetUpdateDt();
+    Window& GetWindow();
 
     void BeginFrame();
     void EndFrame();
