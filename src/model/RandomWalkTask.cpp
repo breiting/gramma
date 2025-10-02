@@ -43,7 +43,7 @@ void RandomWalkTask::Update(Agent& agent, float dt) {
         const VisionHit& centerHit = hits[hits.size() / 2];
 
         // Wand zu nah?
-        if (!centerHit.isAgent && centerHit.distance < agent.GetTraits().comfortRadius * 1.2f) {
+        if (!centerHit.targetAgent && centerHit.distance < agent.GetTraits().comfortRadius * 1.2f) {
             // Heading zufällig in neuen Bereich drehen
             float turnAngle = static_cast<float>((rand() % 180) - 90);  // -90° bis +90°
             agent.SetHeading(std::fmod(agent.GetHeading() + turnAngle + 360.0f, 360.0f));

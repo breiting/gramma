@@ -1,6 +1,7 @@
 #include <chrono>
 #include <glm/glm.hpp>
 #include <gramma/model/AgentFactory.hpp>
+#include <gramma/model/VisionSensor.hpp>
 
 namespace gr {
 
@@ -13,7 +14,12 @@ std::unique_ptr<Agent> AgentFactory::CreateRandomAgent(float diameter) {
     glm::vec2 pos = RandomPosition(diameter);
     float heading = RandomHeading();
 
-    return std::make_unique<Agent>(pos, heading, traits);
+    auto agent = std::make_unique<Agent>(pos, heading, traits);
+
+    // Add sensors
+    agent->AttachSensor(std::make_unique<VisionSensor>(10.0, 120.0, 9));
+
+    return agent;
 }
 
 AgentTraits AgentFactory::RandomTraits() {

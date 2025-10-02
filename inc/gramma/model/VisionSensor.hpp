@@ -1,36 +1,37 @@
 #pragma once
 #include <glm/vec2.hpp>
+#include <gramma/model/ISensor.hpp>
 #include <vector>
-
-#include "ISensor.hpp"
 
 namespace gr {
 
+class Agent;
+class Environment;
+
 struct VisionHit {
-    glm::vec2 position;    // wo getroffen
-    float distance;        // Distanz vom Agent
-    bool isAgent = false;  // true = anderer Agent, false = Wand
+    Agent* targetAgent = nullptr;  // nullptr, wenn es ein Bound war
+    glm::vec2 hitPos;
+    float distance = 0.0f;
 };
 
 class VisionSensor : public ISensor {
    public:
-    VisionSensor(float range, float fov, int numRays);
+    VisionSensor(float range, float fovDeg, int numRays);
 
-    void Update(const Agent& agent, const Room& room) override;
-
+    void Update(const Agent& self, const Environment& env);
     const std::vector<VisionHit>& GetHits() const {
         return m_Hits;
     }
 
    private:
-    float m_Range;  // Sichtweite (Meter)
-    float m_FOV;    // Field of View in Grad (±FOV/2 um Heading)
-    int m_NumRays;  // wie viele Strahlen casten
+    float m_Range;
+    float m_FOV;
+    int m_NumRays;
 
     std::vector<VisionHit> m_Hits;
 
-    bool IntersectRaySegment(const glm::vec2& origin, const glm::vec2& dir, const glm::vec2& a, const glm::vec2& b,
-                             float& outLambda);
+    bool RayIntersectsAgent(const Agent& self, Agent& other, float rayAngle, VisionHit& outHit) const;
+    bool RayIntersectsBounds(const glm::vec2& origin, float rayAngle, const Environment& env, VisionHit& outHit) const;
 };
 
 }  // namespace gr

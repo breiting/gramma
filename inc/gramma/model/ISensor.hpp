@@ -4,13 +4,13 @@
 namespace gr {
 
 class Agent;
-class Room;
+class Environment;
 
 class ISensor {
    public:
     virtual ~ISensor() = default;
 
-    virtual void Update(const Agent& agent, const Room& room) = 0;
+    virtual void Update(const Agent& agent, const Environment& env) = 0;
 };
 
 using SensorPtr = std::unique_ptr<ISensor>;

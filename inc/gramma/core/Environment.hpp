@@ -5,9 +5,31 @@
 #include <gramma/view/AgentView.hpp>
 #include <gramma/view/FoodView.hpp>
 #include <memory>
+#include <nanoflann.hpp>
 #include <vector>
 
 namespace gr {
+
+/**
+ * Wrapper for KD-tree of Agents
+ */
+struct AgentCloud {
+    const std::vector<std::unique_ptr<Agent>>* agents = nullptr;
+
+    inline size_t kdtree_get_point_count() const {
+        return agents ? agents->size() : 0;
+    }
+
+    inline double kdtree_get_pt(const size_t idx, int dim) const {
+        const auto& pos = (*agents)[idx]->GetPosition();
+        return (dim == 0) ? pos.x : pos.y;
+    }
+
+    template <class BBOX>
+    bool kdtree_get_bbox(BBOX&) const {
+        return false;
+    }
+};
 
 /**
  * Global environment that contains agents and food sources.
@@ -22,6 +44,17 @@ class Environment {
 
     void Update(float dt);
     void Render(const glm::mat4& vp);
+
+    void BuildSpatialIndex();
+    using KDTreeType =
+        nanoflann::KDTreeSingleIndexAdaptor<nanoflann::L2_Simple_Adaptor<double, AgentCloud>, AgentCloud, 2, size_t>;
+
+    KDTreeType& GetKDTree() const {
+        return *m_KDTree;
+    }
+    const AgentCloud& GetAgentCloud() const {
+        return m_Cloud;
+    }
 
     void Stats() const;
 
@@ -50,6 +83,9 @@ class Environment {
     // Views
     std::vector<std::unique_ptr<AgentView>> m_AgentViews;
     std::vector<std::unique_ptr<FoodView>> m_FoodViews;
+
+    AgentCloud m_Cloud;
+    std::unique_ptr<KDTreeType> m_KDTree;
 };
 
 }  // namespace gr

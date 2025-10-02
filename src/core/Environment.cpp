@@ -29,6 +29,68 @@ void Environment::AddFoodSource(std::shared_ptr<FoodSource> food) {
     m_FoodViews.push_back(std::move(view));
 }
 
+void Environment::BuildSpatialIndex() {
+    m_Cloud.agents = &m_Agents;
+    if (!m_KDTree) {
+        m_KDTree = std::make_unique<KDTreeType>(2, m_Cloud, nanoflann::KDTreeSingleIndexAdaptorParams(10));
+    }
+    m_KDTree->buildIndex();
+}
+
+void Environment::Update(float dt) {
+    // Update FoodSources
+    for (auto& f : m_FoodSources) {
+        f->Regenerate(dt);
+    }
+
+    // KD-Tree for agents
+    BuildSpatialIndex();
+
+    // Update Agents
+    for (auto& a : m_Agents) {
+        if (a->GetState() != AgentState::Dead) {
+            a->EvaluateNeeds(m_FoodSources, dt);
+            a->Update(dt, *this);
+        }
+    }
+
+    // Delete dead agents
+    for (size_t i = 0; i < m_Agents.size(); i++) {
+        if (m_Agents[i]->GetState() == AgentState::Dead) {
+            m_Agents.erase(m_Agents.begin() + i);
+            m_AgentViews.erase(m_AgentViews.begin() + i);
+        }
+    }
+
+    // Delete empty food sources
+    for (size_t i = 0; i < m_FoodSources.size(); i++) {
+        if (m_FoodSources[i]->GetNutrition() <= 0.0f) {
+            m_FoodSources.erase(m_FoodSources.begin() + i);
+            m_FoodViews.erase(m_FoodViews.begin() + i);
+        }
+    }
+}
+
+void Environment::Render(const glm::mat4& vp) {
+    // FoodSources
+    for (size_t i = 0; i < m_FoodSources.size(); ++i) {
+        m_FoodViews[i]->Draw(m_FoodSources[i].get(), vp);
+    }
+
+    // Agents
+    for (size_t i = 0; i < m_Agents.size(); ++i) {
+        m_AgentViews[i]->Draw(m_Agents[i].get(), vp);
+    }
+}
+
+const std::vector<std::unique_ptr<Agent>>& Environment::GetAgents() const {
+    return m_Agents;
+}
+
+std::vector<std::shared_ptr<FoodSource>> Environment::GetFoodSources() {
+    return m_FoodSources;
+}
+
 void Environment::Stats() const {
     size_t numAgents = m_Agents.size();
     size_t numFood = m_FoodSources.size();
@@ -66,61 +128,6 @@ void Environment::Stats() const {
               << "  |  Avg Exercise: " << avgExercise << "\n"
               << "Avg FoodNut:  " << avgFood << "\n"
               << "-------------------------\n";
-}
-
-void Environment::Update(float dt) {
-    // Update FoodSources
-    for (auto& f : m_FoodSources) {
-        f->Regenerate(dt);
-    }
-
-    // Update Agents
-    for (auto& a : m_Agents) {
-        if (a->GetState() != AgentState::Dead) {
-            a->EvaluateNeeds(m_FoodSources, dt);
-            a->Update(dt);
-        }
-    }
-
-    // Delete dead agents
-    for (size_t i = 0; i < m_Agents.size();) {
-        if (m_Agents[i]->GetState() == AgentState::Dead) {
-            m_Agents.erase(m_Agents.begin() + i);
-            m_AgentViews.erase(m_AgentViews.begin() + i);
-        } else {
-            ++i;
-        }
-    }
-
-    // Delete empty food sources
-    for (size_t i = 0; i < m_FoodSources.size();) {
-        if (m_FoodSources[i]->GetNutrition() <= 0.0f) {
-            m_FoodSources.erase(m_FoodSources.begin() + i);
-            m_FoodViews.erase(m_FoodViews.begin() + i);
-        } else {
-            ++i;
-        }
-    }
-}
-
-void Environment::Render(const glm::mat4& vp) {
-    // FoodSources
-    for (size_t i = 0; i < m_FoodSources.size(); ++i) {
-        m_FoodViews[i]->Draw(m_FoodSources[i].get(), vp);
-    }
-
-    // Agents
-    for (size_t i = 0; i < m_Agents.size(); ++i) {
-        m_AgentViews[i]->Draw(m_Agents[i].get(), vp);
-    }
-}
-
-const std::vector<std::unique_ptr<Agent>>& Environment::GetAgents() const {
-    return m_Agents;
-}
-
-std::vector<std::shared_ptr<FoodSource>> Environment::GetFoodSources() {
-    return m_FoodSources;
 }
 
 }  // namespace gr

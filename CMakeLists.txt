@@ -108,6 +108,7 @@ target_include_directories(gramma
 PUBLIC
 	inc
 	extern/stb
+	extern/nanoflann
 	${GEN_INC_DIR}
 )
 

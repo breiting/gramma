@@ -22,9 +22,8 @@ class Agent {
 
     virtual ~Agent() = default;
 
-    // --- Simulation API ---
     void AssignTask(TaskPtr task);
-    void Update(float dt);
+    void Update(float dt, const Environment& env);
 
     // --- Sensor Management ---
     void AttachSensor(SensorPtr sensor);

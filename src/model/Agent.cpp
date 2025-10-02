@@ -25,12 +25,13 @@ void Agent::AssignTask(TaskPtr task) {
     }
 }
 
-void Agent::Update(float dt) {
-    // Sensors
-    // for (auto& s : m_Sensors) {
-    //     s->Update(*this);
-    // }
+void Agent::Update(float dt, const Environment& env) {
+    // Sensors (Vision, Proximity, etc.)
+    for (auto& s : m_Sensors) {
+        s->Update(*this, env);
+    }
 
+    // Current task
     if (m_State == AgentState::Executing && m_CurrentTask) {
         m_CurrentTask->Update(*this, dt);
         if (m_CurrentTask->IsFinished()) {
