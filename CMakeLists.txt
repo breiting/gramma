@@ -81,6 +81,7 @@ target_include_directories(gramma_ui
 PUBLIC inc
 ${imgui_SOURCE_DIR}
 ${imgui_SOURCE_DIR}/backends
+extern
 )
 
 target_link_libraries(gramma_ui

@@ -1,6 +1,7 @@
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
+#include <roboto_regular.h>
 
 #include <gramma/ui/ImGuiLayer.hpp>
 
@@ -18,6 +19,12 @@ ImGuiLayer::ImGuiLayer(GLFWwindow* window) : m_Window(window) {
 
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init("#version 330");
+
+    ImFontConfig fontConfig;
+    fontConfig.FontDataOwnedByAtlas = false;
+    ImFont* robotoFont =
+        io.Fonts->AddFontFromMemoryTTF((void*)g_RobotoRegular, sizeof(g_RobotoRegular), 16.0f, &fontConfig);
+    io.FontDefault = robotoFont;
 }
 
 ImGuiLayer::~ImGuiLayer() {
