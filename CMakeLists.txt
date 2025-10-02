@@ -63,10 +63,12 @@ add_library(gramma
 		src/model/HungerNeed.cpp
 		src/model/KDTreeCollisionHandler.cpp
 		src/model/RandomWalkTask.cpp
-		src/model/Room.cpp
-		src/model/SeekFoodTask.cpp
-		src/model/SatisfactionNeed.cpp
 		src/model/RelocateTask.cpp
+		src/model/Room.cpp
+		src/model/SatisfactionNeed.cpp
+		src/model/SeekFoodTask.cpp
+		src/model/SegregationAgentFactory.cpp
+		src/model/SimAgentFactory.cpp
 		src/model/VisionSensor.cpp
 
 		src/view/Camera2D.cpp

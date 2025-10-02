@@ -5,13 +5,13 @@
 #include <gramma/core/AppContext.hpp>
 #include <gramma/core/Time.hpp>
 #include <gramma/model/Agent.hpp>
-#include <gramma/model/AgentFactory.hpp>
 #include <gramma/model/ExerciseNeed.hpp>
 #include <gramma/model/HungerNeed.hpp>
 #include <gramma/model/KDTreeCollisionHandler.hpp>
 #include <gramma/model/RandomWalkTask.hpp>
 #include <gramma/model/Room.hpp>
 #include <gramma/model/SatisfactionNeed.hpp>
+#include <gramma/model/SegregationAgentFactory.hpp>
 #include <gramma/model/VisionSensor.hpp>
 #include <gramma/util/TimeMeasureGuard.hpp>
 #include <iostream>
@@ -20,10 +20,9 @@ using namespace gr;
 using namespace std;
 
 static void GenerateAgents(Environment* env) {
-    AgentFactory factory;
+    SegregationAgentFactory factory;
     for (int i = 0; i < 50; ++i) {
-        auto agent = factory.CreateRandomAgent(env);
-        agent->AddNeed(std::make_unique<gr::SatisfactionNeed>(1.0));
+        auto agent = factory.Create(env);
         env->AddAgent(std::move(agent));
     }
 }

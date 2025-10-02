@@ -1,0 +1,37 @@
+#include <gramma/model/SimAgentFactory.hpp>
+#include <memory>
+
+namespace gr {
+
+std::unique_ptr<Agent> SimAgentFactory::Create(Environment* env) {
+    AgentTraits traits = RandomTraits();
+    glm::vec2 pos = RandomPosition(env->GetWidth(), env->GetHeight());
+    float heading = RandomHeading();
+
+    auto agent = std::make_unique<Agent>(pos, heading, traits);
+
+    // Needs
+    agent->AddNeed(std::make_unique<HungerNeed>());
+    agent->AddNeed(std::make_unique<ExerciseNeed>());
+
+    // Sensors
+    agent->AttachSensor(std::make_unique<VisionSensor>(1.0f, 60.0f, 3));
+
+    return agent;
+}
+
+AgentTraits SimAgentFactory::RandomTraits() {
+    std::uniform_int_distribution<int> ageDist(0, 3);
+    std::uniform_real_distribution<float> radiusDist(0.15f, 0.25f);
+    std::uniform_real_distribution<float> comfortDist(0.26f, 0.5f);
+    std::uniform_real_distribution<float> speedDist(0.8f, 4.8f);
+
+    AgentTraits traits;
+    traits.age = static_cast<AgeClass>(ageDist(m_Rng));
+    traits.bodyRadius = radiusDist(m_Rng);
+    traits.comfortRadius = comfortDist(m_Rng);
+    traits.speedPref = speedDist(m_Rng);
+    return traits;
+}
+
+}  // namespace gr

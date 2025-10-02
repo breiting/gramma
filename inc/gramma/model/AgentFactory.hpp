@@ -6,23 +6,22 @@
 
 namespace gr {
 
-/**
- * Utility class to create agents with random traits and position.
- */
+/** Base class for agent factories */
 class AgentFactory {
    public:
     AgentFactory();
 
-    std::unique_ptr<Agent> CreateRandomAgent(Environment *env);
+    virtual ~AgentFactory() = default;
 
-   private:
-    std::mt19937 m_Rng;
+    /// Create one agent (to be overridden by specializations)
+    virtual std::unique_ptr<Agent> Create(Environment* env) = 0;
 
-    AgentTraits RandomTraits();
-    /** \brief Generates a random position for a circle with diameter
-     */
+   protected:
+    // Utility functions for all factories
     glm::vec2 RandomPosition(int width, int height);
     float RandomHeading();
+
+    std::mt19937 m_Rng;
 };
 
 }  // namespace gr
