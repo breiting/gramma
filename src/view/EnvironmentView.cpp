@@ -23,11 +23,13 @@ void EnvironmentView::SyncWithEnvironment(Environment* env) {
             m_AgentViews[agent] = std::move(view);
         }
     }
-    for (auto it = m_AgentViews.begin(); it != m_AgentViews.end(); ++it) {
+    for (auto it = m_AgentViews.begin(); it != m_AgentViews.end();) {
         bool stillExists = std::any_of(env->GetAgents().begin(), env->GetAgents().end(),
-                                       [&](auto& ag) { return ag.get() == it->first; });
+                                       [&](const std::unique_ptr<Agent>& ag) { return ag.get() == it->first; });
         if (!stillExists) {
             it = m_AgentViews.erase(it);
+        } else {
+            it++;
         }
     }
 
@@ -40,11 +42,13 @@ void EnvironmentView::SyncWithEnvironment(Environment* env) {
             m_FoodViews[food] = std::move(view);
         }
     }
-    for (auto it = m_FoodViews.begin(); it != m_FoodViews.end(); ++it) {
+    for (auto it = m_FoodViews.begin(); it != m_FoodViews.end();) {
         bool stillExists = std::any_of(env->GetFoodSources().begin(), env->GetFoodSources().end(),
                                        [&](auto& fs) { return fs.get() == it->first; });
         if (!stillExists) {
             it = m_FoodViews.erase(it);
+        } else {
+            it++;
         }
     }
 }

@@ -52,18 +52,18 @@ void Environment::Update(float dt) {
     }
 
     // Delete dead agents
-    for (size_t i = 0; i < m_Agents.size(); i++) {
-        if (m_Agents[i]->GetState() == AgentState::Dead) {
-            m_Agents.erase(m_Agents.begin() + i);
-        }
-    }
+    m_Agents.erase(std::remove_if(m_Agents.begin(), m_Agents.end(),
+                                  [](const std::unique_ptr<Agent>& a) {
+                                      return a->GetState() == AgentState::Dead;  //
+                                  }),
+                   m_Agents.end());
 
     // Delete empty food sources
-    for (size_t i = 0; i < m_FoodSources.size(); i++) {
-        if (m_FoodSources[i]->GetNutrition() <= 0.0f) {
-            m_FoodSources.erase(m_FoodSources.begin() + i);
-        }
-    }
+    m_FoodSources.erase(std::remove_if(m_FoodSources.begin(), m_FoodSources.end(),
+                                       [](std::shared_ptr<FoodSource>& f) {
+                                           return f->GetNutrition() <= 0;  //
+                                       }),
+                        m_FoodSources.end());
 }
 
 const std::vector<std::unique_ptr<Agent>>& Environment::GetAgents() const {

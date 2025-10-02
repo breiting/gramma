@@ -27,6 +27,8 @@ void Runner::Init(std::unique_ptr<IApp> app, int width, int height, const std::s
     m_Window.SetKeyPressedCallback(m_App->onKeyPressed);
     m_Window.SetMouseButtonCallback(m_App->onMouseButton);
     m_Window.SetMouseMoveCallback(m_App->onMouseMove);
+    m_Window.SetScrollCallback(m_App->onScroll);
+    m_Window.SetWindowSizeCallback(m_App->onWindowSize);
 }
 
 void Runner::Run() {

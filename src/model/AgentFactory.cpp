@@ -24,9 +24,9 @@ std::unique_ptr<Agent> AgentFactory::CreateRandomAgent(float diameter) {
 
 AgentTraits AgentFactory::RandomTraits() {
     std::uniform_int_distribution<int> ageDist(0, 3);
-    std::uniform_real_distribution<float> radiusDist(0.15f, 0.35f);
-    std::uniform_real_distribution<float> comfortDist(0.5f, 1.5f);
-    std::uniform_real_distribution<float> speedDist(0.8f, 1.8f);
+    std::uniform_real_distribution<float> radiusDist(0.15f, 0.25f);
+    std::uniform_real_distribution<float> comfortDist(0.26f, 0.5f);
+    std::uniform_real_distribution<float> speedDist(0.8f, 4.8f);
 
     AgentTraits traits;
     traits.age = static_cast<AgeClass>(ageDist(m_Rng));

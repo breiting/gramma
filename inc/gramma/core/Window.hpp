@@ -46,6 +46,14 @@ class Window {
         m_MouseMoveCallback = cb;
     }
 
+    void SetWindowSizeCallback(std::function<void(int, int)> cb) {
+        m_WindowSizeCallback = cb;
+    }
+
+    void SetScrollCallback(std::function<void(double, double)> cb) {
+        m_ScrollCallback = cb;
+    }
+
    private:
     void InitGlfwCallbacks();
 
@@ -56,6 +64,8 @@ class Window {
     std::function<void(int, int)> m_KeyPressedCallback;
     std::function<void(int, int, int)> m_MouseButtonCallback;
     std::function<void(double, double)> m_MouseMoveCallback;
+    std::function<void(double, double)> m_ScrollCallback;
+    std::function<void(int, int)> m_WindowSizeCallback;
 
     int m_FramebufferWidth;
     int m_FramebufferHeight;

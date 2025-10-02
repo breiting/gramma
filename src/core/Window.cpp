@@ -48,7 +48,7 @@ void Window::Destroy() {
 void Window::InitGlfwCallbacks() {
     glfwSetWindowUserPointer(m_Window, this);
 
-    glfwSetKeyCallback(m_Window, [](GLFWwindow* w, int key, int sc, int action, int mods) {
+    glfwSetKeyCallback(m_Window, [](GLFWwindow* w, int key, int /*sc*/, int action, int mods) {
         auto* self = static_cast<Window*>(glfwGetWindowUserPointer(w));
         if (!self || !self->m_KeyPressedCallback || action != GLFW_PRESS) return;
         self->m_KeyPressedCallback(key, mods);
@@ -61,14 +61,22 @@ void Window::InitGlfwCallbacks() {
 
     glfwSetScrollCallback(m_Window, [](GLFWwindow* w, double xoff, double yoff) {
         auto* self = static_cast<Window*>(glfwGetWindowUserPointer(w));
-        if (!self) return;
-        // self->m_Camera->OnScrollWheel(yoff);
+        if (!self || !self->m_ScrollCallback) return;
+        self->m_ScrollCallback(xoff, yoff);
     });
 
     glfwSetCursorPosCallback(m_Window, [](GLFWwindow* w, double x, double y) {
         auto* self = static_cast<Window*>(glfwGetWindowUserPointer(w));
         if (!self || !self->m_MouseMoveCallback) return;
         self->m_MouseMoveCallback(x, y);
+    });
+
+    glfwSetFramebufferSizeCallback(m_Window, [](GLFWwindow* w, int width, int height) {
+        auto* self = static_cast<Window*>(glfwGetWindowUserPointer(w));
+        glViewport(0, 0, width, height);
+
+        if (!self || !self->m_WindowSizeCallback) return;
+        self->m_WindowSizeCallback(width, height);
     });
 }
 

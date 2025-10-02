@@ -41,6 +41,7 @@ void Camera2D::SetZoom(float z) {
 
 void Camera2D::FitToEnvironment(Environment *env, float aspect) {
     if (!env) return;
+    m_Zoom = 1.0;
     float width = env->GetWidth();
     float height = env->GetHeight();
     float worldAspect = width / height;

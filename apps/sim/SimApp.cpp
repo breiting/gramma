@@ -37,14 +37,14 @@ bool SimApp::Init(gr::AppContext& ctx) {
     m_Camera.SetOrthoByHeight(envHeight + border, ctx.Aspect());
 
     AgentFactory factory;
-    for (int i = 0; i < 200; ++i) {
+    for (int i = 0; i < 20; ++i) {
         auto agent = factory.CreateRandomAgent(envHeight);
         agent->AddNeed(std::make_unique<gr::HungerNeed>(0.1));
         agent->AddNeed(std::make_unique<gr::ExerciseNeed>());
         m_Env->AddAgent(std::move(agent));
     }
 
-    for (int i = 0; i < 100; ++i) {
+    for (int i = 0; i < 5; ++i) {
         glm::vec2 pos = {(float)(rand() % int(envWidth) - envWidth / 2.0),
                          (float)(rand() % int(envHeight) - envHeight / 2.0)};
         m_Env->AddFoodSource(std::make_shared<gr::FoodSource>(pos, 1.0, 0.1));
@@ -66,6 +66,15 @@ bool SimApp::Init(gr::AppContext& ctx) {
         }
     };
 
+    onScroll = [this](double /*xoffs*/, double yoffs) {
+        m_Zoom += yoffs * 0.02f;
+        m_Camera.SetZoom(m_Zoom);
+    };
+
+    onWindowSize = [this](int w, int h) {
+        m_Camera.FitToEnvironment(m_Env.get(), float(w) / float(h));  //
+    };
+
     std::cout << "SimApp initialized. Starting simulation." << std::endl;
     return true;
 }
@@ -78,6 +87,18 @@ void SimApp::Update(gr::AppContext& /*ctx*/, double dt) {
         m_Env->Stats();
         lastPrint = currentTime;
     }
+
+    if (m_Restart) {
+        AgentFactory factory;
+        for (int i = 0; i < 20; ++i) {
+            auto agent = factory.CreateRandomAgent(5);
+            agent->AddNeed(std::make_unique<gr::HungerNeed>(0.2));
+            agent->AddNeed(std::make_unique<gr::ExerciseNeed>());
+            m_Env->AddAgent(std::move(agent));
+        }
+        m_Restart = false;
+    }
+
     m_Env->Update(static_cast<float>(dt));
     m_EnvView.SyncWithEnvironment(m_Env.get());
 }

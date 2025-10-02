@@ -36,6 +36,8 @@ class IApp {
     std::function<void(int, int)> onKeyPressed;
     std::function<void(int, int, int)> onMouseButton;
     std::function<void(double, double)> onMouseMove;
+    std::function<void(double, double)> onScroll;
+    std::function<void(double, double)> onWindowSize;
 };
 
 }  // namespace gr
