@@ -4,14 +4,15 @@
 namespace gr {
 
 std::unique_ptr<Agent> SimAgentFactory::Create(Environment* env) {
-    AgentTraits traits = RandomTraits();
+    auto traits = std::make_unique<AgentTraits>(RandomTraits());
+
     glm::vec2 pos = RandomPosition(env->GetWidth(), env->GetHeight());
     float heading = RandomHeading();
 
-    auto agent = std::make_unique<Agent>(pos, heading, traits);
+    auto agent = std::make_unique<Agent>(pos, heading, std::move(traits));
 
     // Needs
-    agent->AddNeed(std::make_unique<HungerNeed>());
+    agent->AddNeed(std::make_unique<HungerNeed>(0.1f));
     agent->AddNeed(std::make_unique<ExerciseNeed>());
 
     // Sensors

@@ -18,7 +18,7 @@ enum class AgentState {
 /** Represents an agent (person) in the simulation */
 class Agent {
    public:
-    Agent(const glm::vec2& initialPosition, float headingDeg, const AgentTraits& traits);
+    Agent(const glm::vec2& initialPosition, float headingDeg, std::unique_ptr<AgentTraits> traits);
 
     virtual ~Agent() = default;
 
@@ -49,8 +49,18 @@ class Agent {
     void SetDesiredSpeed(float speed);
 
     const glm::vec2& GetVelocity() const;  // derived from Heading + DesiredSpeed
-    const AgentTraits& GetTraits() const;
-    void SetTraits(const AgentTraits& traits);
+
+    const AgentTraits& GetTraits() const {
+        return *m_Traits;
+    }
+    AgentTraits& GetTraits() {
+        return *m_Traits;
+    }
+
+    template <typename T>
+    T* GetTraitsAs() {
+        return dynamic_cast<T*>(m_Traits.get());
+    }
 
    private:
     void UpdateKinematics(float dt);
@@ -61,7 +71,7 @@ class Agent {
     float m_Heading;       // in degrees, 0 = north
     float m_DesiredSpeed;  // m/s
 
-    AgentTraits m_Traits;
+    std::unique_ptr<AgentTraits> m_Traits;
     AgentState m_State;
 
     TaskPtr m_CurrentTask;

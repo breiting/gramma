@@ -1,24 +1,40 @@
-#include <cstdlib>
 #include <glm/glm.hpp>
 #include <gramma/model/Agent.hpp>
 #include <gramma/model/RelocateTask.hpp>
 
 namespace gr {
 
-RelocateTask::RelocateTask(int width, int height) : m_Width(width), m_Height(height) {
+RelocateTask::RelocateTask(glm::vec2 targetPos) : m_Target(targetPos) {
 }
 
 void RelocateTask::Start(Agent& agent) {
-    // Random position within bounds
-    float x = -m_Width / 2.0 + static_cast<float>(rand()) / RAND_MAX * m_Width;
-    float y = -m_Height / 2.0 + static_cast<float>(rand()) / RAND_MAX * m_Height;
+    glm::vec2 dir = m_Target - agent.GetPosition();
+    float dist = glm::length(dir);
+    agent.SetDesiredSpeed(agent.GetTraits().speedPref);
 
-    agent.SetPosition({x, y});
-    m_Done = true;
+    if (dist > 1e-3f) {
+        dir /= dist;
+        agent.SetHeading(glm::degrees(std::atan2(dir.x, dir.y)));
+    } else {
+        m_Done = true;
+    }
 }
 
-void RelocateTask::Update(Agent& /*agent*/, float /*dt*/) {
-    // do nothing
+void RelocateTask::Update(Agent& agent, float dt) {
+    if (m_Done) return;
+
+    glm::vec2 pos = agent.GetPosition();
+    glm::vec2 toTarget = m_Target - pos;
+    float dist = glm::length(toTarget);
+
+    if (dist < agent.GetTraits().bodyRadius * 0.5f) {
+        agent.SetPosition(m_Target);
+        m_Done = true;
+    } else {
+        glm::vec2 dir = toTarget / dist;
+        agent.SetHeading(glm::degrees(std::atan2(dir.x, dir.y)));
+        agent.SetPosition(pos + agent.GetVelocity() * dt);
+    }
 }
 
 }  // namespace gr

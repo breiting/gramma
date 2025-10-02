@@ -89,6 +89,8 @@ class Environment {
         return m_Agents[idx].get();
     }
 
+    glm::vec2 RandomPosition() const;
+
    private:
     float m_Xmin, m_Xmax, m_Ymin, m_Ymax;
 

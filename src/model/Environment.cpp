@@ -6,6 +6,7 @@
 #include <gramma/model/Task.hpp>
 #include <iomanip>
 #include <iostream>
+#include <random>
 
 namespace gr {
 
@@ -72,6 +73,13 @@ const std::vector<std::unique_ptr<Agent>>& Environment::GetAgents() const {
 
 std::vector<std::shared_ptr<FoodSource>>& Environment::GetFoodSources() {
     return m_FoodSources;
+}
+
+glm::vec2 Environment::RandomPosition() const {
+    static thread_local std::mt19937 rng{std::random_device{}()};
+    std::uniform_real_distribution<float> xDist(XMin(), XMax());
+    std::uniform_real_distribution<float> yDist(YMin(), YMax());
+    return glm::vec2(xDist(rng), yDist(rng));
 }
 
 void Environment::Stats() const {

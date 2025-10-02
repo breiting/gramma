@@ -12,8 +12,6 @@ in float vFOV;
 
 out vec4 FragColor;
 
-uniform float uTime;
-
 void main() {
     float dist = length(vUV) * vOuterRadius;
 
@@ -46,9 +44,8 @@ void main() {
         float maskOut = smoothstep(outer, outer - vBlendWidth, dist);
         float ringAlpha = maskIn * maskOut;
 
-        float pulse = 0.5 + 0.5 * sin(2.0 * 3.14159 * 0.5 * uTime); // 0.5 Hz Puls
 
-        FragColor = vec4(vGlowColor.rgb, vGlowColor.a * ringAlpha * pulse);
+        FragColor = vec4(vGlowColor.rgb, vGlowColor.a * ringAlpha);
         return;
     }
 

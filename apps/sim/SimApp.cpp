@@ -19,10 +19,19 @@ using namespace gr;
 using namespace std;
 
 static void GenerateAgents(Environment* env) {
+    if (!env) return;
     SimAgentFactory factory;
     for (int i = 0; i < 50; ++i) {
         auto agent = factory.Create(env);
         env->AddAgent(std::move(agent));
+    }
+}
+
+static void GenerateFood(Environment* env) {
+    if (!env) return;
+    for (int i = 0; i < 5; ++i) {
+        glm::vec2 pos = env->RandomPosition();
+        env->AddFoodSource(std::make_shared<gr::FoodSource>(pos, 1.0, 0.1));
     }
 }
 
@@ -47,12 +56,7 @@ bool SimApp::Init(gr::AppContext& ctx) {
     m_Camera.SetOrthoByHeight(envHeight + border, ctx.Aspect());
 
     GenerateAgents(m_Env.get());
-
-    for (int i = 0; i < 5; ++i) {
-        glm::vec2 pos = {(float)(rand() % int(envWidth) - envWidth / 2.0),
-                         (float)(rand() % int(envHeight) - envHeight / 2.0)};
-        m_Env->AddFoodSource(std::make_shared<gr::FoodSource>(pos, 1.0, 0.1));
-    }
+    GenerateFood(m_Env.get());
 
     onKeyPressed = [this, &ctx](int key, int /*mods*/) {
         if (key == GLFW_KEY_ESCAPE) {
@@ -88,7 +92,7 @@ bool SimApp::Init(gr::AppContext& ctx) {
 void SimApp::Update(gr::AppContext& /*ctx*/, double dt) {
     TimeMeasureGuard guard("Update");
 
-    bool drawStats = false;
+    bool drawStats = true;
     if (drawStats) {
         static float lastPrint = 0.0f;
         float currentTime = Now();
@@ -105,11 +109,7 @@ void SimApp::Update(gr::AppContext& /*ctx*/, double dt) {
     }
 
     if (m_SeedFood) {
-        for (int i = 0; i < 5; ++i) {
-            glm::vec2 pos = {(float)(rand() % int(m_Env->GetWidth()) - m_Env->GetWidth() / 2.0),
-                             (float)(rand() % int(m_Env->GetWidth()) - m_Env->GetWidth() / 2.0)};
-            m_Env->AddFoodSource(std::make_shared<gr::FoodSource>(pos, 1.0, 0.1));
-        }
+        GenerateFood(m_Env.get());
         m_SeedFood = false;
     }
 

@@ -1,7 +1,7 @@
-#include <cmath>
 #include <glm/glm.hpp>
 #include <glm/gtc/constants.hpp>
 #include <gramma/model/Agent.hpp>
+#include <gramma/model/Environment.hpp>
 #include <gramma/model/RandomWalkTask.hpp>
 #include <gramma/model/Room.hpp>
 #include <gramma/model/SeekFoodTask.hpp>
@@ -10,12 +10,12 @@
 
 namespace gr {
 
-Agent::Agent(const glm::vec2& initialPosition, float headingDeg, const AgentTraits& traits)
+Agent::Agent(const glm::vec2& initialPosition, float headingDeg, std::unique_ptr<AgentTraits> traits)
     : m_Position(initialPosition),
       m_Velocity(0.0f, 0.0f),
       m_Heading(headingDeg),
       m_DesiredSpeed(0.0f),
-      m_Traits(traits),
+      m_Traits(std::move(traits)),
       m_State(AgentState::Idle) {
 }
 
@@ -97,7 +97,7 @@ void Agent::EvaluateNeeds(Environment& env, float dt) {
         } else if (chosenNeed->Name() == "Exercise") {
             AssignTask(std::make_unique<RandomWalkTask>(5.0f));
         } else if (chosenNeed->Name() == "Satisfaction") {
-            AssignTask(std::make_unique<RelocateTask>());
+            AssignTask(std::make_unique<RelocateTask>(env.RandomPosition()));
         }
     }
 }
@@ -145,21 +145,6 @@ void Agent::SetDesiredSpeed(float speed) {
 // --- Velocity ---
 const glm::vec2& Agent::GetVelocity() const {
     return m_Velocity;
-}
-
-// --- Traits ---
-const AgentTraits& Agent::GetTraits() const {
-    return m_Traits;
-}
-void Agent::SetTraits(const AgentTraits& traits) {
-    m_Traits = traits;
-}
-
-// --- Private ---
-void Agent::UpdateKinematics(float dt) {
-    float angleRad = glm::radians(m_Heading);
-    m_Velocity = glm::vec2(std::sin(angleRad), std::cos(angleRad)) * m_DesiredSpeed;
-    m_Position += m_Velocity * dt;
 }
 
 }  // namespace gr

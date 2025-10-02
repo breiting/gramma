@@ -36,8 +36,8 @@ bool SegregationApp::Init(gr::AppContext& ctx) {
 
     // Room
     constexpr float border = 1.0;
-    constexpr float envWidth = 50.0;
-    constexpr float envHeight = 30.0;
+    constexpr float envWidth = 25.0;
+    constexpr float envHeight = 15.0;
 
     m_Env = std::make_unique<gr::Environment>(-envWidth / 2.0, envWidth / 2.0, -envHeight / 2.0, envHeight / 2.0);
     m_Env->SetCollisionHandler(std::make_unique<KDTreeCollisionHandler>());

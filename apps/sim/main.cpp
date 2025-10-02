@@ -8,7 +8,7 @@
 using namespace gr;
 
 int main() {
-    std::string name = "seg";
+    std::string name = "sim";
     std::unique_ptr<IApp> app;
 
     if (name == "sim") {

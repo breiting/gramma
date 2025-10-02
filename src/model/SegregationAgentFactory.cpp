@@ -4,11 +4,12 @@
 namespace gr {
 
 std::unique_ptr<Agent> SegregationAgentFactory::Create(Environment* env) {
-    SegregationTraits traits = RandomTraits();
+    auto traits = std::make_unique<SegregationTraits>(RandomTraits());
+
     glm::vec2 pos = RandomPosition(env->GetWidth(), env->GetHeight());
     float heading = RandomHeading();
 
-    auto agent = std::make_unique<Agent>(pos, heading, traits);
+    auto agent = std::make_unique<Agent>(pos, heading, std::move(traits));
 
     // Only SatisfactionNeed
     agent->AddNeed(std::make_unique<SatisfactionNeed>(1.0f));
@@ -21,7 +22,7 @@ SegregationTraits SegregationAgentFactory::RandomTraits() {
     traits.group = (rand() % 2 == 0 ? Group::Red : Group::Blue);
     traits.minSameFraction = 0.3f;  // tolerance
     traits.bodyRadius = 0.2f;
-    traits.comfortRadius = 1.0f;
+    traits.comfortRadius = 1.0;
     traits.speedPref = 0.0f;  // not used here
     return traits;
 }

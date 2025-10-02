@@ -1,13 +1,12 @@
 #pragma once
-#include <gramma/model/Environment.hpp>
+#include <glm/vec2.hpp>
 #include <gramma/model/Task.hpp>
 
 namespace gr {
 
 class RelocateTask : public Task {
    public:
-    RelocateTask() = default;
-    RelocateTask(int width, int height);
+    explicit RelocateTask(glm::vec2 targetPos);
 
     void Start(Agent& agent) override;
     void Update(Agent& agent, float dt) override;
@@ -16,9 +15,8 @@ class RelocateTask : public Task {
     }
 
    private:
+    glm::vec2 m_Target;
     bool m_Done = false;
-    int m_Width;
-    int m_Height;
 };
 
 }  // namespace gr
