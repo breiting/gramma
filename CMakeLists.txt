@@ -65,6 +65,8 @@ add_library(gramma
 		src/model/RandomWalkTask.cpp
 		src/model/Room.cpp
 		src/model/SeekFoodTask.cpp
+		src/model/SatisfactionNeed.cpp
+		src/model/RelocateTask.cpp
 		src/model/VisionSensor.cpp
 
 		src/view/Camera2D.cpp
@@ -124,6 +126,7 @@ if(GRAMMA_BUILD_SIM)
 	add_executable(sim
 				apps/sim/main.cpp
 				apps/sim/SimApp.cpp
+				apps/sim/SegregationApp.cpp
 		)
 	target_link_libraries(sim
 				PRIVATE gramma glm::glm

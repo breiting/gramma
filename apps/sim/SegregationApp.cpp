@@ -1,4 +1,4 @@
-#include "SimApp.hpp"
+#include "SegregationApp.hpp"
 
 #include <GLFW/glfw3.h>
 
@@ -11,6 +11,7 @@
 #include <gramma/model/KDTreeCollisionHandler.hpp>
 #include <gramma/model/RandomWalkTask.hpp>
 #include <gramma/model/Room.hpp>
+#include <gramma/model/SatisfactionNeed.hpp>
 #include <gramma/model/VisionSensor.hpp>
 #include <gramma/util/TimeMeasureGuard.hpp>
 #include <iostream>
@@ -22,18 +23,17 @@ static void GenerateAgents(Environment* env) {
     AgentFactory factory;
     for (int i = 0; i < 50; ++i) {
         auto agent = factory.CreateRandomAgent(env);
-        agent->AddNeed(std::make_unique<gr::HungerNeed>(0.1));
-        agent->AddNeed(std::make_unique<gr::ExerciseNeed>());
+        agent->AddNeed(std::make_unique<gr::SatisfactionNeed>(1.0));
         env->AddAgent(std::move(agent));
     }
 }
 
-std::string SimApp::Name() const {
-    return "SimApp";
+std::string SegregationApp::Name() const {
+    return "SegregationApp";
 }
 
-bool SimApp::Init(gr::AppContext& ctx) {
-    std::cout << "Initializing SimApp..." << std::endl;
+bool SegregationApp::Init(gr::AppContext& ctx) {
+    std::cout << "Initializing SegregationApp..." << std::endl;
 
     // Room
     constexpr float border = 1.0;
@@ -50,44 +50,25 @@ bool SimApp::Init(gr::AppContext& ctx) {
 
     GenerateAgents(m_Env.get());
 
-    for (int i = 0; i < 5; ++i) {
-        glm::vec2 pos = {(float)(rand() % int(envWidth) - envWidth / 2.0),
-                         (float)(rand() % int(envHeight) - envHeight / 2.0)};
-        m_Env->AddFoodSource(std::make_shared<gr::FoodSource>(pos, 1.0, 0.1));
-    }
-
     onKeyPressed = [this, &ctx](int key, int /*mods*/) {
         if (key == GLFW_KEY_ESCAPE) {
             m_Quit = true;
         } else if (key == GLFW_KEY_A) {
             m_SeedAgents = true;
-        } else if (key == GLFW_KEY_F) {
-            m_SeedFood = true;
         } else if (key == GLFW_KEY_W) {
             m_Camera.FitToEnvironment(m_Env.get(), ctx.Aspect());
-        } else if (key == GLFW_KEY_PAGE_UP) {
-            m_Zoom += .1f;
-            m_Camera.SetZoom(m_Zoom);
-        } else if (key == GLFW_KEY_PAGE_DOWN) {
-            m_Zoom -= 0.1f;
-            m_Camera.SetZoom(m_Zoom);
         }
-    };
-
-    onScroll = [this](double /*xoffs*/, double yoffs) {
-        m_Zoom += yoffs * 0.02f;
-        m_Camera.SetZoom(m_Zoom);
     };
 
     onWindowSize = [this](int w, int h) {
         m_Camera.FitToEnvironment(m_Env.get(), float(w) / float(h));  //
     };
 
-    std::cout << "SimApp initialized. Starting simulation." << std::endl;
+    std::cout << "SegregationApp initialized. Starting simulation." << std::endl;
     return true;
 }
 
-void SimApp::Update(gr::AppContext& /*ctx*/, double dt) {
+void SegregationApp::Update(gr::AppContext& /*ctx*/, double dt) {
     TimeMeasureGuard guard("Update");
 
     bool drawStats = false;
@@ -106,20 +87,11 @@ void SimApp::Update(gr::AppContext& /*ctx*/, double dt) {
         m_SeedAgents = false;
     }
 
-    if (m_SeedFood) {
-        for (int i = 0; i < 5; ++i) {
-            glm::vec2 pos = {(float)(rand() % int(m_Env->GetWidth()) - m_Env->GetWidth() / 2.0),
-                             (float)(rand() % int(m_Env->GetWidth()) - m_Env->GetWidth() / 2.0)};
-            m_Env->AddFoodSource(std::make_shared<gr::FoodSource>(pos, 1.0, 0.1));
-        }
-        m_SeedFood = false;
-    }
-
     m_Env->Update(static_cast<float>(dt));
     m_EnvView.SyncWithEnvironment(m_Env.get());
 }
 
-void SimApp::Render(gr::AppContext& ctx) {
+void SegregationApp::Render(gr::AppContext& ctx) {
     TimeMeasureGuard guard("Render");
     if (m_Quit) {
         ctx.RequestQuit();

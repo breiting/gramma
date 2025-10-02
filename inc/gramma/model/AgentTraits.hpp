@@ -4,7 +4,9 @@ namespace gr {
 
 enum class AgeClass { Child, Teenager, Adult, Senior };
 
-struct AgentTraits {
+class AgentTraits {
+   public:
+    virtual ~AgentTraits() = default;
     AgeClass age;
     float bodyRadius;     // meters
     float comfortRadius;  // meters (social zone)

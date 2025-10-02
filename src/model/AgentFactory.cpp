@@ -9,9 +9,11 @@ AgentFactory::AgentFactory() {
     m_Rng.seed(static_cast<unsigned>(std::chrono::system_clock::now().time_since_epoch().count()));
 }
 
-std::unique_ptr<Agent> AgentFactory::CreateRandomAgent(float diameter) {
+std::unique_ptr<Agent> AgentFactory::CreateRandomAgent(Environment *env) {
+    if (!env) return nullptr;
+
     AgentTraits traits = RandomTraits();
-    glm::vec2 pos = RandomPosition(diameter);
+    glm::vec2 pos = RandomPosition(env->GetWidth(), env->GetHeight());
     float heading = RandomHeading();
 
     auto agent = std::make_unique<Agent>(pos, heading, traits);
@@ -36,9 +38,9 @@ AgentTraits AgentFactory::RandomTraits() {
     return traits;
 }
 
-glm::vec2 AgentFactory::RandomPosition(float diameter) {
-    std::uniform_real_distribution<float> xDist(-diameter / 2.0, diameter / 2.0);
-    std::uniform_real_distribution<float> yDist(-diameter / 2.0, diameter / 2.0);
+glm::vec2 AgentFactory::RandomPosition(int width, int height) {
+    std::uniform_real_distribution<float> xDist(-width / 2.0, width / 2.0);
+    std::uniform_real_distribution<float> yDist(-height / 2.0, height / 2.0);
 
     return glm::vec2(xDist(m_Rng), yDist(m_Rng));
 }

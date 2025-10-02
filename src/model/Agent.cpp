@@ -6,6 +6,8 @@
 #include <gramma/model/Room.hpp>
 #include <gramma/model/SeekFoodTask.hpp>
 
+#include "gramma/model/RelocateTask.hpp"
+
 namespace gr {
 
 Agent::Agent(const glm::vec2& initialPosition, float headingDeg, const AgentTraits& traits)
@@ -49,19 +51,24 @@ const std::vector<std::unique_ptr<INeed>>& Agent::GetNeeds() const {
     return m_Needs;
 }
 
-void Agent::EvaluateNeeds(std::vector<std::shared_ptr<FoodSource>> foodSources, float dt) {
+void Agent::EvaluateNeeds(Environment& env, float dt) {
     float bestPriority = 0.0f;
     INeed* chosenNeed = nullptr;
 
     for (auto& n : m_Needs) {
+        // Zeitbasierte Needs aktualisieren
         n->Update(dt);
-        if (n->Priority() > bestPriority) {
-            bestPriority = n->Priority();
+
+        // Kontextabhängige Needs evaluieren
+        float urgency = n->Evaluate(*this, env);
+
+        if (urgency > bestPriority) {
+            bestPriority = urgency;
             chosenNeed = n.get();
         }
     }
 
-    // Die
+    // Prüfen auf kritische Needs (Tod durch Hunger)
     for (auto& n : m_Needs) {
         if (n->Name() == "Hunger" && n->Priority() >= 1.0f) {
             m_State = AgentState::Dead;
@@ -69,22 +76,28 @@ void Agent::EvaluateNeeds(std::vector<std::shared_ptr<FoodSource>> foodSources, 
         }
     }
 
+    // Wenn Idle → Task zuweisen
     if (chosenNeed && m_State == AgentState::Idle) {
         if (chosenNeed->Name() == "Hunger") {
+            // Nächstgelegene FoodSource suchen
             std::shared_ptr<FoodSource> best = nullptr;
-            float bestDist = 9999.0f;
-            for (const auto& fs : foodSources) {
+            float bestDist = std::numeric_limits<float>::max();
+
+            for (auto& fs : env.GetFoodSources()) {
                 float d = glm::length(fs->GetPosition() - m_Position);
                 if (d < bestDist) {
                     bestDist = d;
                     best = fs;
                 }
             }
+
             if (best) {
                 AssignTask(std::make_unique<SeekFoodTask>(best));
             }
         } else if (chosenNeed->Name() == "Exercise") {
             AssignTask(std::make_unique<RandomWalkTask>(5.0f));
+        } else if (chosenNeed->Name() == "Satisfaction") {
+            AssignTask(std::make_unique<RelocateTask>());
         }
     }
 }

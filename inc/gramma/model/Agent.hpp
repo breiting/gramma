@@ -32,7 +32,7 @@ class Agent {
     // --- Need Management ---
     void AddNeed(std::unique_ptr<INeed> need);
     const std::vector<std::unique_ptr<INeed>>& GetNeeds() const;
-    void EvaluateNeeds(std::vector<std::shared_ptr<FoodSource>> foodSources, float dt);
+    void EvaluateNeeds(Environment& env, float dt);
 
     // --- State Management ---
     void SetState(AgentState state);

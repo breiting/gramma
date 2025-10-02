@@ -41,7 +41,7 @@ void Environment::Update(float dt) {
     // Update Agents
     for (auto& a : m_Agents) {
         if (a->GetState() != AgentState::Dead) {
-            a->EvaluateNeeds(m_FoodSources, dt);
+            a->EvaluateNeeds(*this, dt);
             a->Update(dt, *this);
         }
     }

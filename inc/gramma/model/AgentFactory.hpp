@@ -1,6 +1,6 @@
 #pragma once
 #include <gramma/model/Agent.hpp>
-#include <gramma/model/Room.hpp>
+#include <gramma/model/Environment.hpp>
 #include <memory>
 #include <random>
 
@@ -13,7 +13,7 @@ class AgentFactory {
    public:
     AgentFactory();
 
-    std::unique_ptr<Agent> CreateRandomAgent(float diameter);
+    std::unique_ptr<Agent> CreateRandomAgent(Environment *env);
 
    private:
     std::mt19937 m_Rng;
@@ -21,7 +21,7 @@ class AgentFactory {
     AgentTraits RandomTraits();
     /** \brief Generates a random position for a circle with diameter
      */
-    glm::vec2 RandomPosition(float diameter);
+    glm::vec2 RandomPosition(int width, int height);
     float RandomHeading();
 };
 
