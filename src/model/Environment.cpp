@@ -1,5 +1,5 @@
 #include <glm/glm.hpp>
-#include <gramma/core/Environment.hpp>
+#include <gramma/model/Environment.hpp>
 #include <gramma/model/HungerNeed.hpp>
 #include <gramma/model/RandomWalkTask.hpp>
 #include <gramma/model/SeekFoodTask.hpp>

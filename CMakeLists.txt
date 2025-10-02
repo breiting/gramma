@@ -53,14 +53,14 @@ add_library(gramma
 		src/core/Runner.cpp
 		src/core/Time.cpp
 		src/core/Window.cpp
-		src/core/Environment.cpp
 
 		src/model/Agent.cpp
 		src/model/AgentFactory.cpp
+		src/model/BruteForceCollisionHandler.cpp
+		src/model/Environment.cpp
+		src/model/ExerciseNeed.cpp
 		src/model/FoodSource.cpp
 		src/model/HungerNeed.cpp
-		src/model/ExerciseNeed.cpp
-		src/model/BruteForceCollisionHandler.cpp
 		src/model/KDTreeCollisionHandler.cpp
 		src/model/RandomWalkTask.cpp
 		src/model/Room.cpp

@@ -1,5 +1,5 @@
 #pragma once
-#include <gramma/core/Environment.hpp>
+#include <gramma/model/Environment.hpp>
 #include <gramma/view/AgentView.hpp>
 #include <gramma/view/Camera2D.hpp>
 #include <gramma/view/FoodView.hpp>

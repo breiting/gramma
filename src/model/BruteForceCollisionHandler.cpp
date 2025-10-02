@@ -1,6 +1,6 @@
 #include <algorithm>
 #include <glm/glm.hpp>
-#include <gramma/core/Environment.hpp>
+#include <gramma/model/Environment.hpp>
 #include <gramma/model/Agent.hpp>
 #include <gramma/model/BruteForceCollisionHandler.hpp>
 
