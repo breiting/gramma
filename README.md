@@ -26,14 +26,6 @@ cmake -B build
 cmake --build build -j
 ```
 
-Run the hello app
-
-```bash
-./build/hello
-```
-
-You should see a simple white triangle on a dark background.
-
 ## 📜 License
 
 MIT — free to use, learn, and build upon.
