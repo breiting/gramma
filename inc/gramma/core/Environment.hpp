@@ -64,7 +64,7 @@ class Environment {
     void Stats() const;
 
     const std::vector<std::unique_ptr<Agent>>& GetAgents() const;
-    std::vector<std::shared_ptr<FoodSource>> GetFoodSources();
+    std::vector<std::shared_ptr<FoodSource>>& GetFoodSources();
 
     float XMin() const {
         return m_Xmin;

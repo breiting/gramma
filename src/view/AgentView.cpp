@@ -34,7 +34,7 @@ void AgentView::Init() {
     glBindVertexArray(0);
 }
 
-void AgentView::Draw(Agent* agent, const glm::mat4& vp) {
+void AgentView::Draw(const Agent* agent, const glm::mat4& vp) {
     if (!agent) return;
     glm::vec2 pos = agent->GetPosition();
     const auto& traits = agent->GetTraits();

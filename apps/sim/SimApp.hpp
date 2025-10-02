@@ -4,6 +4,7 @@
 #include <gramma/core/IApp.hpp>
 #include <gramma/view/AgentView.hpp>
 #include <gramma/view/Camera2D.hpp>
+#include <gramma/view/EnvironmentView.hpp>
 #include <gramma/view/RoomView.hpp>
 
 class SimApp : public gr::IApp {
@@ -19,6 +20,7 @@ class SimApp : public gr::IApp {
     gr::Camera2D m_Camera;
 
     std::unique_ptr<gr::Environment> m_Env;
+    gr::EnvironmentView m_EnvView;
 
     bool m_Restart{false};
     bool m_Quit{false};

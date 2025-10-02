@@ -92,7 +92,7 @@ const std::vector<std::unique_ptr<Agent>>& Environment::GetAgents() const {
     return m_Agents;
 }
 
-std::vector<std::shared_ptr<FoodSource>> Environment::GetFoodSources() {
+std::vector<std::shared_ptr<FoodSource>>& Environment::GetFoodSources() {
     return m_FoodSources;
 }
 

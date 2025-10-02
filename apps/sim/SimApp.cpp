@@ -31,6 +31,8 @@ bool SimApp::Init(gr::AppContext& ctx) {
     m_Env = std::make_unique<gr::Environment>(-envWidth / 2.0, envWidth / 2.0, -envHeight / 2.0, envHeight / 2.0);
     m_Env->SetCollisionHandler(std::make_unique<KDTreeCollisionHandler>());
 
+    m_EnvView.Init();
+
     // Setup camera
     m_Camera.SetOrthoByHeight(envHeight + border, ctx.Aspect());
 
@@ -69,6 +71,7 @@ void SimApp::Update(gr::AppContext& /*ctx*/, double dt) {
         lastPrint = currentTime;
     }
     m_Env->Update(static_cast<float>(dt));
+    m_EnvView.SyncWithEnvironment(m_Env.get());
 }
 
 void SimApp::Render(gr::AppContext& ctx) {
@@ -77,5 +80,5 @@ void SimApp::Render(gr::AppContext& ctx) {
         return;
     }
 
-    m_Env->Render(m_Camera.ViewProj());
+    m_EnvView.Draw(m_Env.get(), m_Camera);
 }

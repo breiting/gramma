@@ -70,6 +70,7 @@ add_library(gramma
 		src/view/Camera2D.cpp
 		src/view/AgentView.cpp
 		src/view/FoodView.cpp
+		src/view/EnvironmentView.cpp
 		src/view/RoomView.cpp
 		src/view/LineShape.cpp
 		src/view/Shader.cpp
