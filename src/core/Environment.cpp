@@ -14,19 +14,11 @@ Environment::Environment(float xmin, float xmax, float ymin, float ymax)
 }
 
 void Environment::AddAgent(std::unique_ptr<Agent> agent) {
-    auto view = std::make_unique<AgentView>();
-    view->Init();
-
-    m_AgentViews.push_back(std::move(view));
     m_Agents.push_back(std::move(agent));
 }
 
 void Environment::AddFoodSource(std::shared_ptr<FoodSource> food) {
     m_FoodSources.push_back(food);
-
-    auto view = std::make_unique<FoodView>();
-    view->Init();
-    m_FoodViews.push_back(std::move(view));
 }
 
 void Environment::BuildSpatialIndex() {
@@ -63,7 +55,6 @@ void Environment::Update(float dt) {
     for (size_t i = 0; i < m_Agents.size(); i++) {
         if (m_Agents[i]->GetState() == AgentState::Dead) {
             m_Agents.erase(m_Agents.begin() + i);
-            m_AgentViews.erase(m_AgentViews.begin() + i);
         }
     }
 
@@ -71,20 +62,7 @@ void Environment::Update(float dt) {
     for (size_t i = 0; i < m_FoodSources.size(); i++) {
         if (m_FoodSources[i]->GetNutrition() <= 0.0f) {
             m_FoodSources.erase(m_FoodSources.begin() + i);
-            m_FoodViews.erase(m_FoodViews.begin() + i);
         }
-    }
-}
-
-void Environment::Render(const glm::mat4& vp) {
-    // FoodSources
-    for (size_t i = 0; i < m_FoodSources.size(); ++i) {
-        m_FoodViews[i]->Draw(m_FoodSources[i].get(), vp);
-    }
-
-    // Agents
-    for (size_t i = 0; i < m_Agents.size(); ++i) {
-        m_AgentViews[i]->Draw(m_Agents[i].get(), vp);
     }
 }
 

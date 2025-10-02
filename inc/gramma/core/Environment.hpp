@@ -3,8 +3,6 @@
 #include <gramma/model/Agent.hpp>
 #include <gramma/model/FoodSource.hpp>
 #include <gramma/model/ICollisionHandler.hpp>
-#include <gramma/view/AgentView.hpp>
-#include <gramma/view/FoodView.hpp>
 #include <memory>
 #include <nanoflann.hpp>
 #include <vector>
@@ -84,10 +82,6 @@ class Environment {
 
     std::vector<std::unique_ptr<Agent>> m_Agents;
     std::vector<std::shared_ptr<FoodSource>> m_FoodSources;
-
-    // Views
-    std::vector<std::unique_ptr<AgentView>> m_AgentViews;
-    std::vector<std::unique_ptr<FoodView>> m_FoodViews;
 
     std::unique_ptr<ICollisionHandler> m_CollisionHandler;
 
