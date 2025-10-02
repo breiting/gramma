@@ -13,7 +13,6 @@
 #include <gramma/model/SatisfactionNeed.hpp>
 #include <gramma/model/SegregationAgentFactory.hpp>
 #include <gramma/model/VisionSensor.hpp>
-#include <gramma/util/TimeMeasureGuard.hpp>
 #include <iostream>
 
 using namespace gr;

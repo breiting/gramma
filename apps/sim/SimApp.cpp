@@ -12,7 +12,6 @@
 #include <gramma/model/Room.hpp>
 #include <gramma/model/SimAgentFactory.hpp>
 #include <gramma/model/VisionSensor.hpp>
-#include <gramma/util/TimeMeasureGuard.hpp>
 #include <iostream>
 
 using namespace gr;
