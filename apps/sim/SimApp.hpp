@@ -22,7 +22,8 @@ class SimApp : public gr::IApp {
     std::unique_ptr<gr::Environment> m_Env;
     gr::EnvironmentView m_EnvView;
 
-    bool m_Restart{false};
+    bool m_SeedAgents{false};
+    bool m_SeedFood{false};
     bool m_Quit{false};
     float m_Zoom{1.0};
 };
