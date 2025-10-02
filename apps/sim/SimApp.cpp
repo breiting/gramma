@@ -8,6 +8,7 @@
 #include <gramma/model/AgentFactory.hpp>
 #include <gramma/model/ExerciseNeed.hpp>
 #include <gramma/model/HungerNeed.hpp>
+#include <gramma/model/KDTreeCollisionHandler.hpp>
 #include <gramma/model/RandomWalkTask.hpp>
 #include <gramma/model/Room.hpp>
 #include <gramma/model/VisionSensor.hpp>
@@ -28,6 +29,7 @@ bool SimApp::Init(gr::AppContext& ctx) {
     constexpr float envHeight = 30.0;
 
     m_Env = std::make_unique<gr::Environment>(-envWidth / 2.0, envWidth / 2.0, -envHeight / 2.0, envHeight / 2.0);
+    m_Env->SetCollisionHandler(std::make_unique<KDTreeCollisionHandler>());
 
     // Setup camera
     m_Camera.SetOrthoByHeight(envHeight + border, ctx.Aspect());

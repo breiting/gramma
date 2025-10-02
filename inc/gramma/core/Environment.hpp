@@ -2,6 +2,7 @@
 #include <glm/mat4x4.hpp>
 #include <gramma/model/Agent.hpp>
 #include <gramma/model/FoodSource.hpp>
+#include <gramma/model/ICollisionHandler.hpp>
 #include <gramma/view/AgentView.hpp>
 #include <gramma/view/FoodView.hpp>
 #include <memory>
@@ -56,6 +57,10 @@ class Environment {
         return m_Cloud;
     }
 
+    void SetCollisionHandler(std::unique_ptr<ICollisionHandler> h) {
+        m_CollisionHandler = std::move(h);
+    }
+
     void Stats() const;
 
     const std::vector<std::unique_ptr<Agent>>& GetAgents() const;
@@ -83,6 +88,8 @@ class Environment {
     // Views
     std::vector<std::unique_ptr<AgentView>> m_AgentViews;
     std::vector<std::unique_ptr<FoodView>> m_FoodViews;
+
+    std::unique_ptr<ICollisionHandler> m_CollisionHandler;
 
     AgentCloud m_Cloud;
     std::unique_ptr<KDTreeType> m_KDTree;

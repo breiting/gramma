@@ -54,6 +54,11 @@ void Environment::Update(float dt) {
         }
     }
 
+    // Physics
+    if (m_CollisionHandler) {
+        m_CollisionHandler->Resolve(*this);
+    }
+
     // Delete dead agents
     for (size_t i = 0; i < m_Agents.size(); i++) {
         if (m_Agents[i]->GetState() == AgentState::Dead) {
