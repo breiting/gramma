@@ -1,4 +1,5 @@
 #include <glm/gtc/matrix_transform.hpp>
+#include <gramma/model/Environment.hpp>
 #include <gramma/view/Camera2D.hpp>
 
 namespace gr {
@@ -36,6 +37,21 @@ void Camera2D::SetPosition(glm::vec2 pos) {
 }
 void Camera2D::SetZoom(float z) {
     m_Zoom = z;
+}
+
+void Camera2D::FitToEnvironment(Environment *env, float aspect) {
+    if (!env) return;
+    float width = env->GetWidth();
+    float height = env->GetHeight();
+    float worldAspect = width / height;
+
+    if (worldAspect > aspect) {
+        SetOrthoByWidth(width * 1.1f, aspect);  // 10% Margin
+    } else {
+        float targetHeight = height * 1.1f;
+        float targetWidth = targetHeight * aspect;
+        SetOrthoByWidth(targetWidth, aspect);
+    }
 }
 
 glm::mat4 Camera2D::ViewProj() const {

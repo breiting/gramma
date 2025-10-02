@@ -1,7 +1,7 @@
 #pragma once
 
-#include <gramma/model/Environment.hpp>
 #include <gramma/core/IApp.hpp>
+#include <gramma/model/Environment.hpp>
 #include <gramma/view/AgentView.hpp>
 #include <gramma/view/Camera2D.hpp>
 #include <gramma/view/EnvironmentView.hpp>
@@ -24,4 +24,5 @@ class SimApp : public gr::IApp {
 
     bool m_Restart{false};
     bool m_Quit{false};
+    float m_Zoom{1.0};
 };

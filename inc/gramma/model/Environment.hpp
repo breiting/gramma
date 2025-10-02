@@ -77,6 +77,14 @@ class Environment {
         return m_Ymax;
     }
 
+    float GetWidth() const {
+        return m_Xmax - m_Xmin;
+    }
+
+    float GetHeight() const {
+        return m_Ymax - m_Ymin;
+    }
+
    private:
     float m_Xmin, m_Xmax, m_Ymin, m_Ymax;
 

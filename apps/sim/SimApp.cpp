@@ -37,24 +37,32 @@ bool SimApp::Init(gr::AppContext& ctx) {
     m_Camera.SetOrthoByHeight(envHeight + border, ctx.Aspect());
 
     AgentFactory factory;
-    for (int i = 0; i < 20; ++i) {
+    for (int i = 0; i < 200; ++i) {
         auto agent = factory.CreateRandomAgent(envHeight);
         agent->AddNeed(std::make_unique<gr::HungerNeed>(0.1));
         agent->AddNeed(std::make_unique<gr::ExerciseNeed>());
         m_Env->AddAgent(std::move(agent));
     }
 
-    for (int i = 0; i < 10; ++i) {
+    for (int i = 0; i < 100; ++i) {
         glm::vec2 pos = {(float)(rand() % int(envWidth) - envWidth / 2.0),
                          (float)(rand() % int(envHeight) - envHeight / 2.0)};
         m_Env->AddFoodSource(std::make_shared<gr::FoodSource>(pos, 1.0, 0.1));
     }
 
-    onKeyPressed = [this](int key, int /*mods*/) {
+    onKeyPressed = [this, &ctx](int key, int /*mods*/) {
         if (key == GLFW_KEY_ESCAPE) {
             m_Quit = true;
         } else if (key == GLFW_KEY_R) {
             m_Restart = true;
+        } else if (key == GLFW_KEY_F) {
+            m_Camera.FitToEnvironment(m_Env.get(), ctx.Aspect());
+        } else if (key == GLFW_KEY_PAGE_UP) {
+            m_Zoom += .1f;
+            m_Camera.SetZoom(m_Zoom);
+        } else if (key == GLFW_KEY_PAGE_DOWN) {
+            m_Zoom -= 0.1f;
+            m_Camera.SetZoom(m_Zoom);
         }
     };
 
