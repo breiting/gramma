@@ -51,6 +51,12 @@ const std::vector<std::unique_ptr<INeed>>& Agent::GetNeeds() const {
     return m_Needs;
 }
 
+void Agent::SatisfyNeed(const std::string& need) {
+    std::for_each(m_Needs.begin(), m_Needs.end(), [&](auto& n) {
+        if (n->Name() == need) n->Reset();
+    });
+}
+
 void Agent::EvaluateNeeds(Environment& env, float dt) {
     float bestPriority = 0.0f;
     INeed* chosenNeed = nullptr;
@@ -145,6 +151,20 @@ void Agent::SetSpeed(float speed) {
 // --- Velocity ---
 const glm::vec2& Agent::GetVelocity() const {
     return m_Velocity;
+}
+
+void Agent::SetVelocity(const glm::vec2& vel) {
+    // Clamp to maxSpeed
+    float len = glm::length(vel);
+    if (len > m_Traits->maxSpeed) {
+        m_Velocity = (vel / len) * m_Traits->maxSpeed;
+    } else {
+        m_Velocity = vel;
+    }
+    // Update heading
+    if (glm::length(m_Velocity) > 1e-4f) {
+        m_Heading = glm::degrees(std::atan2(m_Velocity.x, m_Velocity.y));
+    }
 }
 
 }  // namespace gr

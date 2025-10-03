@@ -35,6 +35,7 @@ class Agent {
     // --- Need Management ---
     void AddNeed(std::unique_ptr<INeed> need);
     const std::vector<std::unique_ptr<INeed>>& GetNeeds() const;
+    void SatisfyNeed(const std::string& need);
 
     // --- State Management ---
     void SetState(AgentState state);
@@ -51,6 +52,7 @@ class Agent {
     void SetSpeed(float speed);
 
     const glm::vec2& GetVelocity() const;  // derived from Heading + DesiredSpeed
+    void SetVelocity(const glm::vec2& vel);
 
     const AgentTraits* GetTraits() const {
         return m_Traits.get();

@@ -110,6 +110,9 @@ add_library(gramma
 		src/model/RandomWalkTask.cpp
 		src/model/RelocateTask.cpp
 		src/model/Room.cpp
+		src/model/DirectMovement.cpp
+		src/model/MoveTask.cpp
+		src/model/RandomDetourMovement.cpp
 		src/model/SatisfactionNeed.cpp
 		src/model/SeekFoodTask.cpp
 		src/model/SegregationAgentFactory.cpp

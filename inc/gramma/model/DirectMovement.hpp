@@ -1,0 +1,14 @@
+#pragma once
+#include <gramma/model/IMovementStrategy.hpp>
+
+namespace gr {
+
+/**
+ * Simple direct movement: move in a straight line towards the target.
+ */
+class DirectMovement : public IMovementStrategy {
+   public:
+    void Update(Agent& agent, const glm::vec2& target, float dt) override;
+};
+
+}  // namespace gr

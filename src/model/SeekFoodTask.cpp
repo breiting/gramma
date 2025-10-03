@@ -1,56 +1,41 @@
 #include <glm/glm.hpp>
 #include <gramma/model/Agent.hpp>
+#include <gramma/model/DirectMovement.hpp>
 #include <gramma/model/FoodSource.hpp>
 #include <gramma/model/SeekFoodTask.hpp>
 
 namespace gr {
 
-SeekFoodTask::SeekFoodTask(std::shared_ptr<FoodSource> target) : m_Target(target) {
+SeekFoodTask::SeekFoodTask(std::shared_ptr<FoodSource> food) : m_Food(food) {
 }
 
 void SeekFoodTask::Start(Agent& agent) {
-    if (!m_Target) {
+    if (!m_Food) {
         m_Finished = true;
         return;
     }
-    // Agent schaut Richtung Futter
-    glm::vec2 dir = m_Target->GetPosition() - agent.GetPosition();
-    float angle = glm::degrees(std::atan2(dir.x, dir.y));  // 0=north
-    agent.SetHeading(angle);
-    agent.SetSpeed(agent.GetTraits()->maxSpeed);
+
+    m_Move = std::make_unique<MoveTask>(m_Food->GetPosition(), std::make_unique<DirectMovement>());
+    m_Move->Start(agent);
 }
 
 void SeekFoodTask::Update(Agent& agent, float dt) {
-    if (!m_Target) {
+    if (!m_Food) {
         m_Finished = true;
         return;
     }
 
-    glm::vec2 dir = m_Target->GetPosition() - agent.GetPosition();
-    float dist = glm::length(dir);
+    m_Move->Update(agent, dt);
 
-    if (dist < agent.GetTraits()->bodyRadius * 2.0f) {
-        // Agent konsumiert Food
-        float eaten = m_Target->Consume(0.3f);  // 30% pro "Biss"
-        if (eaten > 0.0f) {
-            for (auto& n : agent.GetNeeds()) {
-                if (n->Name() == "Hunger") {
-                    n->Reset();  // satt
-                }
-            }
+    // Check if close enough to eat
+    float dist = glm::length(agent.GetPosition() - m_Food->GetPosition());
+    if (dist < agent.GetTraits()->bodyRadius) {
+        float consumed = m_Food->Consume(0.3f);  // 30% per bite
+        if (consumed > 0.0f) {
+            agent.SatisfyNeed("Hunger");
         }
-        m_Finished = true;
-        return;
     }
-
-    dir = glm::normalize(dir);
-    float angle = glm::degrees(std::atan2(dir.x, dir.y));
-    agent.SetHeading(angle);
-    agent.SetSpeed(agent.GetTraits()->maxSpeed);
-
-    // Bewegung passiert über Task selbst
-    glm::vec2 velocity = dir * agent.GetSpeed();
-    agent.SetPosition(agent.GetPosition() + velocity * dt);
+    m_Finished = m_Move->IsFinished();
 }
 
 bool SeekFoodTask::IsFinished() const {
