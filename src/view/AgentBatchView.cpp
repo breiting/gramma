@@ -104,18 +104,19 @@ void AgentBatchView::UpdateInstances(const std::vector<std::unique_ptr<Agent>>& 
 
     for (auto& a : agents) {
         if (a->GetState() == AgentState::Dead) continue;
+        const auto& traits = a->GetTraits();
 
-        auto color = AgeColor(a->GetTraits().age);
-        const auto* segTrait = dynamic_cast<const SegregationTraits*>(&a->GetTraits());
+        auto color = AgeColor(traits->age);
+        const auto* segTrait = a->GetTraitsAs<SegregationTraits>();
         if (segTrait) {
             color = GroupColor(segTrait->group);
         }
 
         InstanceData d;
         d.position = a->GetPosition();
-        d.innerRadius = a->GetTraits().bodyRadius;
-        d.outerRadius = a->GetTraits().comfortRadius;
-        d.blendWidth = a->GetTraits().bodyRadius * 0.1f;
+        d.innerRadius = traits->bodyRadius;
+        d.outerRadius = traits->comfortRadius;
+        d.blendWidth = traits->bodyRadius * 0.1f;
         d.color = color;
         d.glowColor = glm::vec4(1.0f, 0.2f, 0.2f, 1.0f);
         d.thickness = 0.1f;

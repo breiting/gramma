@@ -5,7 +5,7 @@
 namespace gr {
 
 float SatisfactionNeed::Evaluate(const Agent& self, const Environment& env) const {
-    auto* traits = dynamic_cast<const SegregationTraits*>(&self.GetTraits());
+    const auto* traits = self.GetTraitsAs<SegregationTraits>();
     if (!traits) return 0.0f;
 
     // KD-Tree Query: Nachbarn innerhalb comfortRadius
@@ -20,7 +20,7 @@ float SatisfactionNeed::Evaluate(const Agent& self, const Environment& env) cons
         const Agent* other = env.GetAgent(n.first);
         if (!other || other == &self) continue;
 
-        auto* otherTraits = dynamic_cast<const SegregationTraits*>(&other->GetTraits());
+        const auto* otherTraits = other->GetTraitsAs<SegregationTraits>();
         if (!otherTraits) continue;
 
         total++;

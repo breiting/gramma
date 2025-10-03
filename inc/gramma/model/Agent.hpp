@@ -15,7 +15,7 @@ enum class AgentState {
     Dead,
 };
 
-/** Represents an agent (person) in the simulation */
+/** Represents an agent (acting entity) in the simulation */
 class Agent {
    public:
     Agent(const glm::vec2& initialPosition, float headingDeg, std::unique_ptr<AgentTraits> traits);
@@ -23,7 +23,10 @@ class Agent {
     virtual ~Agent() = default;
 
     void AssignTask(TaskPtr task);
+
+    // --- Update loops ---
     void Update(float dt, const Environment& env);
+    void EvaluateNeeds(Environment& env, float dt);
 
     // --- Sensor Management ---
     void AttachSensor(SensorPtr sensor);
@@ -32,7 +35,6 @@ class Agent {
     // --- Need Management ---
     void AddNeed(std::unique_ptr<INeed> need);
     const std::vector<std::unique_ptr<INeed>>& GetNeeds() const;
-    void EvaluateNeeds(Environment& env, float dt);
 
     // --- State Management ---
     void SetState(AgentState state);
@@ -50,16 +52,21 @@ class Agent {
 
     const glm::vec2& GetVelocity() const;  // derived from Heading + DesiredSpeed
 
-    const AgentTraits& GetTraits() const {
-        return *m_Traits;
+    const AgentTraits* GetTraits() const {
+        return m_Traits.get();
     }
-    AgentTraits& GetTraits() {
-        return *m_Traits;
+    AgentTraits* GetTraits() {
+        return m_Traits.get();
     }
 
     template <typename T>
     T* GetTraitsAs() {
         return dynamic_cast<T*>(m_Traits.get());
+    }
+
+    template <typename T>
+    const T* GetTraitsAs() const {
+        return dynamic_cast<const T*>(m_Traits.get());
     }
 
    private:

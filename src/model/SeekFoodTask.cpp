@@ -17,7 +17,7 @@ void SeekFoodTask::Start(Agent& agent) {
     glm::vec2 dir = m_Target->GetPosition() - agent.GetPosition();
     float angle = glm::degrees(std::atan2(dir.x, dir.y));  // 0=north
     agent.SetHeading(angle);
-    agent.SetDesiredSpeed(agent.GetTraits().speedPref);
+    agent.SetDesiredSpeed(agent.GetTraits()->speedPref);
 }
 
 void SeekFoodTask::Update(Agent& agent, float dt) {
@@ -29,7 +29,7 @@ void SeekFoodTask::Update(Agent& agent, float dt) {
     glm::vec2 dir = m_Target->GetPosition() - agent.GetPosition();
     float dist = glm::length(dir);
 
-    if (dist < agent.GetTraits().bodyRadius * 2.0f) {
+    if (dist < agent.GetTraits()->bodyRadius * 2.0f) {
         // Agent konsumiert Food
         float eaten = m_Target->Consume(0.3f);  // 30% pro "Biss"
         if (eaten > 0.0f) {
@@ -46,7 +46,7 @@ void SeekFoodTask::Update(Agent& agent, float dt) {
     dir = glm::normalize(dir);
     float angle = glm::degrees(std::atan2(dir.x, dir.y));
     agent.SetHeading(angle);
-    agent.SetDesiredSpeed(agent.GetTraits().speedPref);
+    agent.SetDesiredSpeed(agent.GetTraits()->speedPref);
 
     // Bewegung passiert über Task selbst
     glm::vec2 velocity = dir * agent.GetDesiredSpeed();

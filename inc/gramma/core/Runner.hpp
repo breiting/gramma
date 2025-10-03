@@ -7,6 +7,8 @@
 
 namespace gr {
 
+/** Acts as the controller and orchestrates everything
+ */
 class Runner {
    private:
     class RunnerContext : public AppContext {
