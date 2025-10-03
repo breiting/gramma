@@ -117,7 +117,7 @@ void SimApp::Update(gr::AppContext& /*ctx*/, double dt) {
         m_SeedFood = false;
     }
 
-    m_Env->Update(static_cast<float>(dt));
+    m_Env->Update(static_cast<float>(dt) * m_Timescale);
     m_EnvView.SyncWithEnvironment(m_Env.get());
 }
 
@@ -134,6 +134,7 @@ void SimApp::Render(gr::AppContext& ctx) {
     ImGui::Begin("Environment Stats");
     ImGui::Text("Agents: %zu", m_Env->GetAgents().size());
     ImGui::Text("FoodSources: %zu", m_Env->GetFoodSources().size());
+    ImGui::SliderFloat("Timescale", &m_Timescale, 0.5, 10.0);
     ImGui::End();
 
     m_Gui->EndFrame();
