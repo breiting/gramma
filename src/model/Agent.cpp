@@ -2,11 +2,9 @@
 #include <glm/gtc/constants.hpp>
 #include <gramma/model/Agent.hpp>
 #include <gramma/model/Environment.hpp>
-#include <gramma/model/RandomWalkTask.hpp>
+#include <gramma/model/RandomDetourMovement.hpp>
 #include <gramma/model/Room.hpp>
 #include <gramma/model/SeekFoodTask.hpp>
-
-#include "gramma/model/RelocateTask.hpp"
 
 namespace gr {
 
@@ -101,9 +99,7 @@ void Agent::EvaluateNeeds(Environment& env, float dt) {
                 AssignTask(std::make_unique<SeekFoodTask>(best));
             }
         } else if (chosenNeed->Name() == "Exercise") {
-            AssignTask(std::make_unique<RandomWalkTask>(5.0f));
-        } else if (chosenNeed->Name() == "Satisfaction") {
-            AssignTask(std::make_unique<RelocateTask>(env.RandomPosition()));
+            AssignTask(std::make_unique<MoveTask>(env.RandomPosition(), std::make_unique<RandomDetourMovement>()));
         }
     }
 }

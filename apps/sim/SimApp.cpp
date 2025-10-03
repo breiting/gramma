@@ -10,7 +10,6 @@
 #include <gramma/model/ExerciseNeed.hpp>
 #include <gramma/model/HungerNeed.hpp>
 #include <gramma/model/KDTreeCollisionHandler.hpp>
-#include <gramma/model/RandomWalkTask.hpp>
 #include <gramma/model/Room.hpp>
 #include <gramma/model/SimAgentFactory.hpp>
 #include <gramma/model/VisionSensor.hpp>

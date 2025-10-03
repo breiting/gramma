@@ -107,8 +107,6 @@ add_library(gramma
 		src/model/FoodSource.cpp
 		src/model/HungerNeed.cpp
 		src/model/KDTreeCollisionHandler.cpp
-		src/model/RandomWalkTask.cpp
-		src/model/RelocateTask.cpp
 		src/model/Room.cpp
 		src/model/DirectMovement.cpp
 		src/model/MoveTask.cpp
