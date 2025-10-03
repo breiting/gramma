@@ -19,7 +19,7 @@ void KDTreeCollisionHandler::Resolve(Environment& env) {
         std::vector<nanoflann::ResultItem<size_t, double>> retMatches;
         nanoflann::SearchParameters params;
 
-        float radius = a->GetTraits()->comfortRadius * 2.0f;
+        float radius = a->GetTraits()->socialRadius * 2.0f;
         kdIndex.radiusSearch(query_pt, radius * radius, retMatches, params);
 
         for (auto& match : retMatches) {
@@ -28,7 +28,7 @@ void KDTreeCollisionHandler::Resolve(Environment& env) {
 
             glm::vec2 diff = b->GetPosition() - a->GetPosition();
             float dist = glm::length(diff);
-            float minDist = a->GetTraits()->comfortRadius + b->GetTraits()->comfortRadius;
+            float minDist = a->GetTraits()->socialRadius + b->GetTraits()->socialRadius;
 
             if (dist < minDist && dist > 0.0001f) {
                 glm::vec2 dir = diff / dist;

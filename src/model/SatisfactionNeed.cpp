@@ -12,7 +12,7 @@ float SatisfactionNeed::Evaluate(const Agent& self, const Environment& env) cons
     double query_pt[2] = {self.GetPosition().x, self.GetPosition().y};
     std::vector<nanoflann::ResultItem<size_t, double>> neighbors;
     nanoflann::SearchParameters params;
-    env.GetKDTree().radiusSearch(query_pt, traits->comfortRadius * traits->comfortRadius, neighbors, params);
+    env.GetKDTree().radiusSearch(query_pt, traits->socialRadius * traits->socialRadius, neighbors, params);
 
     int same = 0;
     int total = 0;

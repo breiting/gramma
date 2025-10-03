@@ -47,8 +47,8 @@ class Agent {
     float GetHeading() const;
     void SetHeading(float headingDeg);
 
-    float GetDesiredSpeed() const;
-    void SetDesiredSpeed(float speed);
+    float GetSpeed() const;
+    void SetSpeed(float speed);
 
     const glm::vec2& GetVelocity() const;  // derived from Heading + DesiredSpeed
 
@@ -70,13 +70,10 @@ class Agent {
     }
 
    private:
-    void UpdateKinematics(float dt);
-
-   private:
     glm::vec2 m_Position;
     glm::vec2 m_Velocity;
-    float m_Heading;       // in degrees, 0 = north
-    float m_DesiredSpeed;  // m/s
+    float m_Heading;  // in degrees, 0 = north
+    float m_Speed;    // m/s
 
     std::unique_ptr<AgentTraits> m_Traits;
     AgentState m_State;

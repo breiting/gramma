@@ -115,7 +115,7 @@ void AgentBatchView::UpdateInstances(const std::vector<std::unique_ptr<Agent>>& 
         InstanceData d;
         d.position = a->GetPosition();
         d.innerRadius = traits->bodyRadius;
-        d.outerRadius = traits->comfortRadius;
+        d.outerRadius = traits->socialRadius;
         d.blendWidth = traits->bodyRadius * 0.1f;
         d.color = color;
         d.glowColor = glm::vec4(1.0f, 0.2f, 0.2f, 1.0f);

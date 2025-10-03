@@ -22,8 +22,8 @@ SegregationTraits SegregationAgentFactory::RandomTraits() {
     traits.group = (rand() % 2 == 0 ? Group::Red : Group::Blue);
     traits.minSameFraction = 0.3f;  // tolerance
     traits.bodyRadius = 0.2f;
-    traits.comfortRadius = 1.0;
-    traits.speedPref = 0.0f;  // not used here
+    traits.socialRadius = 1.0;
+    traits.maxSpeed = 0.0f;  // not used here
     return traits;
 }
 

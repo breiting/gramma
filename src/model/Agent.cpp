@@ -14,7 +14,7 @@ Agent::Agent(const glm::vec2& initialPosition, float headingDeg, std::unique_ptr
     : m_Position(initialPosition),
       m_Velocity(0.0f, 0.0f),
       m_Heading(headingDeg),
-      m_DesiredSpeed(0.0f),
+      m_Speed(0.0f),
       m_Traits(std::move(traits)),
       m_State(AgentState::Idle) {
 }
@@ -135,11 +135,11 @@ void Agent::SetHeading(float headingDeg) {
 }
 
 // --- Desired Speed ---
-float Agent::GetDesiredSpeed() const {
-    return m_DesiredSpeed;
+float Agent::GetSpeed() const {
+    return m_Speed;
 }
-void Agent::SetDesiredSpeed(float speed) {
-    m_DesiredSpeed = speed;
+void Agent::SetSpeed(float speed) {
+    m_Speed = speed;
 }
 
 // --- Velocity ---

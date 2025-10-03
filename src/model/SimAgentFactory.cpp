@@ -30,8 +30,8 @@ AgentTraits SimAgentFactory::RandomTraits() {
     AgentTraits traits;
     traits.age = static_cast<AgeClass>(ageDist(m_Rng));
     traits.bodyRadius = radiusDist(m_Rng);
-    traits.comfortRadius = comfortDist(m_Rng);
-    traits.speedPref = speedDist(m_Rng);
+    traits.socialRadius = comfortDist(m_Rng);
+    traits.maxSpeed = speedDist(m_Rng);
     return traits;
 }
 

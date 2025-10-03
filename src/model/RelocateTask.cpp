@@ -10,7 +10,7 @@ RelocateTask::RelocateTask(glm::vec2 targetPos) : m_Target(targetPos) {
 void RelocateTask::Start(Agent& agent) {
     glm::vec2 dir = m_Target - agent.GetPosition();
     float dist = glm::length(dir);
-    agent.SetDesiredSpeed(agent.GetTraits()->speedPref);
+    agent.SetSpeed(agent.GetTraits()->maxSpeed);
 
     if (dist > 1e-3f) {
         dir /= dist;
