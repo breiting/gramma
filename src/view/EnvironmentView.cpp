@@ -17,6 +17,15 @@ void EnvironmentView::SyncWithEnvironment(Environment* env) {
 
     m_AgentBatchView.UpdateInstances(env->GetAgents());
 
+    // --- Homes ---
+    for (auto& homePtr : env->GetHomes()) {
+        Home* home = homePtr.get();
+        if (m_HomeViews.find(home) == m_HomeViews.end()) {
+            auto view = std::make_unique<HomeView>();
+            view->Init();
+            m_HomeViews[home] = std::move(view);
+        }
+    }
     // --- FoodViews ---
     for (auto& foodPtr : env->GetFoodSources()) {
         FoodSource* food = foodPtr.get();
@@ -55,12 +64,21 @@ void EnvironmentView::Draw(Environment* env, const Camera2D& cam) {
     // --- Agents ---
     m_AgentBatchView.Draw(vp);
 
-    // --- FoodSources zeichnen ---
+    // --- Draw FoodSources ---
     for (auto& foodPtr : env->GetFoodSources()) {
         FoodSource* food = foodPtr.get();
         auto it = m_FoodViews.find(food);
         if (it != m_FoodViews.end()) {
             it->second->Draw(food, vp);
+        }
+    }
+
+    // --- Draw Homes ---
+    for (auto& homePtr : env->GetHomes()) {
+        Home* home = homePtr.get();
+        auto it = m_HomeViews.find(home);
+        if (it != m_HomeViews.end()) {
+            it->second->Draw(home, vp);
         }
     }
 }

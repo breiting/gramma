@@ -113,6 +113,7 @@ add_library(gramma
 		src/model/RandomDetourMovement.cpp
 		src/model/SatisfactionNeed.cpp
 		src/model/SeekFoodTask.cpp
+		src/model/Home.cpp
 		src/model/SegregationAgentFactory.cpp
 		src/model/SimAgentFactory.cpp
 		src/model/VisionSensor.cpp
@@ -121,6 +122,7 @@ add_library(gramma
 		src/view/AgentView.cpp
 		src/view/AgentBatchView.cpp
 		src/view/FoodView.cpp
+		src/view/HomeView.cpp
 		src/view/EnvironmentView.cpp
 		src/view/RoomView.cpp
 		src/view/LineShape.cpp

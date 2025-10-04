@@ -2,6 +2,7 @@
 #include <glm/mat4x4.hpp>
 #include <gramma/model/Agent.hpp>
 #include <gramma/model/FoodSource.hpp>
+#include <gramma/model/Home.hpp>
 #include <gramma/model/ICollisionHandler.hpp>
 #include <memory>
 #include <nanoflann.hpp>
@@ -40,6 +41,7 @@ class Environment {
 
     void AddAgent(std::unique_ptr<Agent> agent);
     void AddFoodSource(std::shared_ptr<FoodSource> food);
+    void AddHome(std::unique_ptr<Home> home);
 
     void Update(float dt);
     void Render(const glm::mat4& vp);
@@ -62,6 +64,7 @@ class Environment {
     void Stats() const;
 
     const std::vector<std::unique_ptr<Agent>>& GetAgents() const;
+    const std::vector<std::unique_ptr<Home>>& GetHomes() const;
     std::vector<std::shared_ptr<FoodSource>>& GetFoodSources();
 
     float XMin() const {
@@ -96,6 +99,7 @@ class Environment {
 
     std::vector<std::unique_ptr<Agent>> m_Agents;
     std::vector<std::shared_ptr<FoodSource>> m_FoodSources;
+    std::vector<std::unique_ptr<Home>> m_Homes;
 
     std::unique_ptr<ICollisionHandler> m_CollisionHandler;
 

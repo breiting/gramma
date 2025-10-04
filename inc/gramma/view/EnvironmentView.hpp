@@ -3,6 +3,7 @@
 #include <gramma/view/AgentBatchView.hpp>
 #include <gramma/view/Camera2D.hpp>
 #include <gramma/view/FoodView.hpp>
+#include <gramma/view/HomeView.hpp>
 #include <gramma/view/LineShape.hpp>
 #include <memory>
 #include <unordered_map>
@@ -28,6 +29,7 @@ class EnvironmentView {
 
     AgentBatchView m_AgentBatchView;
     std::unordered_map<FoodSource*, std::unique_ptr<FoodView>> m_FoodViews;
+    std::unordered_map<Home*, std::unique_ptr<HomeView>> m_HomeViews;
 };
 
 }  // namespace gr

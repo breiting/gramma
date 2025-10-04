@@ -8,6 +8,7 @@
 #include <gramma/core/Window.hpp>
 #include <gramma/model/Agent.hpp>
 #include <gramma/model/ExerciseNeed.hpp>
+#include <gramma/model/Home.hpp>
 #include <gramma/model/HungerNeed.hpp>
 #include <gramma/model/KDTreeCollisionHandler.hpp>
 #include <gramma/model/Room.hpp>
@@ -36,6 +37,14 @@ static void GenerateFood(Environment* env) {
     }
 }
 
+static void GenerateHome(Environment* env) {
+    if (!env) return;
+    for (int i = 0; i < 5; ++i) {
+        glm::vec2 pos = env->RandomPosition();
+        env->AddHome(std::make_unique<gr::Home>(pos, 4));
+    }
+}
+
 std::string SimApp::Name() const {
     return "SimApp";
 }
@@ -60,6 +69,7 @@ bool SimApp::Init(gr::AppContext& ctx) {
 
     GenerateAgents(m_Env.get());
     GenerateFood(m_Env.get());
+    GenerateHome(m_Env.get());
 
     onKeyPressed = [this, &ctx](int key, int /*mods*/) {
         if (key == GLFW_KEY_ESCAPE) {

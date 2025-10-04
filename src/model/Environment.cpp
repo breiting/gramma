@@ -5,6 +5,7 @@
 #include <gramma/model/Task.hpp>
 #include <iomanip>
 #include <iostream>
+#include <memory>
 #include <random>
 
 namespace gr {
@@ -19,6 +20,10 @@ void Environment::AddAgent(std::unique_ptr<Agent> agent) {
 
 void Environment::AddFoodSource(std::shared_ptr<FoodSource> food) {
     m_FoodSources.push_back(food);
+}
+
+void Environment::AddHome(std::unique_ptr<Home> home) {
+    m_Homes.push_back(std::move(home));
 }
 
 void Environment::BuildSpatialIndex() {
@@ -68,6 +73,10 @@ void Environment::Update(float dt) {
 
 const std::vector<std::unique_ptr<Agent>>& Environment::GetAgents() const {
     return m_Agents;
+}
+
+const std::vector<std::unique_ptr<Home>>& Environment::GetHomes() const {
+    return m_Homes;
 }
 
 std::vector<std::shared_ptr<FoodSource>>& Environment::GetFoodSources() {
