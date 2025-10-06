@@ -108,7 +108,7 @@ void Shader::BuildUnlit() {
     CompileShader(unlit_vert_glsl, unlit_frag_glsl);
 }
 
-void Shader::BuildFood() {
+void Shader::BuildResource() {
     CompileShader(food_vert_glsl, food_frag_glsl);
 }
 

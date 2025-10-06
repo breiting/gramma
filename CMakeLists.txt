@@ -102,29 +102,26 @@ add_library(gramma
 		src/model/Agent.cpp
 		src/model/AgentFactory.cpp
 		src/model/BruteForceCollisionHandler.cpp
-		src/model/Environment.cpp
-		src/model/FoodSource.cpp
-		src/model/EnergyNeed.cpp
-		src/model/KDTreeCollisionHandler.cpp
-		src/model/Room.cpp
 		src/model/DirectMovement.cpp
+		src/model/EnergyNeed.cpp
+		src/model/Environment.cpp
+		src/model/Home.cpp
+		src/model/KDTreeCollisionHandler.cpp
 		src/model/MoveTask.cpp
 		src/model/RandomDetourMovement.cpp
-		src/model/SatisfactionNeed.cpp
-		src/model/SeekFoodTask.cpp
-		src/model/Home.cpp
-		src/model/SegregationAgentFactory.cpp
+		src/model/RestTask.cpp
+		src/model/SeekResourceTask.cpp
 		src/model/SimAgentFactory.cpp
+		src/model/TaskFactory.cpp
 		src/model/VisionSensor.cpp
 
-		src/view/Camera2D.cpp
-		src/view/AgentView.cpp
 		src/view/AgentBatchView.cpp
-		src/view/FoodView.cpp
-		src/view/HomeView.cpp
+		src/view/AgentView.cpp
+		src/view/Camera2D.cpp
 		src/view/EnvironmentView.cpp
-		src/view/RoomView.cpp
+		src/view/HomeView.cpp
 		src/view/LineShape.cpp
+		src/view/ResourceView.cpp
 		src/view/Shader.cpp
 		src/view/Texture.cpp
 		src/view/TriangularMesh.cpp
@@ -175,7 +172,6 @@ if(GRAMMA_BUILD_SIM)
 	add_executable(sim
 				apps/sim/main.cpp
 				apps/sim/SimApp.cpp
-				apps/sim/SegregationApp.cpp
 		)
 	target_link_libraries(sim
 				PRIVATE gramma glm::glm gramma_ui

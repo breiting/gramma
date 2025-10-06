@@ -6,7 +6,6 @@
 #include <gramma/view/AgentView.hpp>
 #include <gramma/view/Camera2D.hpp>
 #include <gramma/view/EnvironmentView.hpp>
-#include <gramma/view/RoomView.hpp>
 
 class SimApp : public gr::IApp {
    public:

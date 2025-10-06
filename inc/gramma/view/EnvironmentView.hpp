@@ -2,9 +2,9 @@
 #include <gramma/model/Environment.hpp>
 #include <gramma/view/AgentBatchView.hpp>
 #include <gramma/view/Camera2D.hpp>
-#include <gramma/view/FoodView.hpp>
 #include <gramma/view/HomeView.hpp>
 #include <gramma/view/LineShape.hpp>
+#include <gramma/view/ResourceView.hpp>
 #include <memory>
 #include <unordered_map>
 
@@ -28,7 +28,7 @@ class EnvironmentView {
     Shader m_Shader;
 
     AgentBatchView m_AgentBatchView;
-    std::unordered_map<FoodSource*, std::unique_ptr<FoodView>> m_FoodViews;
+    std::unordered_map<IResource*, std::unique_ptr<ResourceView>> m_ResourceViews;
     std::unordered_map<Home*, std::unique_ptr<HomeView>> m_HomeViews;
 };
 

@@ -4,7 +4,6 @@
 // clang-format on
 
 #include <glm/glm.hpp>
-#include <gramma/model/SegregationTraits.hpp>
 #include <gramma/view/AgentBatchView.hpp>
 #include <gramma/view/Uniforms.hpp>
 
@@ -20,16 +19,6 @@ static glm::vec4 AgeColor(AgeClass age) {
             return {0.0f, 0.5f, 1.0f, 1.0f};  // blue
         case AgeClass::Senior:
             return {1.0f, 0.0f, 0.0f, 1.0f};  // red
-    }
-    return {1.0f, 1.0f, 1.0f, 1.0f};  // fallback
-}
-
-static glm::vec4 GroupColor(Group group) {
-    switch (group) {
-        case Group::Blue:
-            return {0.0f, 0.0f, 1.0f, 1.0f};
-        case Group::Red:
-            return {1.0f, 0.0f, 0.0f, 1.0f};
     }
     return {1.0f, 1.0f, 1.0f, 1.0f};  // fallback
 }
@@ -106,17 +95,13 @@ void AgentBatchView::UpdateInstances(const std::vector<std::unique_ptr<Agent>>& 
         if (a->GetState() == AgentState::Dead) continue;
         const auto& traits = a->GetTraits();
 
-        auto color = AgeColor(traits->age);
-        const auto* segTrait = a->GetTraitsAs<SegregationTraits>();
-        if (segTrait) {
-            color = GroupColor(segTrait->group);
-        }
+        auto color = AgeColor(traits.age);
 
         InstanceData d;
         d.position = a->GetPosition();
-        d.innerRadius = traits->bodyRadius;
-        d.outerRadius = traits->socialRadius;
-        d.blendWidth = traits->bodyRadius * 0.1f;
+        d.innerRadius = traits.bodyRadius;
+        d.outerRadius = traits.socialRadius;
+        d.blendWidth = traits.bodyRadius * 0.1f;
         d.color = color;
         d.glowColor = glm::vec4(1.0f, 0.2f, 0.2f, 1.0f);
         d.thickness = 0.1f;

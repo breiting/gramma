@@ -23,7 +23,7 @@ class Shader {
     void BuildBasic();
     void BuildAgent();
     void BuildAgentBatch();
-    void BuildFood();
+    void BuildResource();
     void BuildLine();
     void BuildUnlit();
 

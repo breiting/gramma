@@ -1,15 +1,12 @@
 #pragma once
 #include <glm/vec2.hpp>
 #include <gramma/model/IMovementStrategy.hpp>
-#include <gramma/model/Task.hpp>
+#include <gramma/model/ITask.hpp>
 #include <memory>
 
 namespace gr {
 
-/**
- * Task that moves an agent to a target using a movement strategy.
- */
-class MoveTask : public Task {
+class MoveTask : public ITask {
    public:
     MoveTask(const glm::vec2& target, std::unique_ptr<IMovementStrategy> strategy);
 
@@ -22,7 +19,7 @@ class MoveTask : public Task {
    private:
     glm::vec2 m_Target;
     std::unique_ptr<IMovementStrategy> m_Strategy;
-    bool m_Done = false;
+    bool m_Done{false};
 };
 
 }  // namespace gr

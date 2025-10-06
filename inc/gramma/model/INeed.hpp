@@ -20,6 +20,10 @@ class INeed {
         return Priority();
     }
 
+    virtual float Utility(const Agent& /*self*/, const Environment& /*env*/) const {
+        return Priority();
+    }
+
     /// Urgency [0..1]
     virtual float Priority() const {
         return 0.0f;

@@ -1,6 +1,8 @@
 #include <algorithm>
 #include <gramma/view/EnvironmentView.hpp>
 
+#include "gramma/model/IResource.hpp"
+
 namespace gr {
 
 EnvironmentView::EnvironmentView() {
@@ -15,10 +17,10 @@ void EnvironmentView::Init() {
 void EnvironmentView::SyncWithEnvironment(Environment* env) {
     if (!env) return;
 
-    m_AgentBatchView.UpdateInstances(env->GetAgents());
+    m_AgentBatchView.UpdateInstances(env->Agents());
 
     // --- Homes ---
-    for (auto& homePtr : env->GetHomes()) {
+    for (auto& homePtr : env->Homes()) {
         Home* home = homePtr.get();
         if (m_HomeViews.find(home) == m_HomeViews.end()) {
             auto view = std::make_unique<HomeView>();
@@ -26,20 +28,20 @@ void EnvironmentView::SyncWithEnvironment(Environment* env) {
             m_HomeViews[home] = std::move(view);
         }
     }
-    // --- FoodViews ---
-    for (auto& foodPtr : env->GetFoodSources()) {
-        FoodSource* food = foodPtr.get();
-        if (m_FoodViews.find(food) == m_FoodViews.end()) {
-            auto view = std::make_unique<FoodView>();
+    // --- ResourceViews ---
+    for (auto& rPtr : env->Resources()) {
+        IResource* res = rPtr.get();
+        if (m_ResourceViews.find(res) == m_ResourceViews.end()) {
+            auto view = std::make_unique<ResourceView>();
             view->Init();
-            m_FoodViews[food] = std::move(view);
+            m_ResourceViews[res] = std::move(view);
         }
     }
-    for (auto it = m_FoodViews.begin(); it != m_FoodViews.end();) {
-        bool stillExists = std::any_of(env->GetFoodSources().begin(), env->GetFoodSources().end(),
+    for (auto it = m_ResourceViews.begin(); it != m_ResourceViews.end();) {
+        bool stillExists = std::any_of(env->Resources().begin(), env->Resources().end(),
                                        [&](auto& fs) { return fs.get() == it->first; });
         if (!stillExists) {
-            it = m_FoodViews.erase(it);
+            it = m_ResourceViews.erase(it);
         } else {
             it++;
         }
@@ -64,17 +66,17 @@ void EnvironmentView::Draw(Environment* env, const Camera2D& cam) {
     // --- Agents ---
     m_AgentBatchView.Draw(vp);
 
-    // --- Draw FoodSources ---
-    for (auto& foodPtr : env->GetFoodSources()) {
-        FoodSource* food = foodPtr.get();
-        auto it = m_FoodViews.find(food);
-        if (it != m_FoodViews.end()) {
-            it->second->Draw(food, vp);
+    // --- Draw Resources ---
+    for (auto& rPtr : env->Resources()) {
+        IResource* res = rPtr.get();
+        auto it = m_ResourceViews.find(res);
+        if (it != m_ResourceViews.end()) {
+            it->second->Draw(res, vp);
         }
     }
 
     // --- Draw Homes ---
-    for (auto& homePtr : env->GetHomes()) {
+    for (auto& homePtr : env->Homes()) {
         Home* home = homePtr.get();
         auto it = m_HomeViews.find(home);
         if (it != m_HomeViews.end()) {

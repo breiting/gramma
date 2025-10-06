@@ -1,166 +1,119 @@
+#include <cmath>
 #include <glm/glm.hpp>
-#include <glm/gtc/constants.hpp>
 #include <gramma/model/Agent.hpp>
+#include <gramma/model/EnergyNeed.hpp>
 #include <gramma/model/Environment.hpp>
-#include <gramma/model/RandomDetourMovement.hpp>
-#include <gramma/model/Room.hpp>
-#include <gramma/model/SeekFoodTask.hpp>
+#include <gramma/model/Home.hpp>
+#include <gramma/model/ITask.hpp>
+#include <gramma/model/TaskFactory.hpp>
+#include <limits>
 
 namespace gr {
 
-Agent::Agent(const glm::vec2& initialPosition, float headingDeg, std::unique_ptr<AgentTraits> traits)
-    : m_Position(initialPosition),
-      m_Velocity(0.0f, 0.0f),
-      m_Heading(headingDeg),
-      m_Speed(0.0f),
-      m_Traits(std::move(traits)),
-      m_State(AgentState::Idle) {
+Agent::Agent(const glm::vec2& pos, float headingDeg, std::unique_ptr<AgentTraits> traits, Home* home)
+    : m_Position(pos), m_HeadingDeg(headingDeg), m_Traits(std::move(traits)), m_Home(home) {
 }
 
-void Agent::AssignTask(TaskPtr task) {
-    m_CurrentTask = std::move(task);
-    SetState(AgentState::Executing);
-    if (m_CurrentTask) {
-        m_CurrentTask->Start(*this);
+Agent::~Agent() = default;
+
+void Agent::SetVelocity(const glm::vec2& v) {
+    float len = glm::length(v);
+    float maxV = m_Traits->maxSpeed;
+    glm::vec2 clamped = (len > maxV && len > 1e-6f) ? (v / len) * maxV : v;
+    m_Velocity = clamped;
+
+    if (glm::length(m_Velocity) > 1e-6f) {
+        m_HeadingDeg = glm::degrees(std::atan2(m_Velocity.x, m_Velocity.y));
+    }
+}
+
+EnergyNeed* Agent::findEnergyNeed() const {
+    for (auto& n : m_Needs) {
+        if (auto* e = dynamic_cast<EnergyNeed*>(n.get())) return e;
+    }
+    return nullptr;
+}
+
+float Agent::GetEnergyLevel() const {
+    if (auto* e = findEnergyNeed()) return e->Level();
+    return 0.0f;
+}
+
+void Agent::AddEnergyIntake(float de) {
+    if (auto* e = findEnergyNeed()) e->AddIntake(de);
+}
+
+void Agent::AddEnergyRest(float dt) {
+    if (auto* e = findEnergyNeed()) e->AddRest(dt);
+}
+
+void Agent::AddActivityCost(float speed, float dt) {
+    if (auto* e = findEnergyNeed()) e->AddActivityCost(speed, dt);
+}
+
+bool Agent::IsEnergyBelow(float t) const {
+    return GetEnergyLevel() < t;
+}
+
+void Agent::AssignTask(std::unique_ptr<ITask> t) {
+    m_Task = std::move(t);
+    if (m_Task) {
+        m_State = AgentState::Executing;
+        m_Task->Start(*this);
+    } else {
+        m_State = AgentState::Idle;
+    }
+}
+
+void Agent::ClearTask() {
+    m_Task.reset();
+    m_State = AgentState::Idle;
+}
+
+void Agent::EvaluateNeeds(const Environment& env, float dt) {
+    // Needs updaten
+    for (auto& n : m_Needs) n->Update(dt);
+
+    // Tod prüfen: Energie = 0
+    if (GetEnergyLevel() <= 0.0f) {
+        m_State = AgentState::Dead;
+        m_Velocity = {0, 0};
+        return;
+    }
+
+    // Utility-Choice
+    float bestU = -std::numeric_limits<float>::infinity();
+    INeed* chosen = nullptr;
+    for (auto& n : m_Needs) {
+        float u = n->Utility(*this, env);  // default = Priority()
+        if (u > bestU) {
+            bestU = u;
+            chosen = n.get();
+        }
+    }
+
+    if (chosen && m_State != AgentState::Executing) {
+        TaskFactory factory;
+        AssignTask(factory.MakeFor(*chosen, *this, env));
     }
 }
 
 void Agent::Update(float dt, const Environment& env) {
-    // Sensors (Vision, Proximity, etc.)
-    for (auto& s : m_Sensors) {
-        s->Update(*this, env);
-    }
+    if (m_State == AgentState::Dead) return;
 
-    // Current task
-    if (m_State == AgentState::Executing && m_CurrentTask) {
-        m_CurrentTask->Update(*this, dt);
-        if (m_CurrentTask->IsFinished()) {
-            m_State = AgentState::Idle;
-            m_CurrentTask.reset();
-        }
-    }
-}
+    EvaluateNeeds(env, dt);
 
-void Agent::AddNeed(std::unique_ptr<INeed> need) {
-    m_Needs.push_back(std::move(need));
-}
-
-const std::vector<std::unique_ptr<INeed>>& Agent::GetNeeds() const {
-    return m_Needs;
-}
-
-void Agent::SatisfyNeed(const std::string& need) {
-    std::for_each(m_Needs.begin(), m_Needs.end(), [&](auto& n) {
-        if (n->Name() == need) n->Reset();
-    });
-}
-
-void Agent::EvaluateNeeds(Environment& env, float dt) {
-    float bestPriority = 0.0f;
-    INeed* chosenNeed = nullptr;
-
-    for (auto& n : m_Needs) {
-        // Zeitbasierte Needs aktualisieren
-        n->Update(dt);
-
-        // Kontextabhängige Needs evaluieren
-        float urgency = n->Evaluate(*this, env);
-
-        if (urgency > bestPriority) {
-            bestPriority = urgency;
-            chosenNeed = n.get();
+    if (m_Task) {
+        m_Task->Update(*this, dt);
+        if (m_Task->IsFinished()) {
+            ClearTask();
         }
     }
 
-    // Prüfen auf kritische Needs (Tod durch Hunger)
-    for (auto& n : m_Needs) {
-        if (n->Name() == "Hunger" && n->Priority() >= 1.0f) {
-            m_State = AgentState::Dead;
-            return;
-        }
-    }
+    // Kinematik (Euler)
+    m_Position += m_Velocity * dt;
 
-    // Wenn Idle → Task zuweisen
-    if (chosenNeed && m_State == AgentState::Idle) {
-        if (chosenNeed->Name() == "Hunger") {
-            // Nächstgelegene FoodSource suchen
-            std::shared_ptr<FoodSource> best = nullptr;
-            float bestDist = std::numeric_limits<float>::max();
-
-            for (auto& fs : env.GetFoodSources()) {
-                float d = glm::length(fs->GetPosition() - m_Position);
-                if (d < bestDist) {
-                    bestDist = d;
-                    best = fs;
-                }
-            }
-
-            if (best) {
-                AssignTask(std::make_unique<SeekFoodTask>(best));
-            }
-        } else if (chosenNeed->Name() == "Exercise") {
-            AssignTask(std::make_unique<MoveTask>(env.RandomPosition(), std::make_unique<RandomDetourMovement>()));
-        }
-    }
-}
-
-void Agent::AttachSensor(SensorPtr sensor) {
-    m_Sensors.push_back(std::move(sensor));
-}
-
-const std::vector<SensorPtr>& Agent::GetSensors() const {
-    return m_Sensors;
-}
-
-// --- State ---
-void Agent::SetState(AgentState state) {
-    m_State = state;
-}
-AgentState Agent::GetState() const {
-    return m_State;
-}
-
-// --- Position ---
-const glm::vec2& Agent::GetPosition() const {
-    return m_Position;
-}
-void Agent::SetPosition(const glm::vec2& pos) {
-    m_Position = pos;
-}
-
-// --- Heading ---
-float Agent::GetHeading() const {
-    return m_Heading;
-}
-void Agent::SetHeading(float headingDeg) {
-    m_Heading = headingDeg;
-}
-
-// --- Desired Speed ---
-float Agent::GetSpeed() const {
-    return m_Speed;
-}
-void Agent::SetSpeed(float speed) {
-    m_Speed = speed;
-}
-
-// --- Velocity ---
-const glm::vec2& Agent::GetVelocity() const {
-    return m_Velocity;
-}
-
-void Agent::SetVelocity(const glm::vec2& vel) {
-    // Clamp to maxSpeed
-    float len = glm::length(vel);
-    if (len > m_Traits->maxSpeed) {
-        m_Velocity = (vel / len) * m_Traits->maxSpeed;
-    } else {
-        m_Velocity = vel;
-    }
-    // Update heading
-    if (glm::length(m_Velocity) > 1e-4f) {
-        m_Heading = glm::degrees(std::atan2(m_Velocity.x, m_Velocity.y));
-    }
+    // einfache Bounds (clamp in Environment-Bounds optional)
 }
 
 }  // namespace gr

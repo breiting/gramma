@@ -1,3 +1,4 @@
+#include <gramma/model/EnergyNeed.hpp>
 #include <gramma/model/SimAgentFactory.hpp>
 #include <memory>
 
@@ -12,11 +13,7 @@ std::unique_ptr<Agent> SimAgentFactory::Create(Environment* env) {
     auto agent = std::make_unique<Agent>(pos, heading, std::move(traits));
 
     // Needs
-    agent->AddNeed(std::make_unique<HungerNeed>(0.1f));
-    agent->AddNeed(std::make_unique<ExerciseNeed>());
-
-    // Sensors
-    agent->AttachSensor(std::make_unique<VisionSensor>(1.0f, 60.0f, 3));
+    agent->AddNeed(std::make_unique<EnergyNeed>());
 
     return agent;
 }

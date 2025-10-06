@@ -8,11 +8,11 @@ enum class Sex { Male, Female };
 class AgentTraits {
    public:
     virtual ~AgentTraits() = default;
-    AgeClass age;
-    Sex sex;
-    float bodyRadius;    // meters
-    float socialRadius;  // meters (social zone)
-    float maxSpeed;      // meters per second
+    AgeClass age{AgeClass::Adult};
+    Sex sex{Sex::Male};
+    float bodyRadius{0.2f};    // meters
+    float socialRadius{0.8f};  // meters (social zone)
+    float maxSpeed{3.0f};      // meters per second
 };
 
 }  // namespace gr

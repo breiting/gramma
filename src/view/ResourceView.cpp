@@ -1,23 +1,24 @@
 #include <glad.h>
 
-#include <gramma/view/FoodView.hpp>
+#include <gramma/view/ResourceView.hpp>
 
 namespace gr {
 
-void FoodView::Init() {
-    m_Shader.BuildFood();
+void ResourceView::Init() {
+    m_Shader.BuildResource();
     glGenVertexArrays(1, &m_VAO);
     glGenBuffers(1, &m_VBO);
 }
 
-void FoodView::Draw(const FoodSource* food, const glm::mat4& vp) {
+void ResourceView::Draw(const IResource* res, const glm::mat4& vp) {
     m_Shader.Bind();
     m_Shader.SetMat4("uMVP", vp);
-    m_Shader.SetVec2("uPos", food->GetPosition());
+    m_Shader.SetVec2("uPos", res->GetPosition());
 
     // Nutrition beeinflusst Größe
-    float baseRadius = 0.6f;  // "volle" FoodSource
-    float radius = baseRadius * (0.2f + 0.8f * food->GetNutrition());
+    float baseRadius = 0.6f;  // "volle" ResourceSource
+    // float radius = baseRadius * (0.2f + 0.8f * res->GetType());
+    float radius = baseRadius;  // TODO: dependent on resource type
     m_Shader.SetFloat("uRadius", radius);
 
     m_Shader.SetFloat("uBlendWidth", 0.05f);               // dünner soften Rand

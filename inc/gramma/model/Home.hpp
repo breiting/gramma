@@ -1,28 +1,58 @@
 #pragma once
 #include <glm/vec2.hpp>
-#include <gramma/model/Agent.hpp>
+#include <vector>
 
 namespace gr {
+class Agent;
 
-/** Represents a place where agents can rest */
 class Home {
    public:
-    Home(const glm::vec2& pos, int maxOccupancy = 4);
+    Home(const glm::vec2& pos, int maxOccupancy = 4) : m_Position(pos), m_MaxOccupancy(maxOccupancy) {
+    }
 
-    const glm::vec2& GetPosition() const;
+    const glm::vec2& GetPosition() const {
+        return m_Position;
+    }
 
-    bool CanEnter() const;
+    bool CanEnter() const {
+        return static_cast<int>(m_Agents.size()) < m_MaxOccupancy;
+    }
     bool Enter(Agent* agent);
     void Leave(Agent* agent);
 
+    int Capacity() const {
+        return m_MaxOccupancy;
+    }
+    int Occupancy() const {
+        return static_cast<int>(m_Agents.size());
+    }
     int GetMaxOccupancy() const {
         return m_MaxOccupancy;
+    }
+
+    // Pantry
+    void Deposit(float e) {
+        m_Pantry += e;
+        if (m_Pantry < 0) m_Pantry = 0;
+    }
+    float Withdraw(float e) {
+        float t = (e < m_Pantry) ? e : m_Pantry;
+        m_Pantry -= t;
+        return t;
+    }
+    float Pantry() const {
+        return m_Pantry;
+    }
+
+    const std::vector<Agent*>& Residents() const {
+        return m_Agents;
     }
 
    private:
     glm::vec2 m_Position;
     std::vector<Agent*> m_Agents;
     int m_MaxOccupancy;
+    float m_Pantry{0.0f};
 };
 
 }  // namespace gr

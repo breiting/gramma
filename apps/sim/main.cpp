@@ -2,7 +2,6 @@
 #include <iostream>
 #include <memory>
 
-#include "SegregationApp.hpp"
 #include "SimApp.hpp"
 
 using namespace gr;
@@ -13,8 +12,6 @@ int main() {
 
     if (name == "sim") {
         app = std::make_unique<SimApp>();
-    } else if (name == "seg") {
-        app = std::make_unique<SegregationApp>();
     }
 
     Runner runner;

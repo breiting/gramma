@@ -1,9 +1,11 @@
 #pragma once
 #include <glm/mat4x4.hpp>
+#include <glm/vec2.hpp>
 #include <gramma/model/Agent.hpp>
-#include <gramma/model/FoodSource.hpp>
 #include <gramma/model/Home.hpp>
 #include <gramma/model/ICollisionHandler.hpp>
+#include <gramma/model/IResource.hpp>
+#include <gramma/model/Types.hpp>
 #include <memory>
 #include <nanoflann.hpp>
 #include <vector>
@@ -35,14 +37,28 @@ struct AgentCloud {
  * Global environment that contains agents and food sources.
  * Responsible for updating the simulation state and rendering.
  */
+
 class Environment {
    public:
     Environment(float xmin, float xmax, float ymin, float ymax);
 
-    void AddAgent(std::unique_ptr<Agent> agent);
-    void AddFoodSource(std::shared_ptr<FoodSource> food);
-    void AddHome(std::unique_ptr<Home> home);
+    glm::vec2 RandomPosition() const;  // optional: implementieren im .cpp
 
+    void AddAgent(std::unique_ptr<Agent> a);
+    void AddResource(std::shared_ptr<IResource> r);
+    void AddHome(std::shared_ptr<Home> h);
+
+    const std::vector<std::unique_ptr<Agent>>& Agents() const {
+        return m_Agents;
+    }
+    const std::vector<std::shared_ptr<IResource>>& Resources() const {
+        return m_Resources;
+    }
+    const std::vector<std::shared_ptr<Home>>& Homes() const {
+        return m_Homes;
+    }
+
+    // Update-Loop
     void Update(float dt);
     void Render(const glm::mat4& vp);
 
@@ -50,6 +66,7 @@ class Environment {
     using KDTreeType =
         nanoflann::KDTreeSingleIndexAdaptor<nanoflann::L2_Simple_Adaptor<double, AgentCloud>, AgentCloud, 2, size_t>;
 
+    // TODO: remove this
     KDTreeType& GetKDTree() const {
         return *m_KDTree;
     }
@@ -62,10 +79,6 @@ class Environment {
     }
 
     void Stats() const;
-
-    const std::vector<std::unique_ptr<Agent>>& GetAgents() const;
-    const std::vector<std::unique_ptr<Home>>& GetHomes() const;
-    std::vector<std::shared_ptr<FoodSource>>& GetFoodSources();
 
     float XMin() const {
         return m_Xmin;
@@ -92,17 +105,15 @@ class Environment {
         return m_Agents[idx].get();
     }
 
-    glm::vec2 RandomPosition() const;
+    // Utility: nächste Ressource vom Typ
+    std::shared_ptr<IResource> FindNearest(ResourceType type, const glm::vec2& pos) const;
 
    private:
     float m_Xmin, m_Xmax, m_Ymin, m_Ymax;
-
     std::vector<std::unique_ptr<Agent>> m_Agents;
-    std::vector<std::shared_ptr<FoodSource>> m_FoodSources;
-    std::vector<std::unique_ptr<Home>> m_Homes;
-
+    std::vector<std::shared_ptr<IResource>> m_Resources;
+    std::vector<std::shared_ptr<Home>> m_Homes;
     std::unique_ptr<ICollisionHandler> m_CollisionHandler;
-
     AgentCloud m_Cloud;
     std::unique_ptr<KDTreeType> m_KDTree;
 };

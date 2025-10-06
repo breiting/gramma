@@ -1,8 +1,6 @@
 #pragma once
 #include <gramma/model/AgentFactory.hpp>
 #include <gramma/model/AgentTraits.hpp>
-#include <gramma/model/ExerciseNeed.hpp>
-#include <gramma/model/HungerNeed.hpp>
 #include <gramma/model/VisionSensor.hpp>
 
 namespace gr {

@@ -1,10 +1,10 @@
 #include <glm/glm.hpp>
+#include <gramma/model/Agent.hpp>
 #include <gramma/model/Environment.hpp>
-#include <gramma/model/HungerNeed.hpp>
-#include <gramma/model/SeekFoodTask.hpp>
-#include <gramma/model/Task.hpp>
-#include <iomanip>
+#include <gramma/model/IResource.hpp>
+#include <gramma/model/ITask.hpp>
 #include <iostream>
+#include <limits>
 #include <memory>
 #include <random>
 
@@ -13,17 +13,21 @@ namespace gr {
 Environment::Environment(float xmin, float xmax, float ymin, float ymax)
     : m_Xmin(xmin), m_Xmax(xmax), m_Ymin(ymin), m_Ymax(ymax) {
 }
-
-void Environment::AddAgent(std::unique_ptr<Agent> agent) {
-    m_Agents.push_back(std::move(agent));
+glm::vec2 Environment::RandomPosition() const {
+    static thread_local std::mt19937 rng{std::random_device{}()};
+    std::uniform_real_distribution<float> xDist(XMin(), XMax());
+    std::uniform_real_distribution<float> yDist(YMin(), YMax());
+    return glm::vec2(xDist(rng), yDist(rng));
 }
 
-void Environment::AddFoodSource(std::shared_ptr<FoodSource> food) {
-    m_FoodSources.push_back(food);
+void Environment::AddAgent(std::unique_ptr<Agent> a) {
+    m_Agents.emplace_back(std::move(a));
 }
-
-void Environment::AddHome(std::unique_ptr<Home> home) {
-    m_Homes.push_back(std::move(home));
+void Environment::AddResource(std::shared_ptr<IResource> r) {
+    m_Resources.emplace_back(std::move(r));
+}
+void Environment::AddHome(std::shared_ptr<Home> h) {
+    m_Homes.emplace_back(std::move(h));
 }
 
 void Environment::BuildSpatialIndex() {
@@ -35,20 +39,15 @@ void Environment::BuildSpatialIndex() {
 }
 
 void Environment::Update(float dt) {
-    // Update FoodSources
-    for (auto& f : m_FoodSources) {
-        f->Regenerate(dt);
-    }
+    // Ressourcen regenerieren
+    for (auto& r : m_Resources) r->Regenerate(dt);
 
     // KD-Tree for agents
     BuildSpatialIndex();
 
-    // Update Agents
+    // Agents updaten
     for (auto& a : m_Agents) {
-        if (a->GetState() != AgentState::Dead) {
-            a->EvaluateNeeds(*this, dt);
-            a->Update(dt, *this);
-        }
+        a->Update(dt, *this);
     }
 
     // Physics
@@ -63,69 +62,36 @@ void Environment::Update(float dt) {
                                   }),
                    m_Agents.end());
 
-    // Delete empty food sources
-    m_FoodSources.erase(std::remove_if(m_FoodSources.begin(), m_FoodSources.end(),
-                                       [](std::shared_ptr<FoodSource>& f) {
-                                           return f->GetNutrition() <= 0;  //
-                                       }),
-                        m_FoodSources.end());
+    // Delete empty resources
+    m_Resources.erase(std::remove_if(m_Resources.begin(), m_Resources.end(),
+                                     [](std::shared_ptr<IResource>& r) {
+                                         return r->IsDepleted();  //
+                                     }),
+                      m_Resources.end());
 }
 
-const std::vector<std::unique_ptr<Agent>>& Environment::GetAgents() const {
-    return m_Agents;
-}
-
-const std::vector<std::unique_ptr<Home>>& Environment::GetHomes() const {
-    return m_Homes;
-}
-
-std::vector<std::shared_ptr<FoodSource>>& Environment::GetFoodSources() {
-    return m_FoodSources;
-}
-
-glm::vec2 Environment::RandomPosition() const {
-    static thread_local std::mt19937 rng{std::random_device{}()};
-    std::uniform_real_distribution<float> xDist(XMin(), XMax());
-    std::uniform_real_distribution<float> yDist(YMin(), YMax());
-    return glm::vec2(xDist(rng), yDist(rng));
+std::shared_ptr<IResource> Environment::FindNearest(ResourceType type, const glm::vec2& pos) const {
+    float bestD2 = std::numeric_limits<float>::infinity();
+    std::shared_ptr<IResource> best = nullptr;
+    for (auto& r : m_Resources) {
+        if (r->GetType() != type || r->IsDepleted()) continue;
+        glm::vec2 d = r->GetPosition() - pos;
+        float d2 = glm::dot(d, d);
+        if (d2 < bestD2) {
+            bestD2 = d2;
+            best = r;
+        }
+    }
+    return best;
 }
 
 void Environment::Stats() const {
     size_t numAgents = m_Agents.size();
-    size_t numFood = m_FoodSources.size();
-
-    // Agents: Durchschnittlicher Hunger & Exercise
-    float avgHunger = 0.0f;
-    float avgExercise = 0.0f;
-    int hungerCount = 0, exerciseCount = 0;
-
-    for (const auto& a : m_Agents) {
-        for (const auto& n : a->GetNeeds()) {
-            if (n->Name() == "Hunger") {
-                avgHunger += n->Priority();
-                hungerCount++;
-            } else if (n->Name() == "Exercise") {
-                avgExercise += n->Priority();
-                exerciseCount++;
-            }
-        }
-    }
-    if (hungerCount > 0) avgHunger /= hungerCount;
-    if (exerciseCount > 0) avgExercise /= exerciseCount;
-
-    // Food: Durchschnittliche Nutrition
-    float avgFood = 0.0f;
-    for (const auto& f : m_FoodSources) {
-        avgFood += f->GetNutrition();
-    }
-    if (numFood > 0) avgFood /= numFood;
+    size_t numResources = m_Resources.size();
 
     // Ausgabe formatiert
     std::cout << "=== Environment Stats ===\n"
-              << "Agents: " << numAgents << "  |  FoodSources: " << numFood << "\n"
-              << "Avg Hunger:   " << std::fixed << std::setprecision(2) << avgHunger
-              << "  |  Avg Exercise: " << avgExercise << "\n"
-              << "Avg FoodNut:  " << avgFood << "\n"
+              << "Agents: " << numAgents << "  |  Resources: " << numResources << "\n"
               << "-------------------------\n";
 }
 

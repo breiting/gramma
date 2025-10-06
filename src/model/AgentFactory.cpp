@@ -1,6 +1,8 @@
 #include <chrono>
 #include <glm/glm.hpp>
+#include <gramma/model/Agent.hpp>
 #include <gramma/model/AgentFactory.hpp>
+#include <gramma/model/Environment.hpp>
 
 namespace gr {
 

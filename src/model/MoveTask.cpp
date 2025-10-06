@@ -10,17 +10,15 @@ MoveTask::MoveTask(const glm::vec2& target, std::unique_ptr<IMovementStrategy> s
 
 void MoveTask::Start(Agent& /*agent*/) {
     m_Done = false;
-    // nothing else to init here, strategy handles movement
 }
 
 void MoveTask::Update(Agent& agent, float dt) {
     if (m_Done) return;
-
     m_Strategy->Update(agent, m_Target, dt);
 
     float dist = glm::length(agent.GetPosition() - m_Target);
-    if (dist < agent.GetTraits()->bodyRadius * 0.5f) {
-        agent.SetVelocity({0.0f, 0.0f});
+    if (dist < agent.GetTraits().bodyRadius * 0.5f) {
+        agent.SetVelocity({0, 0});
         m_Done = true;
     }
 }

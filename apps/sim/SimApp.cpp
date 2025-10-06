@@ -7,11 +7,10 @@
 #include <gramma/core/Time.hpp>
 #include <gramma/core/Window.hpp>
 #include <gramma/model/Agent.hpp>
-#include <gramma/model/ExerciseNeed.hpp>
+#include <gramma/model/EnergyNeed.hpp>
+#include <gramma/model/FoodResource.hpp>
 #include <gramma/model/Home.hpp>
-#include <gramma/model/HungerNeed.hpp>
 #include <gramma/model/KDTreeCollisionHandler.hpp>
-#include <gramma/model/Room.hpp>
 #include <gramma/model/SimAgentFactory.hpp>
 #include <gramma/model/VisionSensor.hpp>
 #include <gramma/ui/ImGuiLayer.hpp>
@@ -33,7 +32,7 @@ static void GenerateFood(Environment* env) {
     if (!env) return;
     for (int i = 0; i < 5; ++i) {
         glm::vec2 pos = env->RandomPosition();
-        env->AddFoodSource(std::make_shared<gr::FoodSource>(pos, 1.0, 0.1));
+        env->AddResource(std::make_shared<gr::FoodResource>(pos, 1.0, 0.1));
     }
 }
 
@@ -141,8 +140,8 @@ void SimApp::Render(gr::AppContext& ctx) {
 
     // Dein Panel
     ImGui::Begin("Environment Stats");
-    ImGui::Text("Agents: %zu", m_Env->GetAgents().size());
-    ImGui::Text("FoodSources: %zu", m_Env->GetFoodSources().size());
+    ImGui::Text("Agents: %zu", m_Env->Agents().size());
+    ImGui::Text("FoodSources: %zu", m_Env->Resources().size());
     ImGui::SliderFloat("Timescale", &m_Timescale, 0.5, 10.0);
     ImGui::End();
 
