@@ -103,9 +103,8 @@ add_library(gramma
 		src/model/AgentFactory.cpp
 		src/model/BruteForceCollisionHandler.cpp
 		src/model/Environment.cpp
-		src/model/ExerciseNeed.cpp
 		src/model/FoodSource.cpp
-		src/model/HungerNeed.cpp
+		src/model/EnergyNeed.cpp
 		src/model/KDTreeCollisionHandler.cpp
 		src/model/Room.cpp
 		src/model/DirectMovement.cpp
