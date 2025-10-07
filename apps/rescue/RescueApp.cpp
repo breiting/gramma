@@ -60,6 +60,10 @@ bool RescueApp::Init(gr::AppContext& ctx) {
     //     {-ew / 2.0, -eh / 2.0}, {ew / 2.0, -eh / 2.0}, {ew / 2.0, eh / 2.0}, {-ew / 2.0, eh / 2.0}};
     m_Env->AddBoundary(room);
 
+    // Innen (z.B. ein quadratisches Loch in der Mitte)
+    std::vector<glm::vec2> inner = {{-10, -10}, {10, -10}, {10, 10}, {-10, 10}};
+    m_Env->AddObstacle(inner);
+
     m_EnvView.Init();
 
     m_Gui = std::make_unique<ImGuiLayer>(ctx.GetWindow().GetNativeWindow());

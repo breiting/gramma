@@ -57,6 +57,11 @@ void EnvironmentView::Draw(Environment* env, const Camera2D& cam) {
     {
         m_Bounds.Set(env->GetBoundary());
         m_Bounds.Draw(m_Shader, cam.ViewProj(), glm::vec4(0.7f, 0.7f, 0.7f, 1.0f));
+
+        for (auto& o : env->GetObstacles()) {
+            m_Bounds.Set(o);
+            m_Bounds.Draw(m_Shader, cam.ViewProj(), glm::vec4(1.0f, 0.7f, 0.7f, 1.0f));
+        }
     }
 
     // --- Agents ---

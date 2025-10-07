@@ -22,6 +22,16 @@ Environment::~Environment() {
     b2DestroyWorld(m_World);
 }
 
+void Environment::AddBoundary(const std::vector<glm::vec2>& contour) {
+    m_Boundary = contour;
+    CreateChainShape(contour);
+}
+
+void Environment::AddObstacle(const std::vector<glm::vec2>& contour) {
+    m_Obstacles.push_back(contour);
+    CreateChainShape(contour);
+}
+
 bool Environment::ContainsPoint(const glm::vec2& p) const {
     bool inside = false;
     int n = (int)m_Boundary.size();
@@ -65,23 +75,44 @@ glm::vec2 Environment::RandomPosition() const {
     return {(minX + maxX) * 0.5f, (minY + maxY) * 0.5f};
 }
 
-void Environment::AddBoundary(const std::vector<glm::vec2>& vertices) {
+void Environment::CreateChainShape(const std::vector<glm::vec2>& contour) {
+    if (contour.size() < 4) {
+        std::cerr << "Chain needs >= 4 points\n";
+        return;
+    }
+
+    // 1) statischer Body
     b2BodyDef bd = b2DefaultBodyDef();
     bd.type = b2_staticBody;
     b2BodyId body = b2CreateBody(m_World, &bd);
 
-    for (size_t i = 0; i < vertices.size(); ++i) {
-        auto a = vertices[i];
-        auto b = vertices[(i + 1) % vertices.size()];
-
-        b2Segment segment;
-        segment.point1 = {a.x, a.y};
-        segment.point2 = {b.x, b.y};
-
-        b2ShapeDef sd = b2DefaultShapeDef();
-        b2CreateSegmentShape(body, &sd, &segment);
+    // 2) Punkte nach b2Vec2 kopieren
+    std::vector<b2Vec2> pts;
+    pts.reserve(contour.size());
+    for (const auto& p : contour) {
+        pts.push_back({p.x, p.y});
     }
-    m_Boundary = vertices;
+
+    // 3) ChainDef ausfüllen (v3.1.1)
+    b2ChainDef cd = b2DefaultChainDef();
+    cd.points = pts.data();  // <— statt vertices
+    cd.count = static_cast<int>(pts.size());
+    cd.isLoop = true;  // geschlossene Kette (Boundary)
+
+    // optional: Material/Friction/Restitution pro Chain
+    // b2SurfaceMaterial mat = b2DefaultSurfaceMaterial();
+    // mat.friction = 0.9f;
+    // cd.materials = &mat;
+    // cd.materialCount = 1;
+
+    // 4) Chain erzeugen
+    b2ChainId chain = b2CreateChain(body, &cd);
+
+    // optional: global setzen
+    // b2Chain_SetFriction(chain, 0.9f);
+    // b2Chain_SetRestitution(chain, 0.0f);
+
+    // Hinweis: pts muss bis nach CreateChain leben (hier ok, lokale Kopie)
 }
 
 void Environment::AddAgent(std::unique_ptr<Agent> agent) {
@@ -125,6 +156,10 @@ void Environment::AddHome(std::shared_ptr<Home> h) {
 
 const std::vector<glm::vec2>& Environment::GetBoundary() const {
     return m_Boundary;
+}
+
+const std::vector<std::vector<glm::vec2>>& Environment::GetObstacles() const {
+    return m_Obstacles;
 }
 
 void Environment::Update(float dt) {

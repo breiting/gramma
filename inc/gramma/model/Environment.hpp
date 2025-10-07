@@ -23,7 +23,10 @@ class Environment {
     ~Environment();
 
     void AddBoundary(const std::vector<glm::vec2>& vertices);
+    void AddObstacle(const std::vector<glm::vec2>& contour);
+
     const std::vector<glm::vec2>& GetBoundary() const;
+    const std::vector<std::vector<glm::vec2>>& GetObstacles() const;
 
     bool ContainsPoint(const glm::vec2& p) const;
     glm::vec2 RandomPosition() const;
@@ -61,8 +64,12 @@ class Environment {
     std::shared_ptr<IResource> FindNearest(ResourceType type, const glm::vec2& pos) const;
 
    private:
+    void CreateChainShape(const std::vector<glm::vec2>& contour);
+
+   private:
     b2WorldId m_World;
     std::vector<glm::vec2> m_Boundary;
+    std::vector<std::vector<glm::vec2>> m_Obstacles;
 
     std::vector<std::unique_ptr<Agent>> m_Agents;
     std::vector<std::shared_ptr<IResource>> m_Resources;
