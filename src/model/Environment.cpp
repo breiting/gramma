@@ -70,6 +70,15 @@ void Environment::Update(float dt) {
                       m_Resources.end());
 }
 
+Home* Environment::GetNextFreeHome() {
+    for (auto& h : m_Homes) {
+        if (h->Occupancy() < h->GetMaxOccupancy()) {
+            return h.get();
+        }
+    }
+    return nullptr;
+}
+
 std::shared_ptr<IResource> Environment::FindNearest(ResourceType type, const glm::vec2& pos) const {
     float bestD2 = std::numeric_limits<float>::infinity();
     std::shared_ptr<IResource> best = nullptr;

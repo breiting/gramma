@@ -57,6 +57,7 @@ class Environment {
     const std::vector<std::shared_ptr<Home>>& Homes() const {
         return m_Homes;
     }
+    Home* GetNextFreeHome();
 
     // Update-Loop
     void Update(float dt);

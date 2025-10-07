@@ -7,7 +7,7 @@ namespace gr {
 std::unique_ptr<Agent> SimAgentFactory::Create(Environment* env) {
     auto traits = std::make_unique<AgentTraits>(RandomTraits());
 
-    glm::vec2 pos = RandomPosition(env->GetWidth(), env->GetHeight());
+    glm::vec2 pos = env->RandomPosition();
     float heading = RandomHeading();
 
     auto agent = std::make_unique<Agent>(pos, heading, std::move(traits));

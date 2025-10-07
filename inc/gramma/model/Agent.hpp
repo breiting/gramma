@@ -1,6 +1,7 @@
 #pragma once
 #include <glm/vec2.hpp>
 #include <gramma/model/AgentTraits.hpp>
+#include <gramma/model/EnergyNeed.hpp>
 #include <gramma/model/INeed.hpp>
 #include <gramma/model/ITask.hpp>
 #include <gramma/model/Types.hpp>
@@ -16,7 +17,6 @@ class Agent {
     Agent(const glm::vec2& pos, float headingDeg, std::unique_ptr<AgentTraits> traits, Home* home = nullptr);
     ~Agent();
 
-    // Kapselung Zustand
     const glm::vec2& GetPosition() const {
         return m_Position;
     }
@@ -79,13 +79,16 @@ class Agent {
         m_Home = h;
     }
 
-   private:
-    // intern
-    class EnergyNeed* findEnergyNeed() const;
+    void AddNeed(std::unique_ptr<INeed> need) {
+        m_Needs.emplace_back(std::move(need));
+    }
 
    private:
-    glm::vec2 m_Position{0};
-    glm::vec2 m_Velocity{0};
+    EnergyNeed* findEnergyNeed() const;
+
+   private:
+    glm::vec2 m_Position{0, 0};
+    glm::vec2 m_Velocity{0, 0};
     float m_HeadingDeg{0.0f};
 
     std::unique_ptr<AgentTraits> m_Traits;
@@ -94,12 +97,6 @@ class Agent {
 
     AgentState m_State{AgentState::Idle};
     Home* m_Home{nullptr};
-
-   public:
-    // Helpers
-    void AddNeed(std::unique_ptr<INeed> need) {
-        m_Needs.emplace_back(std::move(need));
-    }
 };
 
 }  // namespace gr

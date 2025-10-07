@@ -17,8 +17,6 @@ class AgentFactory {
     virtual std::unique_ptr<Agent> Create(Environment* env) = 0;
 
    protected:
-    // Utility functions for all factories
-    glm::vec2 RandomPosition(int width, int height);
     float RandomHeading();
 
     std::mt19937 m_Rng;

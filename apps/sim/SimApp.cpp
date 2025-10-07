@@ -22,15 +22,21 @@ using namespace std;
 static void GenerateAgents(Environment* env) {
     if (!env) return;
     SimAgentFactory factory;
-    for (int i = 0; i < 50; ++i) {
+    for (int i = 0; i < 20; ++i) {
         auto agent = factory.Create(env);
+        Home* home = env->GetNextFreeHome();
+        if (home) {
+            agent->SetHome(home);
+            home->Enter(agent.get());
+        }
+
         env->AddAgent(std::move(agent));
     }
 }
 
 static void GenerateFood(Environment* env) {
     if (!env) return;
-    for (int i = 0; i < 5; ++i) {
+    for (int i = 0; i < 1; ++i) {
         glm::vec2 pos = env->RandomPosition();
         env->AddResource(std::make_shared<gr::FoodResource>(pos, 1.0, 0.1));
     }
@@ -66,9 +72,9 @@ bool SimApp::Init(gr::AppContext& ctx) {
     // Setup camera
     m_Camera.SetOrthoByHeight(envHeight + border, ctx.Aspect());
 
+    GenerateHome(m_Env.get());
     GenerateAgents(m_Env.get());
     GenerateFood(m_Env.get());
-    GenerateHome(m_Env.get());
 
     onKeyPressed = [this, &ctx](int key, int /*mods*/) {
         if (key == GLFW_KEY_ESCAPE) {

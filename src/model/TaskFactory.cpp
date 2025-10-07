@@ -3,6 +3,8 @@
 #include <gramma/model/Environment.hpp>
 #include <gramma/model/INeed.hpp>
 #include <gramma/model/IResource.hpp>
+#include <gramma/model/MoveTask.hpp>
+#include <gramma/model/RandomDetourMovement.hpp>
 #include <gramma/model/RestTask.hpp>
 #include <gramma/model/SeekResourceTask.hpp>
 #include <gramma/model/TaskFactory.hpp>
@@ -12,9 +14,8 @@
 namespace gr {
 
 std::unique_ptr<ITask> TaskFactory::MakeFor(const INeed& need, Agent& agent, const Environment& env) {
-    // Utility-basierte, zentrale Abbildung Need -> Task (ohne if-else im Agent)
     if (need.Name() == "Energy") {
-        // Regel: wenn Energie unter 'low' -> Ressource suchen, sonst zuhause ruhen
+        // Rule: if energy is below 'low' search for resource, otherwise go home
         const auto* e = dynamic_cast<const EnergyNeed*>(&need);
         float level = agent.GetEnergyLevel();
         if (e && level < e->LowThreshold()) {
@@ -25,8 +26,10 @@ std::unique_ptr<ITask> TaskFactory::MakeFor(const INeed& need, Agent& agent, con
             // keine Ressource gefunden -> als Fallback ruhen (bringt wenig, aber blockiert nicht)
             return std::make_unique<RestTask>(e ? e->Target() : 0.85f);
         } else {
-            float target = e ? e->Target() : 0.85f;
-            return std::make_unique<RestTask>(target);
+            if (agent.GetHome()) {
+                return std::make_unique<MoveTask>(agent.GetHome()->GetPosition(),
+                                                  std::make_unique<RandomDetourMovement>());
+            }
         }
     }
 

@@ -29,26 +29,36 @@ void Agent::SetVelocity(const glm::vec2& v) {
 
 EnergyNeed* Agent::findEnergyNeed() const {
     for (auto& n : m_Needs) {
-        if (auto* e = dynamic_cast<EnergyNeed*>(n.get())) return e;
+        if (auto* e = dynamic_cast<EnergyNeed*>(n.get())) {
+            return e;
+        }
     }
     return nullptr;
 }
 
 float Agent::GetEnergyLevel() const {
-    if (auto* e = findEnergyNeed()) return e->Level();
+    if (auto* e = findEnergyNeed()) {
+        return e->Level();
+    }
     return 0.0f;
 }
 
 void Agent::AddEnergyIntake(float de) {
-    if (auto* e = findEnergyNeed()) e->AddIntake(de);
+    if (auto* e = findEnergyNeed()) {
+        e->AddIntake(de);
+    }
 }
 
 void Agent::AddEnergyRest(float dt) {
-    if (auto* e = findEnergyNeed()) e->AddRest(dt);
+    if (auto* e = findEnergyNeed()) {
+        e->AddRest(dt);
+    }
 }
 
 void Agent::AddActivityCost(float speed, float dt) {
-    if (auto* e = findEnergyNeed()) e->AddActivityCost(speed, dt);
+    if (auto* e = findEnergyNeed()) {
+        e->AddActivityCost(speed, dt);
+    }
 }
 
 bool Agent::IsEnergyBelow(float t) const {
@@ -71,10 +81,10 @@ void Agent::ClearTask() {
 }
 
 void Agent::EvaluateNeeds(const Environment& env, float dt) {
-    // Needs updaten
-    for (auto& n : m_Needs) n->Update(dt);
+    for (auto& n : m_Needs) {
+        n->Update(dt);
+    }
 
-    // Tod prüfen: Energie = 0
     if (GetEnergyLevel() <= 0.0f) {
         m_State = AgentState::Dead;
         m_Velocity = {0, 0};
@@ -85,7 +95,7 @@ void Agent::EvaluateNeeds(const Environment& env, float dt) {
     float bestU = -std::numeric_limits<float>::infinity();
     INeed* chosen = nullptr;
     for (auto& n : m_Needs) {
-        float u = n->Utility(*this, env);  // default = Priority()
+        float u = n->Utility(*this, env);
         if (u > bestU) {
             bestU = u;
             chosen = n.get();
@@ -112,8 +122,6 @@ void Agent::Update(float dt, const Environment& env) {
 
     // Kinematik (Euler)
     m_Position += m_Velocity * dt;
-
-    // einfache Bounds (clamp in Environment-Bounds optional)
 }
 
 }  // namespace gr
