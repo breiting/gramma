@@ -55,11 +55,7 @@ void EnvironmentView::Draw(Environment* env, const Camera2D& cam) {
 
     // --- Bounds ---
     {
-        std::vector<glm::vec2> contour = {{env->XMin(), env->YMin()},
-                                          {env->XMax(), env->YMin()},
-                                          {env->XMax(), env->YMax()},
-                                          {env->XMin(), env->YMax()}};
-        m_Bounds.Set(contour);
+        m_Bounds.Set(env->GetBoundary());
         m_Bounds.Draw(m_Shader, cam.ViewProj(), glm::vec4(0.7f, 0.7f, 0.7f, 1.0f));
     }
 

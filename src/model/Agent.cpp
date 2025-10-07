@@ -1,4 +1,3 @@
-#include <cmath>
 #include <glm/glm.hpp>
 #include <gramma/model/Agent.hpp>
 #include <gramma/model/EnergyNeed.hpp>
@@ -14,18 +13,57 @@ Agent::Agent(const glm::vec2& pos, float headingDeg, std::unique_ptr<AgentTraits
     : m_Position(pos), m_HeadingDeg(headingDeg), m_Traits(std::move(traits)), m_Home(home) {
 }
 
-Agent::~Agent() = default;
-
 void Agent::SetVelocity(const glm::vec2& v) {
-    float len = glm::length(v);
-    float maxV = m_Traits->maxSpeed;
-    glm::vec2 clamped = (len > maxV && len > 1e-6f) ? (v / len) * maxV : v;
-    m_Velocity = clamped;
-
-    if (glm::length(m_Velocity) > 1e-6f) {
-        m_HeadingDeg = glm::degrees(std::atan2(m_Velocity.x, m_Velocity.y));
+    if (m_Body.index1) {
+        b2Body_SetLinearVelocity(m_Body, {v.x, v.y});
+        // for human like movement
+        // b2Body_ApplyForceToCenter(m_Body, {v.x, v.y}, true);
     }
 }
+
+glm::vec2 Agent::GetVelocity() const {
+    if (m_Body.index1) {
+        auto v = b2Body_GetLinearVelocity(m_Body);
+        return glm::vec2(v.x, v.y);
+    }
+    return glm::vec2{0};
+}
+
+const glm::vec2& Agent::GetPosition() const {
+    return m_Position;
+}
+void Agent::SetPosition(const glm::vec2& p) {
+    m_Position = p;
+}
+
+float Agent::GetHeading() const {
+    return m_HeadingDeg;
+}
+void Agent::SetHeading(float deg) {
+    m_HeadingDeg = deg;
+}
+
+const AgentTraits& Agent::GetTraits() const {
+    return *m_Traits;
+}
+AgentTraits& Agent::GetTraits() {
+    return *m_Traits;
+}
+
+template <typename T>
+T* Agent::GetTraitsAs() {
+    return dynamic_cast<T*>(m_Traits.get());
+}
+template <typename T>
+const T* Agent::GetTraitsAs() const {
+    return dynamic_cast<const T*>(m_Traits.get());
+}
+
+AgentState Agent::GetState() const {
+    return m_State;
+}
+
+Agent::~Agent() = default;
 
 EnergyNeed* Agent::findEnergyNeed() const {
     for (auto& n : m_Needs) {
@@ -87,7 +125,6 @@ void Agent::EvaluateNeeds(const Environment& env, float dt) {
 
     if (GetEnergyLevel() <= 0.0f) {
         m_State = AgentState::Dead;
-        m_Velocity = {0, 0};
         return;
     }
 
@@ -119,9 +156,6 @@ void Agent::Update(float dt, const Environment& env) {
             ClearTask();
         }
     }
-
-    // Kinematik (Euler)
-    m_Position += m_Velocity * dt;
 }
 
 }  // namespace gr

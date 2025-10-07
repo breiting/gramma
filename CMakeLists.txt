@@ -42,6 +42,14 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(glfw)
 
 FetchContent_Declare(
+		box2d
+		GIT_REPOSITORY https://github.com/erincatto/box2d.git
+		GIT_TAG v3.1.1
+)
+
+FetchContent_MakeAvailable(box2d)
+
+FetchContent_Declare(
 		imgui
 		GIT_REPOSITORY https://github.com/ocornut/imgui.git
 		GIT_TAG v1.92.3
@@ -101,12 +109,10 @@ add_library(gramma
 
 		src/model/Agent.cpp
 		src/model/AgentFactory.cpp
-		src/model/BruteForceCollisionHandler.cpp
 		src/model/DirectMovement.cpp
 		src/model/EnergyNeed.cpp
 		src/model/Environment.cpp
 		src/model/Home.cpp
-		src/model/KDTreeCollisionHandler.cpp
 		src/model/MoveTask.cpp
 		src/model/RandomDetourMovement.cpp
 		src/model/RestTask.cpp
@@ -155,8 +161,9 @@ embed_text_to_header("${SHADER_SRC_DIR}/line.frag"   "${GEN_INC_DIR}/assets/line
 target_link_libraries(gramma
 PUBLIC
 	project_settings
-	glfw glad glm::glm
+	box2d glfw glad glm::glm
 )
+
 target_compile_features(gramma PUBLIC cxx_std_17)
 
 target_include_directories(gramma

@@ -1,4 +1,6 @@
 #pragma once
+#include <box2d/box2d.h>
+
 #include <glm/vec2.hpp>
 #include <gramma/model/AgentTraits.hpp>
 #include <gramma/model/EnergyNeed.hpp>
@@ -17,44 +19,24 @@ class Agent {
     Agent(const glm::vec2& pos, float headingDeg, std::unique_ptr<AgentTraits> traits, Home* home = nullptr);
     ~Agent();
 
-    const glm::vec2& GetPosition() const {
-        return m_Position;
-    }
-    void SetPosition(const glm::vec2& p) {
-        m_Position = p;
-    }
-
-    const glm::vec2& GetVelocity() const {
-        return m_Velocity;
-    }
     void SetVelocity(const glm::vec2& v);
+    glm::vec2 GetVelocity() const;
 
-    float GetHeading() const {
-        return m_HeadingDeg;
-    }
-    void SetHeading(float deg) {
-        m_HeadingDeg = deg;
-    }
+    const glm::vec2& GetPosition() const;
+    void SetPosition(const glm::vec2& p);
 
-    const AgentTraits& GetTraits() const {
-        return *m_Traits;
-    }
-    AgentTraits& GetTraits() {
-        return *m_Traits;
-    }
+    float GetHeading() const;
+    void SetHeading(float deg);
+
+    const AgentTraits& GetTraits() const;
+    AgentTraits& GetTraits();
 
     template <typename T>
-    T* GetTraitsAs() {
-        return dynamic_cast<T*>(m_Traits.get());
-    }
+    T* GetTraitsAs();
     template <typename T>
-    const T* GetTraitsAs() const {
-        return dynamic_cast<const T*>(m_Traits.get());
-    }
+    const T* GetTraitsAs() const;
 
-    AgentState GetState() const {
-        return m_State;
-    }
+    AgentState GetState() const;
 
     // Need-Fassade (Energy)
     float GetEnergyLevel() const;
@@ -62,6 +44,13 @@ class Agent {
     void AddEnergyRest(float dt);
     void AddActivityCost(float speed, float dt);
     bool IsEnergyBelow(float t) const;
+
+    b2BodyId GetBody() const {
+        return m_Body;
+    }
+    void SetBody(b2BodyId body) {
+        m_Body = body;
+    }
 
     // Task
     void AssignTask(std::unique_ptr<ITask> t);
@@ -88,7 +77,7 @@ class Agent {
 
    private:
     glm::vec2 m_Position{0, 0};
-    glm::vec2 m_Velocity{0, 0};
+    b2BodyId m_Body;
     float m_HeadingDeg{0.0f};
 
     std::unique_ptr<AgentTraits> m_Traits;

@@ -10,7 +10,6 @@
 #include <gramma/model/EnergyNeed.hpp>
 #include <gramma/model/FoodResource.hpp>
 #include <gramma/model/Home.hpp>
-#include <gramma/model/KDTreeCollisionHandler.hpp>
 #include <gramma/model/SimAgentFactory.hpp>
 #include <gramma/model/VisionSensor.hpp>
 #include <gramma/ui/ImGuiLayer.hpp>
@@ -59,22 +58,25 @@ bool SimApp::Init(gr::AppContext& ctx) {
 
     // Room
     constexpr float border = 1.0;
-    constexpr float envWidth = 50.0;
-    constexpr float envHeight = 30.0;
+    constexpr float ew = 50.0;
+    constexpr float eh = 30.0;
 
-    m_Env = std::make_unique<gr::Environment>(-envWidth / 2.0, envWidth / 2.0, -envHeight / 2.0, envHeight / 2.0);
-    m_Env->SetCollisionHandler(std::make_unique<KDTreeCollisionHandler>());
+    m_Env = std::make_unique<gr::Environment>(glm::vec2(0, 0));
+
+    std::vector<glm::vec2> room = {
+        {-ew / 2.0, -eh / 2.0}, {ew / 2.0, -eh / 2.0}, {ew / 2.0, eh / 2.0}, {-ew / 2.0, eh / 2.0}};
+    m_Env->AddBoundary(room);
 
     m_EnvView.Init();
 
     m_Gui = std::make_unique<ImGuiLayer>(ctx.GetWindow().GetNativeWindow());
 
     // Setup camera
-    m_Camera.SetOrthoByHeight(envHeight + border, ctx.Aspect());
+    m_Camera.SetOrthoByHeight(eh + border, ctx.Aspect());
 
     GenerateHome(m_Env.get());
     GenerateAgents(m_Env.get());
-    GenerateFood(m_Env.get());
+    // GenerateFood(m_Env.get());
 
     onKeyPressed = [this, &ctx](int key, int /*mods*/) {
         if (key == GLFW_KEY_ESCAPE) {
@@ -110,7 +112,7 @@ bool SimApp::Init(gr::AppContext& ctx) {
 void SimApp::Update(gr::AppContext& /*ctx*/, double dt) {
     TimeMeasureGuard guard("Update");
 
-    bool drawStats = true;
+    bool drawStats = false;
     if (drawStats) {
         static float lastPrint = 0.0f;
         float currentTime = Now();

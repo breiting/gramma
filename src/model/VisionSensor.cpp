@@ -11,6 +11,8 @@ VisionSensor::VisionSensor(float range, float fov, int rays) : m_Range(range), m
 }
 
 void VisionSensor::Update(const Agent& self, const Environment& env) {
+// TODO: disabled
+#if 0
     // Reset Hits
     for (auto& hit : m_Hits) {
         hit.targetAgent = nullptr;
@@ -61,6 +63,7 @@ void VisionSensor::Update(const Agent& self, const Environment& env) {
             m_Hits[rayIdx].isAgent = true;
         }
     }
+#endif
 }
 
 }  // namespace gr

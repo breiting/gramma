@@ -13,18 +13,13 @@ void DirectMovement::Update(Agent& agent, const glm::vec2& target, float dt) {
     }
 
     glm::vec2 dir = to / dist;
-
     float maxV = agent.GetTraits().maxSpeed;
 
     // Velocity scales with energy
     float energy = agent.GetEnergyLevel();
     float speed = maxV * (0.5f + 0.5f * energy);
-    if (speed > maxV) speed = maxV;
 
     agent.SetVelocity(dir * speed);
-    agent.SetPosition(agent.GetPosition() + agent.GetVelocity() * dt);
-
-    agent.AddActivityCost(glm::length(agent.GetVelocity()), dt);
+    agent.AddActivityCost(speed, dt);
 }
-
 }  // namespace gr

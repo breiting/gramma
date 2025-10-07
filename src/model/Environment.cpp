@@ -8,51 +8,106 @@
 #include <memory>
 #include <random>
 
+#include "box2d/math_functions.h"
+
 namespace gr {
 
-Environment::Environment(float xmin, float xmax, float ymin, float ymax)
-    : m_Xmin(xmin), m_Xmax(xmax), m_Ymin(ymin), m_Ymax(ymax) {
+Environment::Environment(const glm::vec2& gravity) {
+    b2WorldDef def = b2DefaultWorldDef();
+    def.gravity = {gravity.x, gravity.y};
+    m_World = b2CreateWorld(&def);
 }
+
+Environment::~Environment() {
+    b2DestroyWorld(m_World);
+}
+
 glm::vec2 Environment::RandomPosition() const {
     static thread_local std::mt19937 rng{std::random_device{}()};
-    std::uniform_real_distribution<float> xDist(XMin(), XMax());
-    std::uniform_real_distribution<float> yDist(YMin(), YMax());
+    std::uniform_real_distribution<float> xDist(-10, 10);
+    std::uniform_real_distribution<float> yDist(-10, 10);
     return glm::vec2(xDist(rng), yDist(rng));
 }
 
-void Environment::AddAgent(std::unique_ptr<Agent> a) {
-    m_Agents.emplace_back(std::move(a));
+void Environment::AddBoundary(const std::vector<glm::vec2>& vertices) {
+    b2BodyDef bd = b2DefaultBodyDef();
+    bd.type = b2_staticBody;
+    b2BodyId body = b2CreateBody(m_World, &bd);
+
+    for (size_t i = 0; i < vertices.size(); ++i) {
+        auto a = vertices[i];
+        auto b = vertices[(i + 1) % vertices.size()];
+
+        b2Segment segment;
+        segment.point1 = {a.x, a.y};
+        segment.point2 = {b.x, b.y};
+
+        b2ShapeDef sd = b2DefaultShapeDef();
+        b2CreateSegmentShape(body, &sd, &segment);
+    }
+    m_Boundary = vertices;
+}
+
+void Environment::AddAgent(std::unique_ptr<Agent> agent) {
+    // Save position/heading before move
+    glm::vec2 pos = agent->GetPosition();
+    float heading = agent->GetHeading();
+
+    // Body definition
+    b2BodyDef bd = b2DefaultBodyDef();
+    bd.type = b2_dynamicBody;
+    bd.position = {pos.x, pos.y};
+    bd.rotation = b2MakeRot(glm::radians(heading));
+
+    // Create body in the world
+    b2BodyId body = b2CreateBody(m_World, &bd);
+
+    // Shape (circle for agent body)
+    b2Circle circle;
+    circle.center = {0.0f, 0.0f};
+    circle.radius = agent->GetTraits().bodyRadius;
+
+    b2ShapeDef sd = b2DefaultShapeDef();
+    sd.density = 1.0f;
+
+    b2CreateCircleShape(body, &sd, &circle);
+
+    // Give body to agent
+    agent->SetBody(body);
+
+    // Store agent in environment
+    m_Agents.emplace_back(std::move(agent));
 }
 void Environment::AddResource(std::shared_ptr<IResource> r) {
+    // TODO: box2d
     m_Resources.emplace_back(std::move(r));
 }
 void Environment::AddHome(std::shared_ptr<Home> h) {
+    // TODO: box2d
     m_Homes.emplace_back(std::move(h));
 }
 
-void Environment::BuildSpatialIndex() {
-    m_Cloud.agents = &m_Agents;
-    if (!m_KDTree) {
-        m_KDTree = std::make_unique<KDTreeType>(2, m_Cloud, nanoflann::KDTreeSingleIndexAdaptorParams(10));
-    }
-    m_KDTree->buildIndex();
+const std::vector<glm::vec2>& Environment::GetBoundary() const {
+    return m_Boundary;
 }
 
 void Environment::Update(float dt) {
+    b2World_Step(m_World, dt, 4);
+
     // Ressourcen regenerieren
     for (auto& r : m_Resources) r->Regenerate(dt);
 
-    // KD-Tree for agents
-    BuildSpatialIndex();
+    // Sync and update agents
+    for (auto& agent : m_Agents) {
+        if (agent->GetBody().index1 != 0) {
+            b2Transform xf = b2Body_GetTransform(agent->GetBody());
+            glm::vec2 pos = {xf.p.x, xf.p.y};
+            float angle = b2Rot_GetAngle(xf.q);
 
-    // Agents updaten
-    for (auto& a : m_Agents) {
-        a->Update(dt, *this);
-    }
-
-    // Physics
-    if (m_CollisionHandler) {
-        m_CollisionHandler->Resolve(*this);
+            agent->SetPosition(pos);
+            agent->SetHeading(glm::degrees(angle));
+        }
+        agent->Update(dt, *this);
     }
 
     // Delete dead agents
