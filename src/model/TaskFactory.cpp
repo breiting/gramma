@@ -31,6 +31,8 @@ std::unique_ptr<ITask> TaskFactory::MakeFor(const INeed& need, Agent& agent, con
                                                   std::make_unique<RandomDetourMovement>());
             }
         }
+    } else if (need.Name() == "Walk") {
+        return std::make_unique<MoveTask>(env.RandomPosition(), std::make_unique<RandomDetourMovement>());
     }
 
     // Default: nichts

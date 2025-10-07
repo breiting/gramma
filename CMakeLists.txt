@@ -16,7 +16,7 @@ file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/generated/assets")
 
 # Options
 option(GRAMMA_BUILD_SIM "Build sim app" ON)
-option(GRAMMA_BUILD_RESCUE "Build rescue app" OFF)
+option(GRAMMA_BUILD_RESCUE "Build rescue app" ON)
 
 # -------- Dependencies (fetch once, available everywhere) --------
 include(FetchContent)

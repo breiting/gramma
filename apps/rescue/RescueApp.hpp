@@ -1,12 +1,11 @@
 #pragma once
 
 #include <gramma/core/IApp.hpp>
-#include <gramma/model/Simulation.hpp>
+#include <gramma/model/Environment.hpp>
+#include <gramma/ui/IGuiLayer.hpp>
+#include <gramma/view/AgentView.hpp>
 #include <gramma/view/Camera2D.hpp>
-#include <gramma/view/CircleShapes.hpp>
-#include <gramma/view/LineShape.hpp>
-#include <gramma/view/Shader.hpp>
-#include <memory>
+#include <gramma/view/EnvironmentView.hpp>
 
 class RescueApp : public gr::IApp {
    public:
@@ -18,11 +17,15 @@ class RescueApp : public gr::IApp {
     void Render(gr::AppContext& ctx) override;
 
    private:
-    std::unique_ptr<gr::Simulation> m_Simulation;
     gr::Camera2D m_Camera;
-    gr::CircleShapes m_BodyShapes;
-    gr::LineShape m_ComfortShapes;
-    gr::Shader m_Shader;
-    bool m_Restart{false};
+
+    std::unique_ptr<gr::Environment> m_Env;
+    gr::EnvironmentView m_EnvView;
+
+    std::unique_ptr<gr::IGuiLayer> m_Gui;
+
+    bool m_SeedAgents{false};
     bool m_Quit{false};
+    float m_Zoom{1.0};
+    float m_Timescale{1.0};
 };

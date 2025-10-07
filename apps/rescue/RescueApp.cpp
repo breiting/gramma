@@ -1,13 +1,38 @@
 #include "RescueApp.hpp"
 
 #include <GLFW/glfw3.h>
+#include <imgui.h>
 
 #include <gramma/core/AppContext.hpp>
-#include <gramma/model/GreedyExitStrategy.hpp>
-#include <gramma/model/SimpleRepulsionHandler.hpp>
+#include <gramma/core/Time.hpp>
+#include <gramma/core/Window.hpp>
+#include <gramma/model/Agent.hpp>
+#include <gramma/model/EnergyNeed.hpp>
+#include <gramma/model/FoodResource.hpp>
+#include <gramma/model/Home.hpp>
+#include <gramma/model/SimAgentFactory.hpp>
+#include <gramma/model/VisionSensor.hpp>
+#include <gramma/model/WalkNeed.hpp>
+#include <gramma/ui/ImGuiLayer.hpp>
 #include <iostream>
 
 using namespace gr;
+
+static void GenerateAgents(Environment* env) {
+    if (!env) return;
+    SimAgentFactory factory;
+    for (int i = 0; i < 50; ++i) {
+        auto agent = factory.Create(env);
+        agent->AddNeed(std::make_unique<WalkNeed>());
+        Home* home = env->GetNextFreeHome();
+        if (home) {
+            agent->SetHome(home);
+            home->Enter(agent.get());
+        }
+
+        env->AddAgent(std::move(agent));
+    }
+}
 
 std::string RescueApp::Name() const {
     return "RescueApp";
@@ -16,71 +41,65 @@ std::string RescueApp::Name() const {
 bool RescueApp::Init(gr::AppContext& ctx) {
     std::cout << "Initializing RescueApp..." << std::endl;
 
-    // Define room and exit
-    constexpr float roomWidth = 50.0;
-    constexpr float roomHeight = 20.0;
-    Room room{glm::vec2(-roomWidth / 2.0, -roomHeight / 2.0), glm::vec2(roomWidth, roomHeight)};
-    room.exits.push_back({glm::vec2(roomWidth / 2.0f, 0.0f), glm::vec2(0.1f, 1.0f)});   // Right exit
-    room.exits.push_back({glm::vec2(-roomWidth / 2.0f, 0.0f), glm::vec2(0.1f, 1.0f)});  // Left exit
+    constexpr float border = 1.0;
+    constexpr float ew = 50.0;
+    constexpr float eh = 30.0;
 
-    // Create strategies
-    auto navStrategy = std::make_unique<GreedyExitStrategy>();
-    auto collisionHandler = std::make_unique<SimpleRepulsionHandler>(2.0f);
+    m_Env = std::make_unique<gr::Environment>(glm::vec2(0, 0));
 
-    // Create simulation
-    m_Simulation = std::make_unique<Simulation>(room, std::move(navStrategy), std::move(collisionHandler), 500);
-    m_Simulation->Init();
+    // L-förmiger Raum mit einer Aussparung oben rechts
+    std::vector<glm::vec2> room = {
+        {-ew / 2.0f, -eh / 2.0f},  // unten links
+        {ew / 2.0f, -eh / 2.0f},   // unten rechts
+        {ew / 2.0f, eh / 4.0f},    // Einschnitt unten an der rechten Seite
+        {ew / 4.0f, eh / 4.0f},    // Ecke nach innen
+        {ew / 4.0f, eh / 2.0f},    // hoch zur oberen Kante
+        {-ew / 2.0f, eh / 2.0f}    // oben links
+    };
+    // std::vector<glm::vec2> room = {
+    //     {-ew / 2.0, -eh / 2.0}, {ew / 2.0, -eh / 2.0}, {ew / 2.0, eh / 2.0}, {-ew / 2.0, eh / 2.0}};
+    m_Env->AddBoundary(room);
+
+    m_EnvView.Init();
+
+    m_Gui = std::make_unique<ImGuiLayer>(ctx.GetWindow().GetNativeWindow());
 
     // Setup camera
-    m_Camera.SetOrthoByWidth(roomWidth + 10, ctx.Aspect());
+    m_Camera.SetOrthoByHeight(eh + border, ctx.Aspect());
 
-    // Setup shapes
-    m_BodyShapes.Init();
-    m_ComfortShapes.Init();
+    GenerateAgents(m_Env.get());
 
-    // Setup shader
-    try {
-        m_Shader.BuildCircle();
-    } catch (const std::exception& e) {
-        std::cerr << "Shader build failed: " << e.what() << std::endl;
-        return false;
-    }
-
-    onKeyPressed = [this](int key, int mods) {
+    onKeyPressed = [this, &ctx](int key, int /*mods*/) {
         if (key == GLFW_KEY_ESCAPE) {
             m_Quit = true;
-        } else if (key == GLFW_KEY_S) {
-            m_Restart = true;
+        } else if (key == GLFW_KEY_A) {
+            m_SeedAgents = true;
+        } else if (key == GLFW_KEY_W) {
+            m_Camera.FitToEnvironment(m_Env.get(), ctx.Aspect());
         }
+    };
+
+    onScroll = [this](double /*xoffs*/, double yoffs) {
+        m_Zoom += yoffs * 0.02f;
+        m_Camera.SetZoom(m_Zoom);
+    };
+
+    onWindowSize = [this](int w, int h) {
+        m_Camera.FitToEnvironment(m_Env.get(), float(w) / float(h));  //
     };
 
     std::cout << "RescueApp initialized. Starting simulation with 100 agents." << std::endl;
     return true;
 }
 
-void RescueApp::Update(gr::AppContext& ctx, double dt) {
-    if (m_Simulation->IsComplete()) {
-        std::cout << "Simulation complete. Restarting..." << std::endl;
-        m_Restart = true;  // Restart when complete
+void RescueApp::Update(gr::AppContext& /*ctx*/, double dt) {
+    if (m_SeedAgents) {
+        GenerateAgents(m_Env.get());
+        m_SeedAgents = false;
     }
-    if (m_Restart) {
-        m_Simulation->Init();
-        m_Restart = false;
-        std::cout << "Simulation restarted." << std::endl;
-    }
-    if (!m_Simulation->IsComplete()) {
-        m_Simulation->Step(static_cast<float>(dt));
-        // Print stats every second
-        static float lastPrint = 0.0f;
-        float currentTime = m_Simulation->GetElapsedTime();
-        if (currentTime - lastPrint >= 1.0f) {
-            int remaining = m_Simulation->GetAgents().size();
-            auto counts = m_Simulation->GetAgeCounts();
-            std::cout << "Time: " << currentTime << "s, Remaining: " << remaining << " (C:" << counts[0]
-                      << " Y:" << counts[1] << " A:" << counts[2] << " S:" << counts[3] << ")" << std::endl;
-            lastPrint = currentTime;
-        }
-    }
+
+    m_Env->Update(static_cast<float>(dt) * m_Timescale);
+    m_EnvView.SyncWithEnvironment(m_Env.get());
 }
 
 void RescueApp::Render(gr::AppContext& ctx) {
@@ -89,25 +108,14 @@ void RescueApp::Render(gr::AppContext& ctx) {
         return;
     }
 
-    m_BodyShapes.Clear();
+    m_Gui->BeginFrame();
 
-    // Define colors
-    glm::vec4 colors[4] = {
-        glm::vec4(1.0f, 1.0f, 0.0f, 1.0f),  // Yellow - Child
-        glm::vec4(0.0f, 1.0f, 0.0f, 1.0f),  // Green - Young
-        glm::vec4(0.0f, 0.0f, 1.0f, 1.0f),  // Blue - Adult
-        glm::vec4(1.0f, 0.0f, 0.0f, 1.0f)   // Red - Senior
-    };
+    ImGui::Begin("Environment Stats");
+    ImGui::Text("Agents: %zu", m_Env->Agents().size());
+    ImGui::SliderFloat("Timescale", &m_Timescale, 0.5, 10.0);
+    ImGui::End();
 
-    // Add shapes for agents
-    const auto& agents = m_Simulation->GetAgents();
-    for (const auto& agent : agents) {
-        glm::vec4 color = colors[static_cast<int>(agent.traits.age)];
-        // Body
-        m_BodyShapes.Add(agent.Pos, agent.traits.bodyRadius * 2.0f, color);
-    }
+    m_Gui->EndFrame();
 
-    // Render
-    m_BodyShapes.Upload();
-    m_BodyShapes.Draw(m_Shader, m_Camera.ViewProj(), glm::vec4{1.0f});
+    m_EnvView.Draw(m_Env.get(), m_Camera);
 }

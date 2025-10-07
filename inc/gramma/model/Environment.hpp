@@ -25,6 +25,7 @@ class Environment {
     void AddBoundary(const std::vector<glm::vec2>& vertices);
     const std::vector<glm::vec2>& GetBoundary() const;
 
+    bool ContainsPoint(const glm::vec2& p) const;
     glm::vec2 RandomPosition() const;
 
     void AddAgent(std::unique_ptr<Agent> a);

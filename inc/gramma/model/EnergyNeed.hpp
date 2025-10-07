@@ -1,5 +1,3 @@
-
-
 #pragma once
 #include <gramma/model/INeed.hpp>
 #include <string>

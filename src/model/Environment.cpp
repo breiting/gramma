@@ -22,11 +22,47 @@ Environment::~Environment() {
     b2DestroyWorld(m_World);
 }
 
+bool Environment::ContainsPoint(const glm::vec2& p) const {
+    bool inside = false;
+    int n = (int)m_Boundary.size();
+    for (int i = 0, j = n - 1; i < n; j = i++) {
+        const glm::vec2& pi = m_Boundary[i];
+        const glm::vec2& pj = m_Boundary[j];
+
+        bool intersect =
+            ((pi.y > p.y) != (pj.y > p.y)) && (p.x < (pj.x - pi.x) * (p.y - pi.y) / (pj.y - pi.y + 1e-6f) + pi.x);
+        if (intersect) inside = !inside;
+    }
+    return inside;
+}
+
 glm::vec2 Environment::RandomPosition() const {
-    static thread_local std::mt19937 rng{std::random_device{}()};
-    std::uniform_real_distribution<float> xDist(-10, 10);
-    std::uniform_real_distribution<float> yDist(-10, 10);
-    return glm::vec2(xDist(rng), yDist(rng));
+    if (m_Boundary.empty()) return {0, 0};
+
+    float minX = m_Boundary[0].x, maxX = m_Boundary[0].x;
+    float minY = m_Boundary[0].y, maxY = m_Boundary[0].y;
+    for (auto& p : m_Boundary) {
+        minX = std::min(minX, p.x);
+        maxX = std::max(maxX, p.x);
+        minY = std::min(minY, p.y);
+        maxY = std::max(maxY, p.y);
+    }
+
+    // RNG
+    static std::mt19937 rng(std::random_device{}());
+    std::uniform_real_distribution<float> distX(minX, maxX);
+    std::uniform_real_distribution<float> distY(minY, maxY);
+
+    // Rejection-Sampling
+    for (int tries = 0; tries < 1000; ++tries) {
+        glm::vec2 candidate(distX(rng), distY(rng));
+        if (ContainsPoint(candidate)) {
+            return candidate;
+        }
+    }
+
+    // Fallback: Mittelpunkt des Bounding Box
+    return {(minX + maxX) * 0.5f, (minY + maxY) * 0.5f};
 }
 
 void Environment::AddBoundary(const std::vector<glm::vec2>& vertices) {
@@ -65,7 +101,7 @@ void Environment::AddAgent(std::unique_ptr<Agent> agent) {
     // Shape (circle for agent body)
     b2Circle circle;
     circle.center = {0.0f, 0.0f};
-    circle.radius = agent->GetTraits().bodyRadius;
+    circle.radius = agent->GetTraits().socialRadius;
 
     b2ShapeDef sd = b2DefaultShapeDef();
     sd.density = 1.0f;
