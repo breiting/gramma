@@ -17,6 +17,9 @@ class SimApp : public gr::IApp {
     void Render(gr::AppContext& ctx) override;
 
    private:
+    void GenerateAgents(gr::Environment* env);
+
+   private:
     gr::Camera2D m_Camera;
 
     std::unique_ptr<gr::Environment> m_Env;
@@ -24,6 +27,7 @@ class SimApp : public gr::IApp {
 
     std::unique_ptr<gr::IGuiLayer> m_Gui;
 
+    uint32_t m_AgentIdCounter{0};
     bool m_SeedAgents{false};
     bool m_SeedFood{false};
     bool m_Quit{false};

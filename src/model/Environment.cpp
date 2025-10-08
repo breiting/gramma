@@ -9,6 +9,7 @@
 #include <random>
 
 #include "box2d/math_functions.h"
+#include "box2d/types.h"
 
 namespace gr {
 
@@ -135,7 +136,12 @@ void Environment::AddAgent(std::unique_ptr<Agent> agent) {
     circle.radius = agent->GetTraits().socialRadius;
 
     b2ShapeDef sd = b2DefaultShapeDef();
-    sd.density = 1.0f;
+    sd.density = 1.0;
+
+    b2SurfaceMaterial mat = b2DefaultSurfaceMaterial();
+    mat.friction = 0.3;
+    mat.restitution = 0.9;
+    sd.material = mat;
 
     b2CreateCircleShape(body, &sd, &circle);
 

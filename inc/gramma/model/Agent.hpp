@@ -16,8 +16,11 @@ class Home;
 
 class Agent {
    public:
-    Agent(const glm::vec2& pos, float headingDeg, std::unique_ptr<AgentTraits> traits, Home* home = nullptr);
+    Agent(const std::string& id, const glm::vec2& pos, float headingDeg, std::unique_ptr<AgentTraits> traits,
+          Home* home = nullptr);
     ~Agent();
+
+    const std::string& GetId() const;
 
     void SetVelocity(const glm::vec2& v);
     glm::vec2 GetVelocity() const;
@@ -76,6 +79,7 @@ class Agent {
     EnergyNeed* findEnergyNeed() const;
 
    private:
+    std::string m_Id;
     glm::vec2 m_Position{0, 0};
     b2BodyId m_Body;
     float m_HeadingDeg{0.0f};

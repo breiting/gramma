@@ -9,16 +9,19 @@
 
 namespace gr {
 
-Agent::Agent(const glm::vec2& pos, float headingDeg, std::unique_ptr<AgentTraits> traits, Home* home)
-    : m_Position(pos), m_HeadingDeg(headingDeg), m_Traits(std::move(traits)), m_Home(home) {
+Agent::Agent(const std::string& id, const glm::vec2& pos, float headingDeg, std::unique_ptr<AgentTraits> traits,
+             Home* home)
+    : m_Id(id), m_Position(pos), m_HeadingDeg(headingDeg), m_Traits(std::move(traits)), m_Home(home) {
+}
+
+const std::string& Agent::GetId() const {
+    return m_Id;
 }
 
 void Agent::SetVelocity(const glm::vec2& v) {
-    if (m_Body.index1) {
-        b2Body_SetLinearVelocity(m_Body, {v.x, v.y});
-        // for human like movement
-        // b2Body_ApplyForceToCenter(m_Body, {v.x, v.y}, true);
-    }
+    // b2Body_SetLinearVelocity(m_Body, {v.x, v.y});
+    // for human like movement
+    b2Body_ApplyForceToCenter(m_Body, {v.x, v.y}, true);
 }
 
 glm::vec2 Agent::GetVelocity() const {

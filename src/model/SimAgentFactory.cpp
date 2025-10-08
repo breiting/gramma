@@ -4,13 +4,13 @@
 
 namespace gr {
 
-std::unique_ptr<Agent> SimAgentFactory::Create(Environment* env) {
+std::unique_ptr<Agent> SimAgentFactory::Create(const std::string& id, Environment* env) {
     auto traits = std::make_unique<AgentTraits>(RandomTraits());
 
     glm::vec2 pos = env->RandomPosition();
     float heading = RandomHeading();
 
-    auto agent = std::make_unique<Agent>(pos, heading, std::move(traits));
+    auto agent = std::make_unique<Agent>(id, pos, heading, std::move(traits));
 
     // Needs
     agent->AddNeed(std::make_unique<EnergyNeed>());

@@ -18,11 +18,11 @@
 
 using namespace gr;
 
-static void GenerateAgents(Environment* env) {
+void RescueApp::GenerateAgents(Environment* env) {
     if (!env) return;
     SimAgentFactory factory;
     for (int i = 0; i < 50; ++i) {
-        auto agent = factory.Create(env);
+        auto agent = factory.Create("Agent" + std::to_string(m_AgentIdCounter++), env);
         agent->AddNeed(std::make_unique<WalkNeed>());
         Home* home = env->GetNextFreeHome();
         if (home) {

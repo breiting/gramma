@@ -103,6 +103,7 @@ include_directories(${CMAKE_SOURCE_DIR}/inc)
 
 # Lib: gramma
 add_library(gramma
+		src/core/LineOfSightService.cpp
 		src/core/Runner.cpp
 		src/core/Time.cpp
 		src/core/Window.cpp
