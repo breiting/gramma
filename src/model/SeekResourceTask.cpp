@@ -1,9 +1,12 @@
 #include <glm/glm.hpp>
 #include <gramma/model/Agent.hpp>
 #include <gramma/model/DirectMovement.hpp>
+#include <gramma/model/Exit.hpp>
 #include <gramma/model/IResource.hpp>
 #include <gramma/model/MoveTask.hpp>
 #include <gramma/model/SeekResourceTask.hpp>
+
+#include "gramma/model/Types.hpp"
 
 namespace gr {
 
@@ -18,8 +21,6 @@ void SeekResourceTask::Start(Agent& agent) {
     }
     auto move = std::make_unique<MoveTask>(m_Res->GetPosition(), std::make_unique<DirectMovement>());
     move->Start(agent);
-    // Wir nutzen MoveTask „inline“: einfache Komposition
-    // Alternative: Member m_Move; hier halten wir's minimal.
 }
 
 void SeekResourceTask::Update(Agent& agent, float dt) {
@@ -28,15 +29,24 @@ void SeekResourceTask::Update(Agent& agent, float dt) {
         return;
     }
 
-    // Schritt: laufen (direkt – minimal)
     DirectMovement mover;
     mover.Update(agent, m_Res->GetPosition(), dt);
 
-    // In Reichweite?
     float dist = glm::length(m_Res->GetPosition() - agent.GetPosition());
-    if (dist < agent.GetTraits().bodyRadius * 0.75f) m_AtRes = true;
+    float seekRadius = agent.GetTraits().bodyRadius * 0.75;
+    if (auto* e = dynamic_cast<Exit*>(m_Res.get())) {
+        seekRadius = e->GetWidth();
+    }
+    if (dist < seekRadius) m_AtRes = true;
 
     if (m_AtRes) {
+        // Is it an Exit?
+        if (auto* e = dynamic_cast<Exit*>(m_Res.get())) {
+            m_Done = true;
+            agent.SetState(AgentState::Rescued);
+            return;
+        }
+
         float want = m_IntakePerSec * dt;
         float got = m_Res->Consume(want);
         agent.AddEnergyIntake(got);

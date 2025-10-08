@@ -32,6 +32,9 @@ std::unique_ptr<ITask> TaskFactory::MakeFor(const INeed& need, Agent& agent, con
         }
     } else if (need.Name() == "Walk") {
         return std::make_unique<MoveTask>(env.RandomPosition(), std::make_unique<DirectMovement>());
+    } else if (need.Name() == "Safety") {
+        auto nearest = env.FindNearest(ResourceType::Exit, agent.GetPosition());
+        return std::make_unique<SeekResourceTask>(nearest);
     }
 
     // Default: nichts

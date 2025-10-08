@@ -40,6 +40,7 @@ class Agent {
     const T* GetTraitsAs() const;
 
     AgentState GetState() const;
+    void SetState(AgentState state);
 
     // Need-Fassade (Energy)
     float GetEnergyLevel() const;

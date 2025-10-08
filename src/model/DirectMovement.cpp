@@ -33,7 +33,8 @@ void DirectMovement::Update(Agent& agent, const glm::vec2& target, float dt) {
     }
 
     agent.SetVelocity(dir * speed);
-    agent.AddActivityCost(glm::length(agent.GetVelocity()), dt);
+    // TODO: currently no energy is drained
+    // agent.AddActivityCost(glm::length(agent.GetVelocity()), dt);
 }
 
 }  // namespace gr

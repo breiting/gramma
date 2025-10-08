@@ -12,7 +12,7 @@ std::unique_ptr<Agent> SimAgentFactory::Create(const std::string& id, const glm:
     auto agent = std::make_unique<Agent>(id, pos, heading, std::move(traits));
 
     // Needs
-    agent->AddNeed(std::make_unique<EnergyNeed>());
+    // agent->AddNeed(std::make_unique<EnergyNeed>());
 
     return agent;
 }

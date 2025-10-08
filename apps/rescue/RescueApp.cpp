@@ -10,6 +10,7 @@
 #include <gramma/model/EnergyNeed.hpp>
 #include <gramma/model/FoodResource.hpp>
 #include <gramma/model/Home.hpp>
+#include <gramma/model/SafetyNeed.hpp>
 #include <gramma/model/SimAgentFactory.hpp>
 #include <gramma/model/VisionSensor.hpp>
 #include <gramma/model/WalkNeed.hpp>
@@ -23,7 +24,7 @@ void RescueApp::GenerateAgents(Environment* env, int count) {
     SimAgentFactory factory;
     for (int i = 0; i < count; ++i) {
         auto agent = factory.Create("Agent" + std::to_string(m_AgentIdCounter++), env->RandomPosition());
-        agent->AddNeed(std::make_unique<WalkNeed>());
+        agent->AddNeed(std::make_unique<SafetyNeed>());
         Home* home = env->GetNextFreeHome();
         if (home) {
             agent->SetHome(home);
@@ -38,7 +39,7 @@ void RescueApp::CreateAgent(Environment* env, const glm::vec2& pos) {
     if (!env) return;
     SimAgentFactory factory;
     auto agent = factory.Create("Agent" + std::to_string(m_AgentIdCounter++), pos);
-    // agent->AddNeed(std::make_unique<WalkNeed>());
+    agent->AddNeed(std::make_unique<SafetyNeed>());
 
     env->AddAgent(std::move(agent));
 }
@@ -56,22 +57,15 @@ bool RescueApp::Init(gr::AppContext& ctx) {
 
     m_Env = std::make_unique<gr::Environment>(glm::vec2(0, 0));
 
-    // L-förmiger Raum mit einer Aussparung oben rechts
     std::vector<glm::vec2> room = {
-        {-ew / 2.0f, -eh / 2.0f},  // unten links
-        {ew / 2.0f, -eh / 2.0f},   // unten rechts
-        {ew / 2.0f, eh / 4.0f},    // Einschnitt unten an der rechten Seite
-        {ew / 4.0f, eh / 4.0f},    // Ecke nach innen
-        {ew / 4.0f, eh / 2.0f},    // hoch zur oberen Kante
-        {-ew / 2.0f, eh / 2.0f}    // oben links
-    };
-    // std::vector<glm::vec2> room = {
-    //     {-ew / 2.0, -eh / 2.0}, {ew / 2.0, -eh / 2.0}, {ew / 2.0, eh / 2.0}, {-ew / 2.0, eh / 2.0}};
+        {-ew / 2.0, -eh / 2.0}, {-ew / 2.0, eh / 2.0}, {ew / 2.0, eh / 2.0}, {ew / 2.0, -eh / 2.0}};
     m_Env->AddBoundary(room);
 
-    // Innen (z.B. ein quadratisches Loch in der Mitte)
-    std::vector<glm::vec2> inner = {{-10, -10}, {10, -10}, {10, 10}, {-10, 10}};
+    std::vector<glm::vec2> inner = {{-5, -5}, {5, -5}, {5, 5}, {-5, 5}};
     m_Env->AddObstacle(inner);
+
+    // Add one exit
+    m_Env->AddResource(std::make_shared<Exit>(glm::vec2(ew / 2.0, 0)));
 
     m_EnvView.Init();
 
@@ -80,7 +74,7 @@ bool RescueApp::Init(gr::AppContext& ctx) {
     // Setup camera
     m_Camera.SetOrthoByHeight(eh + border, ctx.Aspect());
 
-    // GenerateAgents(m_Env.get(), 50);
+    GenerateAgents(m_Env.get(), 50);
 
     onKeyPressed = [this, &ctx](int key, int /*mods*/) {
         if (key == GLFW_KEY_ESCAPE) {

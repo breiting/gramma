@@ -8,6 +8,7 @@
 #include <memory>
 #include <random>
 
+#include "box2d/id.h"
 #include "box2d/math_functions.h"
 #include "box2d/types.h"
 
@@ -140,7 +141,7 @@ void Environment::AddAgent(std::unique_ptr<Agent> agent) {
 
     b2SurfaceMaterial mat = b2DefaultSurfaceMaterial();
     mat.friction = 0.3;
-    mat.restitution = 0.9;
+    mat.restitution = 0.2;
     sd.material = mat;
 
     b2CreateCircleShape(body, &sd, &circle);
@@ -188,12 +189,16 @@ void Environment::Update(float dt) {
     }
 
     // Delete dead agents
-    m_Agents.erase(std::remove_if(m_Agents.begin(), m_Agents.end(),
-                                  [](const std::unique_ptr<Agent>& a) {
-                                      return a->GetState() == AgentState::Dead ||
-                                             a->GetState() == AgentState::Rescued;  //
-                                  }),
-                   m_Agents.end());
+    auto it = m_Agents.begin();
+    while (it != m_Agents.end()) {
+        Agent* agent = it->get();
+        if (agent->GetState() == AgentState::Dead || agent->GetState() == AgentState::Rescued) {
+            b2DestroyBody(agent->GetBody());
+            it = m_Agents.erase(it);
+        } else {
+            ++it;
+        }
+    }
 
     // Delete empty resources
     m_Resources.erase(std::remove_if(m_Resources.begin(), m_Resources.end(),

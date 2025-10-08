@@ -7,6 +7,8 @@
 #include <gramma/view/AgentBatchView.hpp>
 #include <gramma/view/Uniforms.hpp>
 
+#include "gramma/model/Types.hpp"
+
 namespace gr {
 
 static glm::vec4 AgeColor(AgeClass age) {
@@ -92,7 +94,7 @@ void AgentBatchView::UpdateInstances(const std::vector<std::unique_ptr<Agent>>& 
     m_InstanceData.reserve(agents.size());
 
     for (auto& a : agents) {
-        if (a->GetState() == AgentState::Dead) continue;
+        if (a->GetState() == AgentState::Dead || a->GetState() == AgentState::Rescued) continue;
         const auto& traits = a->GetTraits();
 
         auto color = AgeColor(traits.age);

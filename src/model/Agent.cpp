@@ -7,6 +7,8 @@
 #include <gramma/model/TaskFactory.hpp>
 #include <limits>
 
+#include "gramma/model/Types.hpp"
+
 namespace gr {
 
 Agent::Agent(const std::string& id, const glm::vec2& pos, float headingDeg, std::unique_ptr<AgentTraits> traits,
@@ -19,9 +21,9 @@ const std::string& Agent::GetId() const {
 }
 
 void Agent::SetVelocity(const glm::vec2& v) {
-    // b2Body_SetLinearVelocity(m_Body, {v.x, v.y});
+    b2Body_SetLinearVelocity(m_Body, {v.x, v.y});
     // for human like movement
-    b2Body_ApplyForceToCenter(m_Body, {v.x, v.y}, true);
+    // b2Body_ApplyForceToCenter(m_Body, {v.x, v.y}, true);
 }
 
 glm::vec2 Agent::GetVelocity() const {
@@ -64,6 +66,10 @@ const T* Agent::GetTraitsAs() const {
 
 AgentState Agent::GetState() const {
     return m_State;
+}
+
+void Agent::SetState(AgentState state) {
+    m_State = state;
 }
 
 Agent::~Agent() = default;
@@ -118,7 +124,6 @@ void Agent::AssignTask(std::unique_ptr<ITask> t) {
 
 void Agent::ClearTask() {
     m_Task.reset();
-    m_State = AgentState::Idle;
 }
 
 void Agent::EvaluateNeeds(const Environment& env, float dt) {
@@ -126,10 +131,11 @@ void Agent::EvaluateNeeds(const Environment& env, float dt) {
         n->Update(dt);
     }
 
-    if (GetEnergyLevel() <= 0.0f) {
-        m_State = AgentState::Dead;
-        return;
-    }
+    // TODO:
+    // if (GetEnergyLevel() <= 0.0f) {
+    //     m_State = AgentState::Dead;
+    //     return;
+    // }
 
     // Utility-Choice
     float bestU = -std::numeric_limits<float>::infinity();
@@ -149,7 +155,7 @@ void Agent::EvaluateNeeds(const Environment& env, float dt) {
 }
 
 void Agent::Update(float dt, const Environment& env) {
-    if (m_State == AgentState::Dead) return;
+    if (m_State == AgentState::Dead || m_State == AgentState::Rescued) return;
 
     EvaluateNeeds(env, dt);
 
