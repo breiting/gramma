@@ -14,7 +14,7 @@ class AgentFactory {
     virtual ~AgentFactory() = default;
 
     /// Create one agent (to be overridden by specializations)
-    virtual std::unique_ptr<Agent> Create(const std::string& id, Environment* env) = 0;
+    virtual std::unique_ptr<Agent> Create(const std::string& id, const glm::vec2& pos) = 0;
 
    protected:
     float RandomHeading();

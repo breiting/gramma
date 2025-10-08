@@ -39,7 +39,16 @@ void Camera2D::SetZoom(float z) {
     m_Zoom = z;
 }
 
-void Camera2D::FitToEnvironment(Environment *env, float aspect) {
+glm::vec2 Camera2D::ScreenToWorld(const glm::vec2& screen, int width, int height) {
+    float xNDC = 2.0f * (screen.x / (float)width) - 1.0f;
+    float yNDC = 1.0f - 2.0f * (screen.y / (float)height);
+    glm::vec4 clipCoords(xNDC, yNDC, 0.0f, 1.0f);
+    glm::mat4 inv = glm::inverse(ViewProj());
+    glm::vec4 world = inv * clipCoords;
+    return glm::vec2{world.x, world.y};
+}
+
+void Camera2D::FitToEnvironment(Environment* env, float aspect) {
     if (!env) return;
     m_Zoom = 1.0;
     float width = 10;  // TODO:

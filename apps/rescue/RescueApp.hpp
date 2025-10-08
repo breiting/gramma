@@ -17,7 +17,8 @@ class RescueApp : public gr::IApp {
     void Render(gr::AppContext& ctx) override;
 
    private:
-    void GenerateAgents(gr::Environment* env);
+    void GenerateAgents(gr::Environment* env, int count);
+    void CreateAgent(gr::Environment* env, const glm::vec2& pos);
 
    private:
     gr::Camera2D m_Camera;
@@ -27,6 +28,7 @@ class RescueApp : public gr::IApp {
 
     std::unique_ptr<gr::IGuiLayer> m_Gui;
 
+    glm::vec2 m_MousePos{0, 0};
     uint32_t m_AgentIdCounter{0};
     bool m_SeedAgents{false};
     bool m_Quit{false};

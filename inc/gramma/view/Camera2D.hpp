@@ -15,6 +15,8 @@ class Camera2D {
 
     void FitToEnvironment(Environment *env, float aspect);
 
+    glm::vec2 ScreenToWorld(const glm::vec2 &screenPos, int width, int height);
+
     void SetPosition(glm::vec2 pos);
     void SetZoom(float z);
     glm::mat4 ViewProj() const;

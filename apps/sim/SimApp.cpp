@@ -22,7 +22,7 @@ void SimApp::GenerateAgents(Environment* env) {
     if (!env) return;
     SimAgentFactory factory;
     for (int i = 0; i < 20; ++i) {
-        auto agent = factory.Create("Agent" + std::to_string(m_AgentIdCounter++), env);
+        auto agent = factory.Create("Agent" + std::to_string(m_AgentIdCounter++), env->RandomPosition());
         Home* home = env->GetNextFreeHome();
         if (home) {
             agent->SetHome(home);

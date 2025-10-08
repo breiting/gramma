@@ -18,11 +18,11 @@
 
 using namespace gr;
 
-void RescueApp::GenerateAgents(Environment* env) {
+void RescueApp::GenerateAgents(Environment* env, int count) {
     if (!env) return;
     SimAgentFactory factory;
-    for (int i = 0; i < 50; ++i) {
-        auto agent = factory.Create("Agent" + std::to_string(m_AgentIdCounter++), env);
+    for (int i = 0; i < count; ++i) {
+        auto agent = factory.Create("Agent" + std::to_string(m_AgentIdCounter++), env->RandomPosition());
         agent->AddNeed(std::make_unique<WalkNeed>());
         Home* home = env->GetNextFreeHome();
         if (home) {
@@ -32,6 +32,15 @@ void RescueApp::GenerateAgents(Environment* env) {
 
         env->AddAgent(std::move(agent));
     }
+}
+
+void RescueApp::CreateAgent(Environment* env, const glm::vec2& pos) {
+    if (!env) return;
+    SimAgentFactory factory;
+    auto agent = factory.Create("Agent" + std::to_string(m_AgentIdCounter++), pos);
+    // agent->AddNeed(std::make_unique<WalkNeed>());
+
+    env->AddAgent(std::move(agent));
 }
 
 std::string RescueApp::Name() const {
@@ -71,7 +80,7 @@ bool RescueApp::Init(gr::AppContext& ctx) {
     // Setup camera
     m_Camera.SetOrthoByHeight(eh + border, ctx.Aspect());
 
-    GenerateAgents(m_Env.get());
+    // GenerateAgents(m_Env.get(), 50);
 
     onKeyPressed = [this, &ctx](int key, int /*mods*/) {
         if (key == GLFW_KEY_ESCAPE) {
@@ -88,6 +97,17 @@ bool RescueApp::Init(gr::AppContext& ctx) {
         m_Camera.SetZoom(m_Zoom);
     };
 
+    onMouseMove = [this](double x, double y) {
+        m_MousePos = glm::vec2(x, y);  //
+    };
+
+    onMouseButton = [this, &ctx](int button, int action, int /*mod*/) {
+        if (button == GLFW_MOUSE_BUTTON_1 && action == GLFW_PRESS) {
+            auto position = m_Camera.ScreenToWorld(m_MousePos, ctx.GetWidth(), ctx.GetHeight());
+            CreateAgent(m_Env.get(), position);
+        }
+    };
+
     onWindowSize = [this](int w, int h) {
         m_Camera.FitToEnvironment(m_Env.get(), float(w) / float(h));  //
     };
@@ -98,7 +118,7 @@ bool RescueApp::Init(gr::AppContext& ctx) {
 
 void RescueApp::Update(gr::AppContext& /*ctx*/, double dt) {
     if (m_SeedAgents) {
-        GenerateAgents(m_Env.get());
+        GenerateAgents(m_Env.get(), 50);
         m_SeedAgents = false;
     }
 

@@ -190,7 +190,8 @@ void Environment::Update(float dt) {
     // Delete dead agents
     m_Agents.erase(std::remove_if(m_Agents.begin(), m_Agents.end(),
                                   [](const std::unique_ptr<Agent>& a) {
-                                      return a->GetState() == AgentState::Dead;  //
+                                      return a->GetState() == AgentState::Dead ||
+                                             a->GetState() == AgentState::Rescued;  //
                                   }),
                    m_Agents.end());
 
