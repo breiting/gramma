@@ -10,7 +10,8 @@ layout (location = 6) in vec2 iHeading;
 uniform mat4 uMVP;
 
 void main() {
-    float t = (gl_VertexID == 0) ? 0.0 : 1.5;
+    float t = (gl_VertexID == 0) ? 0.0 : 1.0 + iRadius * 1.2;
+
     vec2 offset = normalize(iHeading) * iRadius * t;
     vec2 worldPos = iPos + offset;
     gl_Position = uMVP * vec4(worldPos, 0.0, 1.0);

@@ -148,6 +148,9 @@ void Environment::AddHome(std::shared_ptr<Home> h) {
 }
 
 void Environment::RemoveAllAgents() {
+    for (auto& a : m_Agents) {
+        b2DestroyBody(a->GetBody());
+    }
     m_Agents.clear();
 }
 

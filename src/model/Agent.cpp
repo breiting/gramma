@@ -5,6 +5,8 @@
 #include <gramma/model/task/TaskFactory.hpp>
 #include <limits>
 
+#include "glm/geometric.hpp"
+
 namespace gr {
 
 Agent::Agent() {
@@ -23,7 +25,9 @@ void Agent::SetId(const std::string& id) {
 
 void Agent::SetVelocity(const glm::vec2& v) {
     b2Body_SetLinearVelocity(m_Body, {v.x, v.y});
-    m_Heading = glm::normalize(v);
+    if (glm::length(v) > 0.0) {
+        m_Heading = glm::normalize(v);
+    }
 }
 
 glm::vec2 Agent::GetVelocity() const {
