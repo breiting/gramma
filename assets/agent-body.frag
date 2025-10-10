@@ -11,9 +11,25 @@ out vec4 FragColor;
 
 void main() {
     float dist = length(vUV) * vRadius;
-    float innerRadius = vRadius - vGlowWidth;
 
-    float alpha = smoothstep(vRadius, innerRadius, dist);
 
-    FragColor = vec4(vColor.rgb, alpha * vColor.a);
+    float glowStart = vRadius - vGlowWidth;
+    float alpha = 1.0;
+
+    if (dist <= glowStart) {
+        // Volle Farbe im inneren Kreis
+        FragColor = vec4(vColor.rgb, vColor.a);
+        return;
+    }
+
+    if (dist <= vRadius) {
+        // Weicher Übergang zum Glow
+        float t = smoothstep(glowStart, vRadius, dist);
+        vec3 blendedColor = mix(vColor.rgb, vGlowColor.rgb, t);
+        float blendedAlpha = mix(vColor.a, vGlowColor.a, t);
+        FragColor = vec4(blendedColor, blendedAlpha);
+        return;
+    }
+
+    discard;
 }
