@@ -7,8 +7,7 @@ namespace gr {
 std::unique_ptr<Agent> SimAgentFactory::Create(const std::string& id, const glm::vec2& pos) {
     auto traits = std::make_unique<AgentTraits>(RandomTraits());
 
-    float heading = RandomHeading();
-
+    auto heading = glm::vec2{0, 1};
     auto agent = std::make_unique<Agent>(id, pos, heading, std::move(traits));
 
     // Needs

@@ -23,14 +23,11 @@ class AgentBatchView {
    private:
     struct InstanceData {
         glm::vec2 position;
-        float innerRadius;
-        float outerRadius;
-        float blendWidth;
+        float radius;
         glm::vec4 color;
         glm::vec4 glowColor;
-        float thickness;
-        float heading;
-        float fov;
+        float glowWidth;
+        glm::vec2 heading;
     };
 
     Shader m_Shader;

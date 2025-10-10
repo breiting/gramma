@@ -16,7 +16,7 @@ class Home;
 
 class Agent {
    public:
-    Agent(const std::string& id, const glm::vec2& pos, float headingDeg, std::unique_ptr<AgentTraits> traits,
+    Agent(const std::string& id, const glm::vec2& pos, const glm::vec2& heading, std::unique_ptr<AgentTraits> traits,
           Home* home = nullptr);
     ~Agent();
 
@@ -28,8 +28,8 @@ class Agent {
     const glm::vec2& GetPosition() const;
     void SetPosition(const glm::vec2& p);
 
-    float GetHeading() const;
-    void SetHeading(float deg);
+    const glm::vec2& GetHeading() const;
+    void SetHeading(const glm::vec2& heading);
 
     const AgentTraits& GetTraits() const;
     AgentTraits& GetTraits();
@@ -83,7 +83,7 @@ class Agent {
     std::string m_Id;
     glm::vec2 m_Position{0, 0};
     b2BodyId m_Body;
-    float m_HeadingDeg{0.0f};
+    glm::vec2 m_Heading{0, 1};  // north
 
     std::unique_ptr<AgentTraits> m_Traits;
     std::vector<std::unique_ptr<INeed>> m_Needs;

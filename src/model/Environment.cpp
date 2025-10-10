@@ -8,6 +8,7 @@
 #include <memory>
 #include <random>
 
+#include "box2d/box2d.h"
 #include "box2d/id.h"
 #include "box2d/math_functions.h"
 #include "box2d/types.h"
@@ -88,20 +89,17 @@ void Environment::CreateChainShape(const std::vector<glm::vec2>& contour) {
     bd.type = b2_staticBody;
     b2BodyId body = b2CreateBody(m_World, &bd);
 
-    // 2) Punkte nach b2Vec2 kopieren
     std::vector<b2Vec2> pts;
     pts.reserve(contour.size());
     for (const auto& p : contour) {
         pts.push_back({p.x, p.y});
     }
 
-    // 3) ChainDef ausfüllen (v3.1.1)
     b2ChainDef cd = b2DefaultChainDef();
-    cd.points = pts.data();  // <— statt vertices
+    cd.points = pts.data();
     cd.count = static_cast<int>(pts.size());
-    cd.isLoop = true;  // geschlossene Kette (Boundary)
+    cd.isLoop = true;
 
-    // optional: Material/Friction/Restitution pro Chain
     // b2SurfaceMaterial mat = b2DefaultSurfaceMaterial();
     // mat.friction = 0.9f;
     // cd.materials = &mat;
@@ -120,21 +118,21 @@ void Environment::CreateChainShape(const std::vector<glm::vec2>& contour) {
 void Environment::AddAgent(std::unique_ptr<Agent> agent) {
     // Save position/heading before move
     glm::vec2 pos = agent->GetPosition();
-    float heading = agent->GetHeading();
 
     // Body definition
     b2BodyDef bd = b2DefaultBodyDef();
     bd.type = b2_dynamicBody;
     bd.position = {pos.x, pos.y};
-    bd.rotation = b2MakeRot(glm::radians(heading));
 
     // Create body in the world
     b2BodyId body = b2CreateBody(m_World, &bd);
 
+    b2Body_SetFixedRotation(body, true);
+
     // Shape (circle for agent body)
     b2Circle circle;
     circle.center = {0.0f, 0.0f};
-    circle.radius = agent->GetTraits().socialRadius;
+    circle.radius = agent->GetTraits().bodyRadius;
 
     b2ShapeDef sd = b2DefaultShapeDef();
     sd.density = 1.0;
@@ -183,7 +181,7 @@ void Environment::Update(float dt) {
             float angle = b2Rot_GetAngle(xf.q);
 
             agent->SetPosition(pos);
-            agent->SetHeading(glm::degrees(angle));
+            agent->SetHeading({std::cos(angle), std::sin(angle)});
         }
         agent->Update(dt, *this);
     }

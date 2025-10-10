@@ -19,6 +19,8 @@ class RescueApp : public gr::IApp {
    private:
     void GenerateAgents(gr::Environment* env, int count);
     void CreateAgent(gr::Environment* env, const glm::vec2& pos);
+    int Scenario1();
+    int Scenario2();
 
    private:
     gr::Camera2D m_Camera;

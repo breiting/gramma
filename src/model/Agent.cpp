@@ -11,9 +11,9 @@
 
 namespace gr {
 
-Agent::Agent(const std::string& id, const glm::vec2& pos, float headingDeg, std::unique_ptr<AgentTraits> traits,
+Agent::Agent(const std::string& id, const glm::vec2& pos, const glm::vec2& heading, std::unique_ptr<AgentTraits> traits,
              Home* home)
-    : m_Id(id), m_Position(pos), m_HeadingDeg(headingDeg), m_Traits(std::move(traits)), m_Home(home) {
+    : m_Id(id), m_Position(pos), m_Heading(heading), m_Traits(std::move(traits)), m_Home(home) {
 }
 
 const std::string& Agent::GetId() const {
@@ -22,8 +22,6 @@ const std::string& Agent::GetId() const {
 
 void Agent::SetVelocity(const glm::vec2& v) {
     b2Body_SetLinearVelocity(m_Body, {v.x, v.y});
-    // for human like movement
-    // b2Body_ApplyForceToCenter(m_Body, {v.x, v.y}, true);
 }
 
 glm::vec2 Agent::GetVelocity() const {
@@ -41,11 +39,11 @@ void Agent::SetPosition(const glm::vec2& p) {
     m_Position = p;
 }
 
-float Agent::GetHeading() const {
-    return m_HeadingDeg;
+const glm::vec2& Agent::GetHeading() const {
+    return m_Heading;
 }
-void Agent::SetHeading(float deg) {
-    m_HeadingDeg = deg;
+void Agent::SetHeading(const glm::vec2& deg) {
+    m_Heading = deg;
 }
 
 const AgentTraits& Agent::GetTraits() const {

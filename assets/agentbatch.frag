@@ -1,53 +1,34 @@
 #version 330 core
 
 in vec2 vUV;
-in float vInnerRadius;
-in float vOuterRadius;
-in float vBlendWidth;
+in float vRadius;
 in vec4 vColor;
 in vec4 vGlowColor;
-in float vThickness;
-in float vHeading;
-in float vFOV;
+in float vGlowWidth;
+in vec2 vHeading;
 
 out vec4 FragColor;
 
 void main() {
-    float dist = length(vUV) * vOuterRadius;
+    float dist = length(vUV) * vRadius;
 
-    // --- Body ---
-    if (dist < vInnerRadius) {
-        float alpha = 1.0;
-        if (dist > vInnerRadius - vBlendWidth) {
-            alpha = smoothstep(vInnerRadius, vInnerRadius - vBlendWidth, dist);
-        }
+    float innerRadius = vRadius - vGlowWidth;
+    float alpha = 0.0;
 
-        // Heading
+    // --- Body with glow ---
+    if (dist < vRadius) {
+        alpha = smoothstep(vRadius, innerRadius, dist);
+
+        vec3 color = vColor.rgb;
+
+        // Highlight heading direction (thin line)
         vec2 dir = normalize(vUV);
-        vec2 head = vec2(sin(vHeading), cos(vHeading)); // Heading (0 = Norden)
-        float d = dot(dir, head);
+        float alignment = dot(dir, vHeading);
+        float angleHighlight = smoothstep(0.98, 1.0, alignment);  // thin forward line
 
-        if (d > cos(radians(vFOV))) {
-            FragColor = vec4(vColor.rgb * 1.2, 1.0); // heller im FOV
-        } else {
-            FragColor = vec4(vColor.rgb, vColor.a * alpha);
-        }
+        color += vec3(1.0) * angleHighlight * 0.4;
+
+        FragColor = vec4(color, alpha * vColor.a);
         return;
     }
-
-    // --- Glow-Ring ---
-    float inner = vOuterRadius - vThickness;
-    float outer = vOuterRadius;
-
-    if (dist >= inner && dist <= outer) {
-        float maskIn  = smoothstep(inner, inner + vBlendWidth, dist);
-        float maskOut = smoothstep(outer, outer - vBlendWidth, dist);
-        float ringAlpha = maskIn * maskOut;
-
-
-        FragColor = vec4(vGlowColor.rgb, vGlowColor.a * ringAlpha);
-        return;
-    }
-
-    discard;
 }

@@ -24,7 +24,6 @@ void RescueApp::GenerateAgents(Environment* env, int count) {
     SimAgentFactory factory;
     for (int i = 0; i < count; ++i) {
         auto agent = factory.Create("Agent" + std::to_string(m_AgentIdCounter++), env->RandomPosition());
-        agent->AddNeed(std::make_unique<SafetyNeed>());
         Home* home = env->GetNextFreeHome();
         if (home) {
             agent->SetHome(home);
@@ -48,15 +47,10 @@ std::string RescueApp::Name() const {
     return "RescueApp";
 }
 
-bool RescueApp::Init(gr::AppContext& ctx) {
-    std::cout << "Initializing RescueApp..." << std::endl;
-
+int RescueApp::Scenario1() {
     constexpr float border = 1.0;
     constexpr float ew = 50.0;
     constexpr float eh = 30.0;
-
-    m_Env = std::make_unique<gr::Environment>(glm::vec2(0, 0));
-
     std::vector<glm::vec2> room = {
         {-ew / 2.0, -eh / 2.0}, {-ew / 2.0, eh / 2.0}, {ew / 2.0, eh / 2.0}, {ew / 2.0, -eh / 2.0}};
     m_Env->AddBoundary(room);
@@ -66,21 +60,47 @@ bool RescueApp::Init(gr::AppContext& ctx) {
 
     // Add one exit
     m_Env->AddResource(std::make_shared<Exit>(glm::vec2(ew / 2.0, 0)));
+    GenerateAgents(m_Env.get(), 50);
+    return eh + border;
+}
+
+int RescueApp::Scenario2() {
+    constexpr float border = 1.0;
+    constexpr float ew = 10.0;
+    constexpr float eh = 5.0;
+    std::vector<glm::vec2> room = {
+        {-ew / 2.0, -eh / 2.0}, {-ew / 2.0, eh / 2.0}, {ew / 2.0, eh / 2.0}, {ew / 2.0, -eh / 2.0}};
+    m_Env->AddBoundary(room);
+    // Add one exit
+    m_Env->AddResource(std::make_shared<Exit>(glm::vec2(ew / 2.0, 0)));
+    GenerateAgents(m_Env.get(), 2);
+    return eh + border;
+}
+
+bool RescueApp::Init(gr::AppContext& ctx) {
+    std::cout << "Initializing RescueApp..." << std::endl;
+
+    m_Env = std::make_unique<gr::Environment>(glm::vec2(0, 0));
+
+    // auto height = Scenario1();
+    auto height = Scenario2();
 
     m_EnvView.Init();
 
     m_Gui = std::make_unique<ImGuiLayer>(ctx.GetWindow().GetNativeWindow());
 
-    // Setup camera
-    m_Camera.SetOrthoByHeight(eh + border, ctx.Aspect());
-
-    GenerateAgents(m_Env.get(), 50);
+    m_Camera.SetOrthoByHeight(height, ctx.Aspect());
 
     onKeyPressed = [this, &ctx](int key, int /*mods*/) {
         if (key == GLFW_KEY_ESCAPE) {
             m_Quit = true;
         } else if (key == GLFW_KEY_A) {
             m_SeedAgents = true;
+        } else if (key == GLFW_KEY_N) {
+            for (auto& a : m_Env->Agents()) {
+                a->AddNeed(std::make_unique<SafetyNeed>());
+            }
+
         } else if (key == GLFW_KEY_W) {
             m_Camera.FitToEnvironment(m_Env.get(), ctx.Aspect());
         }
@@ -112,7 +132,7 @@ bool RescueApp::Init(gr::AppContext& ctx) {
 
 void RescueApp::Update(gr::AppContext& /*ctx*/, double dt) {
     if (m_SeedAgents) {
-        GenerateAgents(m_Env.get(), 50);
+        GenerateAgents(m_Env.get(), 10);
         m_SeedAgents = false;
     }
 

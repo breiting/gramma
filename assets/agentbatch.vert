@@ -4,24 +4,18 @@ layout (location = 0) in vec2 dummy;
 
 // Instanced Attributes
 layout (location = 1) in vec2 iPos;
-layout (location = 2) in float iInnerRadius;
-layout (location = 3) in float iOuterRadius;
-layout (location = 4) in float iBlendWidth;
-layout (location = 5) in vec4 iColor;
-layout (location = 6) in vec4 iGlowColor;
-layout (location = 7) in float iThickness;
-layout (location = 8) in float iHeading;
-layout (location = 9) in float iFOV;
+layout (location = 2) in float iRadius;
+layout (location = 3) in vec4 iColor;
+layout (location = 4) in vec4 iGlowColor;
+layout (location = 5) in float iGlowWidth;
+layout (location = 6) in vec2 iHeading;
 
 out vec2 vUV;
-out float vInnerRadius;
-out float vOuterRadius;
-out float vBlendWidth;
+out float vRadius;
 out vec4 vColor;
 out vec4 vGlowColor;
-out float vThickness;
-out float vHeading;
-out float vFOV;
+out float vGlowWidth;
+out vec2 vHeading;
 
 uniform mat4 uMVP;
 
@@ -32,15 +26,12 @@ void main() {
     );
 
     vUV          = corner;
-    vInnerRadius = iInnerRadius;
-    vOuterRadius = iOuterRadius;
-    vBlendWidth  = iBlendWidth;
+    vRadius      = iRadius;
     vColor       = iColor;
     vGlowColor   = iGlowColor;
-    vThickness   = iThickness;
     vHeading     = iHeading;
-    vFOV         = iFOV;
+	vGlowWidth   = iGlowWidth;
 
-    vec2 worldPos = iPos + corner * iOuterRadius;
+    vec2 worldPos = iPos + corner * iRadius;
     gl_Position = uMVP * vec4(worldPos, 0.0, 1.0);
 }

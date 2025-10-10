@@ -44,47 +44,29 @@ void AgentBatchView::Init() {
     // Layout (binding für Shader-Instanced Attributes)
     std::size_t stride = sizeof(InstanceData);
 
-    // position (vec2), innerRadius, outerRadius, blendWidth
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, stride, (void*)offsetof(InstanceData, position));
     glVertexAttribDivisor(1, 1);
 
     glEnableVertexAttribArray(2);
-    glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, stride, (void*)offsetof(InstanceData, innerRadius));
+    glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, stride, (void*)offsetof(InstanceData, radius));
     glVertexAttribDivisor(2, 1);
 
     glEnableVertexAttribArray(3);
-    glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, stride, (void*)offsetof(InstanceData, outerRadius));
+    glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, stride, (void*)offsetof(InstanceData, color));
     glVertexAttribDivisor(3, 1);
 
     glEnableVertexAttribArray(4);
-    glVertexAttribPointer(4, 1, GL_FLOAT, GL_FALSE, stride, (void*)offsetof(InstanceData, blendWidth));
+    glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, stride, (void*)offsetof(InstanceData, glowColor));
     glVertexAttribDivisor(4, 1);
 
-    // color
     glEnableVertexAttribArray(5);
-    glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, stride, (void*)offsetof(InstanceData, color));
+    glVertexAttribPointer(5, 1, GL_FLOAT, GL_FALSE, stride, (void*)offsetof(InstanceData, glowWidth));
     glVertexAttribDivisor(5, 1);
 
-    // glowColor
     glEnableVertexAttribArray(6);
-    glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, stride, (void*)offsetof(InstanceData, glowColor));
+    glVertexAttribPointer(6, 2, GL_FLOAT, GL_FALSE, stride, (void*)offsetof(InstanceData, heading));
     glVertexAttribDivisor(6, 1);
-
-    // thickness
-    glEnableVertexAttribArray(7);
-    glVertexAttribPointer(7, 1, GL_FLOAT, GL_FALSE, stride, (void*)offsetof(InstanceData, thickness));
-    glVertexAttribDivisor(7, 1);
-
-    // heading
-    glEnableVertexAttribArray(8);
-    glVertexAttribPointer(8, 1, GL_FLOAT, GL_FALSE, stride, (void*)offsetof(InstanceData, heading));
-    glVertexAttribDivisor(8, 1);
-
-    // fov
-    glEnableVertexAttribArray(9);
-    glVertexAttribPointer(9, 1, GL_FLOAT, GL_FALSE, stride, (void*)offsetof(InstanceData, fov));
-    glVertexAttribDivisor(9, 1);
 
     glBindVertexArray(0);
 }
@@ -101,14 +83,11 @@ void AgentBatchView::UpdateInstances(const std::vector<std::unique_ptr<Agent>>& 
 
         InstanceData d;
         d.position = a->GetPosition();
-        d.innerRadius = traits.bodyRadius;
-        d.outerRadius = traits.socialRadius;
-        d.blendWidth = traits.bodyRadius * 0.1f;
+        d.radius = traits.bodyRadius;
+        d.glowWidth = traits.bodyRadius * 0.1f;
         d.color = color;
         d.glowColor = glm::vec4(1.0f, 0.2f, 0.2f, 1.0f);
-        d.thickness = 0.1f;
-        d.heading = glm::radians(a->GetHeading());
-        d.fov = 30.0f;
+        d.heading = a->GetHeading();
         m_InstanceData.push_back(d);
     }
 
