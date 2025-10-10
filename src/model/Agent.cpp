@@ -125,6 +125,13 @@ bool Agent::IsEnergyBelow(float t) const {
     return GetEnergyLevel() < t;
 }
 
+b2BodyId Agent::GetBody() const {
+    return m_Body;
+}
+void Agent::SetBody(b2BodyId body) {
+    m_Body = body;
+}
+
 void Agent::AssignTask(std::unique_ptr<ITask> t) {
     m_Task = std::move(t);
     if (m_Task) {

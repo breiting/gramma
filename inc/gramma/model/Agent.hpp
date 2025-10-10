@@ -24,26 +24,29 @@ class Agent {
     const std::string& GetId() const;
     void SetId(const std::string& id);
 
-    void SetVelocity(const glm::vec2& v);
-    glm::vec2 GetVelocity() const;
-
+    /// Movement
     const glm::vec2& GetPosition() const;
     void SetPosition(const glm::vec2& p);
 
     const glm::vec2& GetHeading() const;
     void SetHeading(const glm::vec2& heading);
 
+    void SetVelocity(const glm::vec2& v);
+    glm::vec2 GetVelocity() const;
+
+    /// Traits
     const AgentTraits& GetTraits() const;
     AgentTraits& GetTraits();
     void SetTraits(std::unique_ptr<AgentTraits> traits);
-
-    const std::vector<std::unique_ptr<INeed>>& GetNeeds() const;
-
     template <typename T>
     T* GetTraitsAs();
     template <typename T>
     const T* GetTraitsAs() const;
 
+    /// Needs
+    const std::vector<std::unique_ptr<INeed>>& GetNeeds() const;
+
+    /// State
     AgentState GetState() const;
     void SetState(AgentState state);
 
@@ -54,18 +57,15 @@ class Agent {
     void AddActivityCost(float speed, float dt);
     bool IsEnergyBelow(float t) const;
 
-    b2BodyId GetBody() const {
-        return m_Body;
-    }
-    void SetBody(b2BodyId body) {
-        m_Body = body;
-    }
+    /// Physics
+    b2BodyId GetBody() const;
+    void SetBody(b2BodyId body);
 
-    // Task
+    /// Task
     void AssignTask(std::unique_ptr<ITask> t);
     void ClearTask();
 
-    // Decision + Update
+    /// Decision + Update
     void Update(float dt, const Environment& env);
     void EvaluateNeeds(const Environment& env, float dt);
 
