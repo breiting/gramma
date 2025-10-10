@@ -2,10 +2,10 @@
 #include <gramma/view/Shader.hpp>
 #include <iostream>
 
-#include "assets/agent_frag.h"
-#include "assets/agent_vert.h"
-#include "assets/agentbatch_frag.h"
-#include "assets/agentbatch_vert.h"
+#include "assets/agent_body_frag.h"
+#include "assets/agent_body_vert.h"
+#include "assets/agent_line_frag.h"
+#include "assets/agent_line_vert.h"
 #include "assets/basic_frag.h"
 #include "assets/basic_vert.h"
 #include "assets/food_frag.h"
@@ -112,12 +112,12 @@ void Shader::BuildResource() {
     CompileShader(food_vert_glsl, food_frag_glsl);
 }
 
-void Shader::BuildAgent() {
-    CompileShader(agent_vert_glsl, agent_frag_glsl);
+void Shader::BuildAgentBody() {
+    CompileShader(agent_body_vert_glsl, agent_body_frag_glsl);
 }
 
-void Shader::BuildAgentBatch() {
-    CompileShader(agentbatch_vert_glsl, agentbatch_frag_glsl);
+void Shader::BuildAgentLine() {
+    CompileShader(agent_line_vert_glsl, agent_line_frag_glsl);
 }
 
 void Shader::BuildBasic() {

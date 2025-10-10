@@ -22,10 +22,12 @@
 #include <memory>
 
 using namespace gr;
+using namespace std;
 
 void PlayApp::LoadAgent(const std::string& filename) {
     AgentSerializer s;
     auto agent = s.Load(filename);
+    cout << agent->GetHeading().x << " " << agent->GetHeading().y << endl;
     m_Env->AddAgent(std::move(agent));
 }
 

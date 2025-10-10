@@ -43,8 +43,8 @@ void Agent::SetPosition(const glm::vec2& p) {
 const glm::vec2& Agent::GetHeading() const {
     return m_Heading;
 }
-void Agent::SetHeading(const glm::vec2& deg) {
-    m_Heading = deg;
+void Agent::SetHeading(const glm::vec2& head) {
+    m_Heading = head;
 }
 
 const AgentTraits& Agent::GetTraits() const {

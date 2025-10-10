@@ -9,7 +9,7 @@ EnvironmentView::EnvironmentView() {
 }
 
 void EnvironmentView::Init() {
-    m_AgentBatchView.Init();
+    m_AgentView.Init();
     m_Shader.BuildLine();
     m_Bounds.Init();
 }
@@ -17,7 +17,7 @@ void EnvironmentView::Init() {
 void EnvironmentView::SyncWithEnvironment(Environment* env) {
     if (!env) return;
 
-    m_AgentBatchView.UpdateInstances(env->Agents());
+    m_AgentView.UpdateInstances(env->Agents());
 
     // --- Homes ---
     for (auto& homePtr : env->Homes()) {
@@ -65,7 +65,7 @@ void EnvironmentView::Draw(Environment* env, const Camera2D& cam) {
     }
 
     // --- Agents ---
-    m_AgentBatchView.Draw(vp);
+    m_AgentView.Draw(vp);
 
     // --- Draw Resources ---
     for (auto& rPtr : env->Resources()) {

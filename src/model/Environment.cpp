@@ -170,10 +170,7 @@ void Environment::Update(float dt) {
         if (agent->GetBody().index1 != 0) {
             b2Transform xf = b2Body_GetTransform(agent->GetBody());
             glm::vec2 pos = {xf.p.x, xf.p.y};
-            float angle = b2Rot_GetAngle(xf.q);
-
             agent->SetPosition(pos);
-            agent->SetHeading({std::cos(angle), std::sin(angle)});
         }
         agent->Update(*this, dt);
     }

@@ -20,6 +20,7 @@ class Agent {
 
     ~Agent();
 
+    /// ID
     const std::string& GetId() const;
     void SetId(const std::string& id);
 

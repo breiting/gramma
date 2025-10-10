@@ -1,8 +1,5 @@
 #version 330 core
 
-layout (location = 0) in vec2 dummy;
-
-// Instanced Attributes
 layout (location = 1) in vec2 iPos;
 layout (location = 2) in float iRadius;
 layout (location = 3) in vec4 iColor;
@@ -25,12 +22,12 @@ void main() {
         (gl_VertexID >= 2) ? 1.0 : -1.0
     );
 
-    vUV          = corner;
-    vRadius      = iRadius;
-    vColor       = iColor;
-    vGlowColor   = iGlowColor;
-    vHeading     = iHeading;
-	vGlowWidth   = iGlowWidth;
+    vUV = corner;
+    vRadius = iRadius;
+    vColor = iColor;
+    vGlowColor = iGlowColor;
+    vGlowWidth = iGlowWidth;
+    vHeading = normalize(iHeading);
 
     vec2 worldPos = iPos + corner * iRadius;
     gl_Position = uMVP * vec4(worldPos, 0.0, 1.0);

@@ -1,8 +1,11 @@
-#include <glm/ext/matrix_transform.hpp>
-#include <gramma/view/AgentView.hpp>
+// clang-format off
+#include <glad.h>
+#include <GLFW/glfw3.h>
+// clang-format on
 
-#include "GLFW/glfw3.h"
-#include "gramma/view/Uniforms.hpp"
+#include <glm/glm.hpp>
+#include <gramma/view/AgentView.hpp>
+#include <gramma/view/Uniforms.hpp>
 
 namespace gr {
 
@@ -17,43 +20,128 @@ static glm::vec4 AgeColor(AgeClass age) {
         case AgeClass::Senior:
             return {1.0f, 0.0f, 0.0f, 1.0f};  // red
     }
-    return {1.0f, 1.0f, 1.0f, 1.0f};  // fallback white
+    return {1.0f, 1.0f, 1.0f, 1.0f};  // fallback
 }
 
+AgentView::AgentView() {
+}
 AgentView::~AgentView() {
-    if (m_Vao) {
-        glDeleteVertexArrays(1, &m_Vao);
-    }
+    if (m_VaoBody) glDeleteVertexArrays(1, &m_VaoBody);
+    if (m_VaoLine) glDeleteVertexArrays(1, &m_VaoLine);
+    if (m_InstanceVbo) glDeleteBuffers(1, &m_InstanceVbo);
 }
 
 void AgentView::Init() {
-    m_Shader.BuildAgent();
+    m_ShaderBody.BuildAgentBody();
+    m_ShaderLine.BuildAgentLine();
 
-    glGenVertexArrays(1, &m_Vao);
-    glBindVertexArray(m_Vao);
+    glGenVertexArrays(1, &m_VaoBody);
+    glGenVertexArrays(1, &m_VaoLine);
+    glGenBuffers(1, &m_InstanceVbo);
+
+    // Layout (binding für Shader-Instanced Attributes)
+    std::size_t stride = sizeof(InstanceData);
+
+    // ----- Body VAO -----
+    glBindVertexArray(m_VaoBody);
+    glBindBuffer(GL_ARRAY_BUFFER, m_InstanceVbo);
+
+    glEnableVertexAttribArray(1);  // position
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, stride, (void*)offsetof(InstanceData, position));
+    glVertexAttribDivisor(1, 1);
+
+    glEnableVertexAttribArray(2);  // radius
+    glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, stride, (void*)offsetof(InstanceData, radius));
+    glVertexAttribDivisor(2, 1);
+
+    glEnableVertexAttribArray(3);  // color
+    glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, stride, (void*)offsetof(InstanceData, color));
+    glVertexAttribDivisor(3, 1);
+
+    glEnableVertexAttribArray(4);  // glowColor
+    glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, stride, (void*)offsetof(InstanceData, glowColor));
+    glVertexAttribDivisor(4, 1);
+
+    glEnableVertexAttribArray(5);  // glowWidth
+    glVertexAttribPointer(5, 1, GL_FLOAT, GL_FALSE, stride, (void*)offsetof(InstanceData, glowWidth));
+    glVertexAttribDivisor(5, 1);
+
+    glEnableVertexAttribArray(6);  // heading
+    glVertexAttribPointer(6, 2, GL_FLOAT, GL_FALSE, stride, (void*)offsetof(InstanceData, heading));
+    glVertexAttribDivisor(6, 1);
+
+    glBindVertexArray(0);
+
+    // ----- Line VAO -----
+    glBindVertexArray(m_VaoLine);
+    glBindBuffer(GL_ARRAY_BUFFER, m_InstanceVbo);
+
+    glEnableVertexAttribArray(1);  // position
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, stride, (void*)offsetof(InstanceData, position));
+    glVertexAttribDivisor(1, 1);
+
+    glEnableVertexAttribArray(2);  // radius
+    glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, stride, (void*)offsetof(InstanceData, radius));
+    glVertexAttribDivisor(2, 1);
+
+    glEnableVertexAttribArray(3);  // color
+    glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, stride, (void*)offsetof(InstanceData, color));
+    glVertexAttribDivisor(3, 1);
+
+    glEnableVertexAttribArray(4);  // glowColor
+    glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, stride, (void*)offsetof(InstanceData, glowColor));
+    glVertexAttribDivisor(4, 1);
+
+    glEnableVertexAttribArray(5);  // glowWidth
+    glVertexAttribPointer(5, 1, GL_FLOAT, GL_FALSE, stride, (void*)offsetof(InstanceData, glowWidth));
+    glVertexAttribDivisor(5, 1);
+
+    glEnableVertexAttribArray(6);  // heading
+    glVertexAttribPointer(6, 2, GL_FLOAT, GL_FALSE, stride, (void*)offsetof(InstanceData, heading));
+    glVertexAttribDivisor(6, 1);
+
     glBindVertexArray(0);
 }
 
-void AgentView::Draw(const Agent* agent, const glm::mat4& vp) {
-    if (!agent) return;
-    glm::vec2 pos = agent->GetPosition();
-    const auto& traits = agent->GetTraits();
+void AgentView::UpdateInstances(const std::vector<std::unique_ptr<Agent>>& agents) {
+    m_InstanceData.clear();
+    m_InstanceData.reserve(agents.size());
 
-    m_Shader.Bind();
-    m_Shader.SetMat4(Uniforms::MVP, vp);
-    m_Shader.SetVec2(Uniforms::POSITION, pos);
-    m_Shader.SetFloat(Uniforms::INNER_RADIUS, traits.bodyRadius);
-    m_Shader.SetFloat(Uniforms::OUTER_RADIUS, traits.socialRadius);
-    m_Shader.SetFloat(Uniforms::BLEND_WIDTH, traits.bodyRadius * 0.1);
-    m_Shader.SetVec4(Uniforms::COLOR, AgeColor(traits.age));
-    m_Shader.SetVec4(Uniforms::GLOW_COLOR, glm::vec4(1.0, 0.2, 0.2, 1.0));
-    m_Shader.SetFloat(Uniforms::THICKNESS, 0.1f);
-    m_Shader.SetFloat(Uniforms::TIME, glfwGetTime());
-    // s m_Shader.SetFloat(Uniforms::HEADING, glm::radians(agent->GetHeading()));
-    m_Shader.SetFloat(Uniforms::FOV, 30.0);
+    for (auto& a : agents) {
+        if (a->GetState() == AgentState::Dead || a->GetState() == AgentState::Rescued) continue;
+        const auto& traits = a->GetTraits();
 
-    glBindVertexArray(m_Vao);
-    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+        auto color = AgeColor(traits.age);
+
+        InstanceData d;
+        d.position = a->GetPosition();
+        d.radius = traits.bodyRadius;
+        d.glowWidth = traits.bodyRadius * 0.1f;
+        d.color = color;
+        d.glowColor = glm::vec4(1.0f, 0.2f, 0.2f, 1.0f);
+        d.heading = a->GetHeading();
+        m_InstanceData.push_back(d);
+    }
+
+    glBindBuffer(GL_ARRAY_BUFFER, m_InstanceVbo);
+    glBufferData(GL_ARRAY_BUFFER, m_InstanceData.size() * sizeof(InstanceData), m_InstanceData.data(), GL_DYNAMIC_DRAW);
+}
+
+void AgentView::Draw(const glm::mat4& vp) {
+    if (m_InstanceData.empty()) return;
+
+    // Body
+    m_ShaderBody.Bind();
+    m_ShaderBody.SetMat4(Uniforms::MVP, vp);
+    glBindVertexArray(m_VaoBody);
+    glDrawArraysInstanced(GL_TRIANGLE_STRIP, 0, 4, static_cast<GLsizei>(m_InstanceData.size()));
+
+    // Heading
+    m_ShaderLine.Bind();
+    m_ShaderLine.SetMat4(Uniforms::MVP, vp);
+    glBindVertexArray(m_VaoLine);
+    glDrawArraysInstanced(GL_LINES, 0, 2, static_cast<GLsizei>(m_InstanceData.size()));
+
     glBindVertexArray(0);
 }
 

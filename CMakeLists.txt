@@ -133,7 +133,6 @@ add_library(gramma
 		src/model/TaskFactory.cpp
 		src/model/VisionSensor.cpp
 
-		src/view/AgentBatchView.cpp
 		src/view/AgentView.cpp
 		src/view/Camera2D.cpp
 		src/view/EnvironmentView.cpp
@@ -152,11 +151,11 @@ add_library(gramma
 set(SHADER_SRC_DIR "${CMAKE_SOURCE_DIR}/assets")
 set(GEN_INC_DIR    "${CMAKE_BINARY_DIR}/generated")
 
-embed_text_to_header("${SHADER_SRC_DIR}/agent.vert"  "${GEN_INC_DIR}/assets/agent_vert.h"  agent_vert_glsl)
-embed_text_to_header("${SHADER_SRC_DIR}/agent.frag"  "${GEN_INC_DIR}/assets/agent_frag.h"  agent_frag_glsl)
+embed_text_to_header("${SHADER_SRC_DIR}/agent-body.vert"  "${GEN_INC_DIR}/assets/agent_body_vert.h"  agent_body_vert_glsl)
+embed_text_to_header("${SHADER_SRC_DIR}/agent-body.frag"  "${GEN_INC_DIR}/assets/agent_body_frag.h"  agent_body_frag_glsl)
 
-embed_text_to_header("${SHADER_SRC_DIR}/agentbatch.vert"  "${GEN_INC_DIR}/assets/agentbatch_vert.h"  agentbatch_vert_glsl)
-embed_text_to_header("${SHADER_SRC_DIR}/agentbatch.frag"  "${GEN_INC_DIR}/assets/agentbatch_frag.h"  agentbatch_frag_glsl)
+embed_text_to_header("${SHADER_SRC_DIR}/agent-line.vert"  "${GEN_INC_DIR}/assets/agent_line_vert.h"  agent_line_vert_glsl)
+embed_text_to_header("${SHADER_SRC_DIR}/agent-line.frag"  "${GEN_INC_DIR}/assets/agent_line_frag.h"  agent_line_frag_glsl)
 
 embed_text_to_header("${SHADER_SRC_DIR}/food.vert"  "${GEN_INC_DIR}/assets/food_vert.h"  food_vert_glsl)
 embed_text_to_header("${SHADER_SRC_DIR}/food.frag"  "${GEN_INC_DIR}/assets/food_frag.h"  food_frag_glsl)

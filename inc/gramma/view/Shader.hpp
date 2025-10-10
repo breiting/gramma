@@ -21,8 +21,8 @@ class Shader {
 
     // Load and build a pre-defined shader
     void BuildBasic();
-    void BuildAgent();
-    void BuildAgentBatch();
+    void BuildAgentBody();
+    void BuildAgentLine();
     void BuildResource();
     void BuildLine();
     void BuildUnlit();
