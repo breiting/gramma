@@ -147,6 +147,10 @@ void Environment::AddHome(std::shared_ptr<Home> h) {
     m_Homes.emplace_back(std::move(h));
 }
 
+void Environment::RemoveAllAgents() {
+    m_Agents.clear();
+}
+
 const std::vector<glm::vec2>& Environment::GetBoundary() const {
     return m_Boundary;
 }

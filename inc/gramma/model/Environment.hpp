@@ -43,6 +43,8 @@ class Environment {
     const std::vector<std::unique_ptr<Agent>>& Agents() const {
         return m_Agents;
     }
+    void RemoveAllAgents();
+
     const std::vector<std::shared_ptr<IResource>>& Resources() const {
         return m_Resources;
     }

@@ -17,6 +17,7 @@ file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/generated/assets")
 # Options
 option(GRAMMA_BUILD_SIM "Build sim app" ON)
 option(GRAMMA_BUILD_RESCUE "Build rescue app" ON)
+option(GRAMMA_BUILD_PLAY "Build play app" ON)
 
 # -------- Dependencies (fetch once, available everywhere) --------
 include(FetchContent)
@@ -80,6 +81,15 @@ target_include_directories(imgui PUBLIC
 
 target_link_libraries(imgui PUBLIC glfw)
 
+# nlohmann/json
+FetchContent_Declare(
+		json
+		GIT_REPOSITORY https://github.com/nlohmann/json.git
+		GIT_TAG v3.11.3
+)
+FetchContent_MakeAvailable(json)
+
+
 # GUI Layer
 add_library(gramma_ui
 		src/ui/ImGuiLayer.cpp
@@ -110,6 +120,7 @@ add_library(gramma
 
 		src/model/Agent.cpp
 		src/model/AgentFactory.cpp
+		src/model/AgentSerializer.cpp
 		src/model/DirectMovement.cpp
 		src/model/EnergyNeed.cpp
 		src/model/Environment.cpp
@@ -163,6 +174,7 @@ target_link_libraries(gramma
 PUBLIC
 	project_settings
 	box2d glfw glad glm::glm
+	nlohmann_json::nlohmann_json
 )
 
 target_compile_features(gramma PUBLIC cxx_std_17)
@@ -199,3 +211,16 @@ if(GRAMMA_BUILD_RESCUE)
 	target_include_directories(rescue PRIVATE ${CMAKE_SOURCE_DIR}/inc ${CMAKE_SOURCE_DIR}/extern/glad/include)
 	target_compile_features(rescue PRIVATE cxx_std_17)
 endif()
+
+if(GRAMMA_BUILD_PLAY)
+	add_executable(play
+				apps/play/main.cpp
+				apps/play/PlayApp.cpp
+		)
+	target_link_libraries(play
+				PRIVATE gramma glm::glm gramma_ui
+		)
+	target_include_directories(play PRIVATE ${CMAKE_SOURCE_DIR}/inc ${CMAKE_SOURCE_DIR}/extern/glad/include)
+	target_compile_features(play PRIVATE cxx_std_17)
+endif()
+

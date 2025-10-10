@@ -11,6 +11,8 @@
 
 namespace gr {
 
+Agent::Agent() {
+}
 Agent::Agent(const std::string& id, const glm::vec2& pos, const glm::vec2& heading, std::unique_ptr<AgentTraits> traits,
              Home* home)
     : m_Id(id), m_Position(pos), m_Heading(heading), m_Traits(std::move(traits)), m_Home(home) {
@@ -18,6 +20,10 @@ Agent::Agent(const std::string& id, const glm::vec2& pos, const glm::vec2& headi
 
 const std::string& Agent::GetId() const {
     return m_Id;
+}
+
+void Agent::SetId(const std::string& id) {
+    m_Id = id;
 }
 
 void Agent::SetVelocity(const glm::vec2& v) {
@@ -49,8 +55,17 @@ void Agent::SetHeading(const glm::vec2& deg) {
 const AgentTraits& Agent::GetTraits() const {
     return *m_Traits;
 }
+
 AgentTraits& Agent::GetTraits() {
     return *m_Traits;
+}
+
+void Agent::SetTraits(std::unique_ptr<AgentTraits> traits) {
+    m_Traits = std::move(traits);
+}
+
+const std::vector<std::unique_ptr<INeed>>& Agent::GetNeeds() const {
+    return m_Needs;
 }
 
 template <typename T>

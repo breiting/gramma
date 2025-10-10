@@ -16,11 +16,13 @@ class Home;
 
 class Agent {
    public:
+    Agent();
     Agent(const std::string& id, const glm::vec2& pos, const glm::vec2& heading, std::unique_ptr<AgentTraits> traits,
           Home* home = nullptr);
     ~Agent();
 
     const std::string& GetId() const;
+    void SetId(const std::string& id);
 
     void SetVelocity(const glm::vec2& v);
     glm::vec2 GetVelocity() const;
@@ -33,6 +35,9 @@ class Agent {
 
     const AgentTraits& GetTraits() const;
     AgentTraits& GetTraits();
+    void SetTraits(std::unique_ptr<AgentTraits> traits);
+
+    const std::vector<std::unique_ptr<INeed>>& GetNeeds() const;
 
     template <typename T>
     T* GetTraitsAs();
