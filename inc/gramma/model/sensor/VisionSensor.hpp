@@ -1,8 +1,8 @@
 #pragma once
 #include <glm/vec2.hpp>
-#include <gramma/model/Agent.hpp>
-#include <gramma/model/Environment.hpp>
-#include <gramma/model/ISensor.hpp>
+#include <gramma/model/agent/Agent.hpp>
+#include <gramma/model/environment/Environment.hpp>
+#include <gramma/model/sensor/ISensor.hpp>
 #include <memory>
 #include <vector>
 

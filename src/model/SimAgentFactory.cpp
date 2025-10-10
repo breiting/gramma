@@ -1,5 +1,5 @@
-#include <gramma/model/EnergyNeed.hpp>
-#include <gramma/model/SimAgentFactory.hpp>
+#include <gramma/model/agent/SimAgentFactory.hpp>
+#include <gramma/model/need/EnergyNeed.hpp>
 #include <memory>
 
 namespace gr {

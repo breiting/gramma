@@ -1,7 +1,7 @@
 #pragma once
-#include <gramma/model/AgentFactory.hpp>
-#include <gramma/model/AgentTraits.hpp>
-#include <gramma/model/VisionSensor.hpp>
+#include <gramma/model/agent/AgentFactory.hpp>
+#include <gramma/model/agent/AgentTraits.hpp>
+#include <gramma/model/sensor/VisionSensor.hpp>
 
 namespace gr {
 

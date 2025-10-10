@@ -1,5 +1,5 @@
 #pragma once
-#include <gramma/model/ITask.hpp>
+#include <gramma/model/task/ITask.hpp>
 
 namespace gr {
 

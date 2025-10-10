@@ -1,5 +1,5 @@
 #pragma once
-#include <gramma/model/Environment.hpp>
+#include <gramma/model/environment/Environment.hpp>
 #include <gramma/view/AgentBatchView.hpp>
 #include <gramma/view/Camera2D.hpp>
 #include <gramma/view/HomeView.hpp>

@@ -7,8 +7,6 @@
 #include <gramma/view/AgentBatchView.hpp>
 #include <gramma/view/Uniforms.hpp>
 
-#include "gramma/model/Types.hpp"
-
 namespace gr {
 
 static glm::vec4 AgeColor(AgeClass age) {

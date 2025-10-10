@@ -1,7 +1,7 @@
 #include <algorithm>
 #include <gramma/view/EnvironmentView.hpp>
 
-#include "gramma/model/IResource.hpp"
+#include "gramma/model/resource/IResource.hpp"
 
 namespace gr {
 

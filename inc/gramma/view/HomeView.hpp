@@ -1,6 +1,6 @@
 #pragma once
 #include <glm/mat4x4.hpp>
-#include <gramma/model/Home.hpp>
+#include <gramma/model/resource/Home.hpp>
 #include <gramma/view/Shader.hpp>
 
 namespace gr {

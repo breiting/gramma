@@ -1,6 +1,6 @@
 #pragma once
 #include <algorithm>
-#include <gramma/model/IResource.hpp>
+#include <gramma/model/resource/IResource.hpp>
 
 namespace gr {
 

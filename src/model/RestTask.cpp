@@ -1,11 +1,10 @@
-#include <gramma/model/Agent.hpp>
-#include <gramma/model/RestTask.hpp>
+#include <gramma/model/agent/Agent.hpp>
+#include <gramma/model/task/RestTask.hpp>
 
 namespace gr {
 
 void RestTask::Update(Agent& agent, float dt) {
-    agent.AddEnergyRest(dt);
-    m_Done = (agent.GetEnergyLevel() >= m_Target);
+    // nop
 }
 
 }  // namespace gr

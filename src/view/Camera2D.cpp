@@ -1,5 +1,5 @@
 #include <glm/gtc/matrix_transform.hpp>
-#include <gramma/model/Environment.hpp>
+#include <gramma/model/environment/Environment.hpp>
 #include <gramma/view/Camera2D.hpp>
 
 namespace gr {

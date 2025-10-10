@@ -1,8 +1,8 @@
-#include <cmath>
-#include <gramma/model/VisionSensor.hpp>
+// #include <cmath>
+#include <gramma/model/sensor/VisionSensor.hpp>
 #include <nanoflann.hpp>
 
-#include "glm/trigonometric.hpp"
+// #include "glm/trigonometric.hpp"
 
 namespace gr {
 

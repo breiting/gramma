@@ -1,5 +1,5 @@
 #include <algorithm>
-#include <gramma/model/Home.hpp>
+#include <gramma/model/resource/Home.hpp>
 
 namespace gr {
 

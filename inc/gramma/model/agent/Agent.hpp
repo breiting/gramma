@@ -2,13 +2,13 @@
 #include <box2d/box2d.h>
 
 #include <glm/vec2.hpp>
-#include <gramma/model/AgentTraits.hpp>
-#include <gramma/model/EnergyNeed.hpp>
-#include <gramma/model/INeed.hpp>
-#include <gramma/model/ITask.hpp>
-#include <gramma/model/Types.hpp>
+#include <gramma/model/agent/AgentTraits.hpp>
+#include <gramma/model/need/INeed.hpp>
+#include <gramma/model/task/ITask.hpp>
 #include <memory>
 #include <vector>
+
+enum class AgentState { Idle, Executing, Dead, Rescued };
 
 namespace gr {
 class Environment;
@@ -50,13 +50,6 @@ class Agent {
     AgentState GetState() const;
     void SetState(AgentState state);
 
-    // Need-Fassade (Energy)
-    float GetEnergyLevel() const;
-    void AddEnergyIntake(float de);
-    void AddEnergyRest(float dt);
-    void AddActivityCost(float speed, float dt);
-    bool IsEnergyBelow(float t) const;
-
     /// Physics
     b2BodyId GetBody() const;
     void SetBody(b2BodyId body);
@@ -80,9 +73,6 @@ class Agent {
     void AddNeed(std::unique_ptr<INeed> need) {
         m_Needs.emplace_back(std::move(need));
     }
-
-   private:
-    EnergyNeed* findEnergyNeed() const;
 
    private:
     std::string m_Id;

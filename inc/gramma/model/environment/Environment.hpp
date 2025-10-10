@@ -3,11 +3,10 @@
 
 #include <glm/mat4x4.hpp>
 #include <glm/vec2.hpp>
-#include <gramma/model/Agent.hpp>
-#include <gramma/model/Exit.hpp>
-#include <gramma/model/Home.hpp>
-#include <gramma/model/IResource.hpp>
-#include <gramma/model/Types.hpp>
+#include <gramma/model/agent/Agent.hpp>
+#include <gramma/model/resource/Exit.hpp>
+#include <gramma/model/resource/Home.hpp>
+#include <gramma/model/resource/IResource.hpp>
 #include <memory>
 #include <vector>
 

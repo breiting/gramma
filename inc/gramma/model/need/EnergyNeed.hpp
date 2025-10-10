@@ -1,5 +1,5 @@
 #pragma once
-#include <gramma/model/INeed.hpp>
+#include <gramma/model/need/INeed.hpp>
 #include <string>
 
 namespace gr {

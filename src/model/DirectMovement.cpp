@@ -1,8 +1,8 @@
 #include <glm/geometric.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtc/random.hpp>
-#include <gramma/model/Agent.hpp>
-#include <gramma/model/DirectMovement.hpp>
+#include <gramma/model/agent/Agent.hpp>
+#include <gramma/model/movement/DirectMovement.hpp>
 
 namespace gr {
 
@@ -13,8 +13,7 @@ void DirectMovement::Update(Agent& agent, const glm::vec2& target, float dt) {
     glm::vec2 dir = dist > 1e-4f ? to / dist : glm::vec2(0, 0);
 
     float maxV = agent.GetTraits().maxSpeed;
-    float energy = agent.GetEnergyLevel();
-    float speed = maxV * (0.5f + 0.5f * energy);
+    float speed = maxV;
 
     // Fortschritt checken
     if (dist > m_LastDist - 0.01f) {  // kaum Fortschritt
@@ -33,8 +32,6 @@ void DirectMovement::Update(Agent& agent, const glm::vec2& target, float dt) {
     }
 
     agent.SetVelocity(dir * speed);
-    // TODO: currently no energy is drained
-    // agent.AddActivityCost(glm::length(agent.GetVelocity()), dt);
 }
 
 }  // namespace gr

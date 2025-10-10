@@ -1,13 +1,9 @@
 #include <glm/glm.hpp>
-#include <gramma/model/Agent.hpp>
-#include <gramma/model/EnergyNeed.hpp>
-#include <gramma/model/Environment.hpp>
-#include <gramma/model/Home.hpp>
-#include <gramma/model/ITask.hpp>
-#include <gramma/model/TaskFactory.hpp>
+#include <gramma/model/agent/Agent.hpp>
+#include <gramma/model/environment/Environment.hpp>
+#include <gramma/model/task/ITask.hpp>
+#include <gramma/model/task/TaskFactory.hpp>
 #include <limits>
-
-#include "gramma/model/Types.hpp"
 
 namespace gr {
 
@@ -87,44 +83,6 @@ void Agent::SetState(AgentState state) {
 
 Agent::~Agent() = default;
 
-EnergyNeed* Agent::findEnergyNeed() const {
-    for (auto& n : m_Needs) {
-        if (auto* e = dynamic_cast<EnergyNeed*>(n.get())) {
-            return e;
-        }
-    }
-    return nullptr;
-}
-
-float Agent::GetEnergyLevel() const {
-    if (auto* e = findEnergyNeed()) {
-        return e->Level();
-    }
-    return 0.0f;
-}
-
-void Agent::AddEnergyIntake(float de) {
-    if (auto* e = findEnergyNeed()) {
-        e->AddIntake(de);
-    }
-}
-
-void Agent::AddEnergyRest(float dt) {
-    if (auto* e = findEnergyNeed()) {
-        e->AddRest(dt);
-    }
-}
-
-void Agent::AddActivityCost(float speed, float dt) {
-    if (auto* e = findEnergyNeed()) {
-        e->AddActivityCost(speed, dt);
-    }
-}
-
-bool Agent::IsEnergyBelow(float t) const {
-    return GetEnergyLevel() < t;
-}
-
 b2BodyId Agent::GetBody() const {
     return m_Body;
 }
@@ -150,12 +108,6 @@ void Agent::EvaluateNeeds(const Environment& env, float dt) {
     for (auto& n : m_Needs) {
         n->Update(dt);
     }
-
-    // TODO:
-    // if (GetEnergyLevel() <= 0.0f) {
-    //     m_State = AgentState::Dead;
-    //     return;
-    // }
 
     // Utility-Choice
     float bestU = -std::numeric_limits<float>::infinity();

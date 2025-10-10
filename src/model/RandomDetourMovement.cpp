@@ -1,7 +1,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/random.hpp>
-#include <gramma/model/Agent.hpp>
-#include <gramma/model/RandomDetourMovement.hpp>
+#include <gramma/model/agent/Agent.hpp>
+#include <gramma/model/movement/RandomDetourMovement.hpp>
 
 namespace gr {
 
@@ -22,12 +22,9 @@ void RandomDetourMovement::Update(Agent& agent, const glm::vec2& target, float d
 
     // Geschwindigkeit berechnen
     float maxV = agent.GetTraits().maxSpeed;
-    float energy = agent.GetEnergyLevel();
-    float speed = maxV * (0.5f + 0.5f * energy);
+    float speed = maxV;
     if (speed > maxV) speed = maxV;
 
-    // Box2D-Integration via Agent-Facade
     agent.SetVelocity(dir * speed);
-    agent.AddActivityCost(speed, dt);
 }
 }  // namespace gr

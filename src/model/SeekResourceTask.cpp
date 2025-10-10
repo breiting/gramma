@@ -1,12 +1,10 @@
 #include <glm/glm.hpp>
-#include <gramma/model/Agent.hpp>
-#include <gramma/model/DirectMovement.hpp>
-#include <gramma/model/Exit.hpp>
-#include <gramma/model/IResource.hpp>
-#include <gramma/model/MoveTask.hpp>
-#include <gramma/model/SeekResourceTask.hpp>
-
-#include "gramma/model/Types.hpp"
+#include <gramma/model/agent/Agent.hpp>
+#include <gramma/model/movement/DirectMovement.hpp>
+#include <gramma/model/resource/Exit.hpp>
+#include <gramma/model/resource/IResource.hpp>
+#include <gramma/model/task/MoveTask.hpp>
+#include <gramma/model/task/SeekResourceTask.hpp>
 
 namespace gr {
 
@@ -45,14 +43,6 @@ void SeekResourceTask::Update(Agent& agent, float dt) {
             m_Done = true;
             agent.SetState(AgentState::Rescued);
             return;
-        }
-
-        float want = m_IntakePerSec * dt;
-        float got = m_Res->Consume(want);
-        agent.AddEnergyIntake(got);
-
-        if (agent.GetEnergyLevel() >= m_Target || m_Res->IsDepleted()) {
-            m_Done = true;
         }
     }
 }

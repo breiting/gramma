@@ -1,6 +1,6 @@
 #include <algorithm>
 #include <glm/glm.hpp>
-#include <gramma/model/EnergyNeed.hpp>
+#include <gramma/model/need/EnergyNeed.hpp>
 
 namespace gr {
 

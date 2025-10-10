@@ -1,6 +1,6 @@
 #pragma once
 #include <glm/mat4x4.hpp>
-#include <gramma/model/Agent.hpp>
+#include <gramma/model/agent/Agent.hpp>
 #include <gramma/view/Shader.hpp>
 #include <memory>
 #include <vector>

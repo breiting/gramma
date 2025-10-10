@@ -1,8 +1,9 @@
 #pragma once
 #include <glm/vec2.hpp>
-#include <gramma/model/Types.hpp>
 
 namespace gr {
+
+enum class ResourceType { Food, Water, Exit };
 
 class IResource {
    public:

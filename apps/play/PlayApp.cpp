@@ -6,21 +6,20 @@
 #include <gramma/core/AppContext.hpp>
 #include <gramma/core/Time.hpp>
 #include <gramma/core/Window.hpp>
-#include <gramma/model/Agent.hpp>
-#include <gramma/model/EnergyNeed.hpp>
-#include <gramma/model/FoodResource.hpp>
-#include <gramma/model/Home.hpp>
-#include <gramma/model/SafetyNeed.hpp>
-#include <gramma/model/SimAgentFactory.hpp>
-#include <gramma/model/VisionSensor.hpp>
-#include <gramma/model/WalkNeed.hpp>
+#include <gramma/model/agent/Agent.hpp>
+#include <gramma/model/agent/AgentSerializer.hpp>
+#include <gramma/model/agent/SimAgentFactory.hpp>
+#include <gramma/model/movement/DirectMovement.hpp>
+#include <gramma/model/need/EnergyNeed.hpp>
+#include <gramma/model/need/SafetyNeed.hpp>
+#include <gramma/model/need/WalkNeed.hpp>
+#include <gramma/model/resource/FoodResource.hpp>
+#include <gramma/model/resource/Home.hpp>
+#include <gramma/model/sensor/VisionSensor.hpp>
+#include <gramma/model/task/MoveTask.hpp>
 #include <gramma/ui/ImGuiLayer.hpp>
 #include <iostream>
 #include <memory>
-
-#include "gramma/model/AgentSerializer.hpp"
-#include "gramma/model/DirectMovement.hpp"
-#include "gramma/model/MoveTask.hpp"
 
 using namespace gr;
 

@@ -1,6 +1,6 @@
 #pragma once
 #include <glm/vec2.hpp>
-#include <gramma/model/IResource.hpp>
+#include <gramma/model/resource/IResource.hpp>
 #include <string>
 
 namespace gr {

@@ -5,10 +5,10 @@
 
 #include <glm/glm.hpp>
 #include <gramma/core/Math.hpp>
-#include <gramma/model/Agent.hpp>
-#include <gramma/model/Environment.hpp>
-#include <gramma/model/IResource.hpp>
-#include <gramma/model/ITask.hpp>
+#include <gramma/model/agent/Agent.hpp>
+#include <gramma/model/environment/Environment.hpp>
+#include <gramma/model/resource/IResource.hpp>
+#include <gramma/model/task/ITask.hpp>
 #include <iostream>
 #include <limits>
 #include <memory>

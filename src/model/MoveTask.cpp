@@ -1,6 +1,6 @@
 #include <glm/glm.hpp>
-#include <gramma/model/Agent.hpp>
-#include <gramma/model/MoveTask.hpp>
+#include <gramma/model/agent/Agent.hpp>
+#include <gramma/model/task/MoveTask.hpp>
 
 namespace gr {
 

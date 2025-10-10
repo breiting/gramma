@@ -1,6 +1,6 @@
 #pragma once
 #include <glm/vec2.hpp>
-#include <gramma/model/Agent.hpp>
+#include <gramma/model/agent/Agent.hpp>
 #include <memory>
 #include <nlohmann/json.hpp>
 #include <string>

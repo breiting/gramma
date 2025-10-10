@@ -1,7 +1,7 @@
 #pragma once
 
 #include <gramma/core/IApp.hpp>
-#include <gramma/model/Environment.hpp>
+#include <gramma/model/environment/Environment.hpp>
 #include <gramma/ui/IGuiLayer.hpp>
 #include <gramma/view/AgentView.hpp>
 #include <gramma/view/Camera2D.hpp>

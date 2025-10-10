@@ -1,18 +1,18 @@
 #pragma once
-#include <gramma/model/INeed.hpp>
+#include <gramma/model/need/INeed.hpp>
 #include <string>
 
 namespace gr {
 
-class SafetyNeed : public INeed {
+class WalkNeed : public INeed {
    public:
-    SafetyNeed() = default;
+    WalkNeed() = default;
 
     float Priority() const override {
         return 1.0f;
     }
     std::string Name() const override {
-        return "Safety";
+        return "Walk";
     }
 };
 

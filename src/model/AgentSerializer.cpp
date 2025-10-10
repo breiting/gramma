@@ -1,5 +1,5 @@
 #include <fstream>
-#include <gramma/model/AgentSerializer.hpp>
+#include <gramma/model/agent/AgentSerializer.hpp>
 #include <iostream>
 #include <stdexcept>
 

@@ -1,7 +1,7 @@
 #pragma once
 #include <glm/vec2.hpp>
-#include <gramma/model/IMovementStrategy.hpp>
-#include <gramma/model/ITask.hpp>
+#include <gramma/model/movement/IMovementStrategy.hpp>
+#include <gramma/model/task/ITask.hpp>
 #include <memory>
 
 namespace gr {

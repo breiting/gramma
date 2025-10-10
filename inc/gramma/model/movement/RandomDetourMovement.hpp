@@ -1,5 +1,5 @@
 #pragma once
-#include <gramma/model/IMovementStrategy.hpp>
+#include <gramma/model/movement/IMovementStrategy.hpp>
 
 namespace gr {
 

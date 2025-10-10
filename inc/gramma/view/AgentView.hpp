@@ -1,5 +1,5 @@
 #pragma once
-#include <gramma/model/Agent.hpp>
+#include <gramma/model/agent/Agent.hpp>
 #include <gramma/view/Shader.hpp>
 
 namespace gr {

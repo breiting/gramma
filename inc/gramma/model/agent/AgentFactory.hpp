@@ -1,6 +1,6 @@
 #pragma once
-#include <gramma/model/Agent.hpp>
-#include <gramma/model/Environment.hpp>
+#include <gramma/model/agent/Agent.hpp>
+#include <gramma/model/environment/Environment.hpp>
 #include <memory>
 #include <random>
 
