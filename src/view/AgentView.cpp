@@ -118,7 +118,7 @@ void AgentView::UpdateInstances(const std::vector<std::unique_ptr<Agent>>& agent
         d.radius = traits.bodyRadius;
         d.glowWidth = traits.bodyRadius * 0.1;
         d.color = color;
-        d.glowColor = glm::vec4(1.0f, 0.2f, 0.2f, 1.0f);
+        d.glowColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
         d.heading = a->GetHeading();
         m_InstanceData.push_back(d);
     }
