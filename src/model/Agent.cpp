@@ -9,9 +9,8 @@ namespace gr {
 
 Agent::Agent() {
 }
-Agent::Agent(const std::string& id, const glm::vec2& pos, const glm::vec2& heading, std::unique_ptr<AgentTraits> traits,
-             Home* home)
-    : m_Id(id), m_Position(pos), m_Heading(heading), m_Traits(std::move(traits)), m_Home(home) {
+Agent::Agent(const std::string& id, const glm::vec2& pos, const glm::vec2& heading, std::unique_ptr<AgentTraits> traits)
+    : m_Id(id), m_Position(pos), m_Heading(heading), m_Traits(std::move(traits)) {
 }
 
 const std::string& Agent::GetId() const {
@@ -126,7 +125,7 @@ void Agent::EvaluateNeeds(const Environment& env, float dt) {
     }
 }
 
-void Agent::Update(float dt, const Environment& env) {
+void Agent::Update(const Environment& env, float dt) {
     if (m_State == AgentState::Dead || m_State == AgentState::Rescued) return;
 
     EvaluateNeeds(env, dt);

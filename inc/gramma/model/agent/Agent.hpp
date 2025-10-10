@@ -12,13 +12,12 @@ enum class AgentState { Idle, Executing, Dead, Rescued };
 
 namespace gr {
 class Environment;
-class Home;
 
 class Agent {
    public:
     Agent();
-    Agent(const std::string& id, const glm::vec2& pos, const glm::vec2& heading, std::unique_ptr<AgentTraits> traits,
-          Home* home = nullptr);
+    Agent(const std::string& id, const glm::vec2& pos, const glm::vec2& heading, std::unique_ptr<AgentTraits> traits);
+
     ~Agent();
 
     const std::string& GetId() const;
@@ -59,20 +58,14 @@ class Agent {
     void ClearTask();
 
     /// Decision + Update
-    void Update(float dt, const Environment& env);
-    void EvaluateNeeds(const Environment& env, float dt);
-
-    // Home
-    Home* GetHome() const {
-        return m_Home;
-    }
-    void SetHome(Home* h) {
-        m_Home = h;
-    }
+    void Update(const Environment& env, float dt);
 
     void AddNeed(std::unique_ptr<INeed> need) {
         m_Needs.emplace_back(std::move(need));
     }
+
+   private:
+    void EvaluateNeeds(const Environment& env, float dt);
 
    private:
     std::string m_Id;
@@ -85,7 +78,6 @@ class Agent {
     std::unique_ptr<ITask> m_Task;
 
     AgentState m_State{AgentState::Idle};
-    Home* m_Home{nullptr};
 };
 
 }  // namespace gr

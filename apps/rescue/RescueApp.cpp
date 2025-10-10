@@ -24,11 +24,6 @@ void RescueApp::GenerateAgents(Environment* env, int count) {
     SimAgentFactory factory;
     for (int i = 0; i < count; ++i) {
         auto agent = factory.Create("Agent" + std::to_string(m_AgentIdCounter++), env->RandomPosition());
-        Home* home = env->GetNextFreeHome();
-        if (home) {
-            agent->SetHome(home);
-            home->Enter(agent.get());
-        }
 
         env->AddAgent(std::move(agent));
     }

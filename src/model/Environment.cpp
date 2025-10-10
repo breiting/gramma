@@ -175,7 +175,7 @@ void Environment::Update(float dt) {
             agent->SetPosition(pos);
             agent->SetHeading({std::cos(angle), std::sin(angle)});
         }
-        agent->Update(dt, *this);
+        agent->Update(*this, dt);
     }
 
     // Delete dead agents
