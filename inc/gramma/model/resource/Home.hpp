@@ -2,16 +2,33 @@
 #include <glm/vec2.hpp>
 #include <vector>
 
+#include "gramma/model/resource/IResource.hpp"
+
 namespace gr {
 class Agent;
 
-class Home {
+class Home : public IResource {
    public:
     Home(const glm::vec2& pos, int maxOccupancy = 4) : m_Position(pos), m_MaxOccupancy(maxOccupancy) {
     }
 
-    const glm::vec2& GetPosition() const {
+    ResourceType GetType() const override {
+        return ResourceType::Home;
+    }
+
+    const glm::vec2& GetPosition() const override {
         return m_Position;
+    }
+
+    float Consume(float) override {
+        return 1.0f;
+    }
+
+    void Regenerate(float) override {
+    }
+
+    bool IsDepleted() const override {
+        return false;
     }
 
     bool CanEnter() const {

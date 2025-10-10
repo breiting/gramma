@@ -13,7 +13,7 @@
 namespace gr {
 
 /**
- * Global environment that contains agents and food sources.
+ * Global environment that contains all simulation data
  * Responsible for updating the simulation state and rendering.
  */
 
@@ -32,25 +32,12 @@ class Environment {
     glm::vec2 RandomPosition() const;
 
     void AddAgent(std::unique_ptr<Agent> a);
-    void AddResource(std::shared_ptr<IResource> r);
-    void AddHome(std::shared_ptr<Home> h);
-
-    b2WorldId GetWorld() const {
-        return m_World;
-    }
-
-    const std::vector<std::unique_ptr<Agent>>& Agents() const {
-        return m_Agents;
-    }
+    const std::vector<std::unique_ptr<Agent>>& Agents() const;
     void RemoveAllAgents();
 
-    const std::vector<std::shared_ptr<IResource>>& Resources() const {
-        return m_Resources;
-    }
-    const std::vector<std::shared_ptr<Home>>& Homes() const {
-        return m_Homes;
-    }
-    Home* GetNextFreeHome();
+    void AddResource(std::shared_ptr<IResource> r);
+
+    const std::vector<std::shared_ptr<IResource>>& Resources() const;
 
     // Update-Loop
     void Update(float dt);
@@ -75,7 +62,6 @@ class Environment {
 
     std::vector<std::unique_ptr<Agent>> m_Agents;
     std::vector<std::shared_ptr<IResource>> m_Resources;
-    std::vector<std::shared_ptr<Home>> m_Homes;
 };
 
 }  // namespace gr

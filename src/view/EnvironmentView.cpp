@@ -19,15 +19,6 @@ void EnvironmentView::SyncWithEnvironment(Environment* env) {
 
     m_AgentView.UpdateInstances(env->Agents());
 
-    // --- Homes ---
-    for (auto& homePtr : env->Homes()) {
-        Home* home = homePtr.get();
-        if (m_HomeViews.find(home) == m_HomeViews.end()) {
-            auto view = std::make_unique<HomeView>();
-            view->Init();
-            m_HomeViews[home] = std::move(view);
-        }
-    }
     // --- ResourceViews ---
     for (auto& rPtr : env->Resources()) {
         IResource* res = rPtr.get();
@@ -53,7 +44,7 @@ void EnvironmentView::Draw(Environment* env, const Camera2D& cam) {
 
     auto vp = cam.ViewProj();
 
-    // --- Bounds ---
+    // --- Draw Bounds ---
     {
         m_Bounds.Set(env->GetBoundary());
         m_Bounds.Draw(m_Shader, cam.ViewProj(), glm::vec4(0.7f, 0.7f, 0.7f, 1.0f));
@@ -64,7 +55,7 @@ void EnvironmentView::Draw(Environment* env, const Camera2D& cam) {
         }
     }
 
-    // --- Agents ---
+    // --- Draw Agents ---
     m_AgentView.Draw(vp);
 
     // --- Draw Resources ---
@@ -73,15 +64,6 @@ void EnvironmentView::Draw(Environment* env, const Camera2D& cam) {
         auto it = m_ResourceViews.find(res);
         if (it != m_ResourceViews.end()) {
             it->second->Draw(res, vp);
-        }
-    }
-
-    // --- Draw Homes ---
-    for (auto& homePtr : env->Homes()) {
-        Home* home = homePtr.get();
-        auto it = m_HomeViews.find(home);
-        if (it != m_HomeViews.end()) {
-            it->second->Draw(home, vp);
         }
     }
 }

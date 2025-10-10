@@ -3,7 +3,7 @@
 
 namespace gr {
 
-enum class ResourceType { Food, Water, Exit };
+enum class ResourceType { Food, Water, Home, Exit };
 
 class IResource {
    public:

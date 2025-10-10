@@ -16,9 +16,6 @@ class AgentFactory {
     /// Create one agent (to be overridden by specializations)
     virtual std::unique_ptr<Agent> Create(const std::string& id, const glm::vec2& pos) = 0;
 
-   protected:
-    float RandomHeading();
-
     std::mt19937 m_Rng;
 };
 

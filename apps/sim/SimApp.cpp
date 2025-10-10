@@ -39,7 +39,7 @@ static void GenerateHome(Environment* env) {
     if (!env) return;
     for (int i = 0; i < 5; ++i) {
         glm::vec2 pos = env->RandomPosition();
-        env->AddHome(std::make_unique<gr::Home>(pos, 4));
+        env->AddResource(std::make_unique<gr::Home>(pos, 4));
     }
 }
 

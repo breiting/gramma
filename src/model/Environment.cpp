@@ -142,9 +142,13 @@ void Environment::AddResource(std::shared_ptr<IResource> r) {
     // TODO: box2d
     m_Resources.emplace_back(std::move(r));
 }
-void Environment::AddHome(std::shared_ptr<Home> h) {
-    // TODO: box2d
-    m_Homes.emplace_back(std::move(h));
+
+const std::vector<std::shared_ptr<IResource>>& Environment::Resources() const {
+    return m_Resources;
+}
+
+const std::vector<std::unique_ptr<Agent>>& Environment::Agents() const {
+    return m_Agents;
 }
 
 void Environment::RemoveAllAgents() {
@@ -196,15 +200,6 @@ void Environment::Update(float dt) {
                                          return r->IsDepleted();  //
                                      }),
                       m_Resources.end());
-}
-
-Home* Environment::GetNextFreeHome() {
-    for (auto& h : m_Homes) {
-        if (h->Occupancy() < h->GetMaxOccupancy()) {
-            return h.get();
-        }
-    }
-    return nullptr;
 }
 
 std::shared_ptr<IResource> Environment::FindNearest(ResourceType type, const glm::vec2& pos) const {
