@@ -1,4 +1,10 @@
+#include <box2d/box2d.h>
+#include <box2d/id.h>
+#include <box2d/math_functions.h>
+#include <box2d/types.h>
+
 #include <glm/glm.hpp>
+#include <gramma/core/Math.hpp>
 #include <gramma/model/Agent.hpp>
 #include <gramma/model/Environment.hpp>
 #include <gramma/model/IResource.hpp>
@@ -7,11 +13,6 @@
 #include <limits>
 #include <memory>
 #include <random>
-
-#include "box2d/box2d.h"
-#include "box2d/id.h"
-#include "box2d/math_functions.h"
-#include "box2d/types.h"
 
 namespace gr {
 
@@ -84,7 +85,6 @@ void Environment::CreateChainShape(const std::vector<glm::vec2>& contour) {
         return;
     }
 
-    // 1) statischer Body
     b2BodyDef bd = b2DefaultBodyDef();
     bd.type = b2_staticBody;
     b2BodyId body = b2CreateBody(m_World, &bd);
@@ -100,24 +100,16 @@ void Environment::CreateChainShape(const std::vector<glm::vec2>& contour) {
     cd.count = static_cast<int>(pts.size());
     cd.isLoop = true;
 
-    // b2SurfaceMaterial mat = b2DefaultSurfaceMaterial();
-    // mat.friction = 0.9f;
-    // cd.materials = &mat;
-    // cd.materialCount = 1;
-
-    // 4) Chain erzeugen
     b2ChainId chain = b2CreateChain(body, &cd);
 
-    // optional: global setzen
-    // b2Chain_SetFriction(chain, 0.9f);
-    // b2Chain_SetRestitution(chain, 0.0f);
-
-    // Hinweis: pts muss bis nach CreateChain leben (hier ok, lokale Kopie)
+    b2Chain_SetFriction(chain, 0.1f);
+    b2Chain_SetRestitution(chain, 0.0f);  // no repulsion (Abprallen)
 }
 
 void Environment::AddAgent(std::unique_ptr<Agent> agent) {
-    // Save position/heading before move
     glm::vec2 pos = agent->GetPosition();
+    float mass = agent->GetTraits().mass;
+    float radius = agent->GetTraits().bodyRadius;
 
     // Body definition
     b2BodyDef bd = b2DefaultBodyDef();
@@ -126,16 +118,14 @@ void Environment::AddAgent(std::unique_ptr<Agent> agent) {
 
     // Create body in the world
     b2BodyId body = b2CreateBody(m_World, &bd);
-
     b2Body_SetFixedRotation(body, true);
 
-    // Shape (circle for agent body)
     b2Circle circle;
     circle.center = {0.0f, 0.0f};
     circle.radius = agent->GetTraits().bodyRadius;
 
     b2ShapeDef sd = b2DefaultShapeDef();
-    sd.density = 1.0;
+    sd.density = mass / (radius * radius * gr::PI);  // kg/m^2
 
     b2SurfaceMaterial mat = b2DefaultSurfaceMaterial();
     mat.friction = 0.3;
@@ -144,10 +134,8 @@ void Environment::AddAgent(std::unique_ptr<Agent> agent) {
 
     b2CreateCircleShape(body, &sd, &circle);
 
-    // Give body to agent
     agent->SetBody(body);
 
-    // Store agent in environment
     m_Agents.emplace_back(std::move(agent));
 }
 void Environment::AddResource(std::shared_ptr<IResource> r) {

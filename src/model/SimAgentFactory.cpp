@@ -21,12 +21,14 @@ AgentTraits SimAgentFactory::RandomTraits() {
     std::uniform_real_distribution<float> radiusDist(0.15f, 0.25f);
     std::uniform_real_distribution<float> comfortDist(0.26f, 0.5f);
     std::uniform_real_distribution<float> speedDist(0.8f, 4.8f);
+    std::uniform_real_distribution<float> mass(40, 120);  // TODO: make dependent on sex, age, ...
 
     AgentTraits traits;
     traits.age = static_cast<AgeClass>(ageDist(m_Rng));
     traits.bodyRadius = radiusDist(m_Rng);
     traits.socialRadius = comfortDist(m_Rng);
     traits.maxSpeed = speedDist(m_Rng);
+    traits.mass = mass(m_Rng);
     return traits;
 }
 
