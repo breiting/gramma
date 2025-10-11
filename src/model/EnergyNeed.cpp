@@ -11,6 +11,10 @@ void EnergyNeed::Update(float dt) {
     m_E = std::max(0.0f, m_E - m_P.basal * dt);
 }
 
+float EnergyNeed::Priority() const {
+    return 1.0f - m_E;
+}
+
 void EnergyNeed::AddIntake(float e) {
     m_E = glm::clamp(m_E + e, 0.0f, 1.0f);
 }

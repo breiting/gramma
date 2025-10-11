@@ -48,7 +48,7 @@ class Environment {
     void Update(float dt);
     void Render(const glm::mat4& vp);
 
-    /// Find the nearest resource
+    /// Find the nearest resource given the type
     std::shared_ptr<IResource> FindNearest(ResourceType type, const glm::vec2& pos) const;
 
    private:

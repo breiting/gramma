@@ -19,9 +19,8 @@ class EnergyNeed : public INeed {
     explicit EnergyNeed(const EnergyNeedParams& p = EnergyNeedParams{});
 
     void Update(float dt) override;
-    float Priority() const override {
-        return 1.0f - m_E;
-    }
+    float Priority() const override;
+
     std::string Name() const override {
         return "Energy";
     }
@@ -30,9 +29,6 @@ class EnergyNeed : public INeed {
     void AddRest(float dt);
     void AddActivityCost(float speed, float dt);
 
-    float Level() const {
-        return m_E;
-    }
     float LowThreshold() const {
         return m_P.low;
     }

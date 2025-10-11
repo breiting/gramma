@@ -3,7 +3,6 @@
 #include <gramma/model/agent/Agent.hpp>
 #include <gramma/model/environment/Environment.hpp>
 #include <gramma/model/sensor/ISensor.hpp>
-#include <memory>
 #include <vector>
 
 namespace gr {
@@ -32,7 +31,5 @@ class VisionSensor : public ISensor {
 
     std::vector<VisionHit> m_Hits;
 };
-
-using VisionSensorPtr = std::unique_ptr<VisionSensor>;
 
 }  // namespace gr
