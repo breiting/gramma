@@ -19,15 +19,8 @@ class Exit : public IResource {
         return m_Pos;
     }
 
-    float Consume(float) override {
-        return 1.0f;
-    }
-
-    void Regenerate(float) override {
-    }
-
-    bool IsDepleted() const override {
-        return false;
+    float GetBoundingRadius() const override {
+        return m_Width * 0.5;
     }
 
     bool IsBlocked() const {

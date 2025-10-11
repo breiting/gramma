@@ -61,9 +61,9 @@ bool PlayApp::Init(gr::AppContext& ctx) {
         if (key == GLFW_KEY_ESCAPE) {
             m_Quit = true;
         } else if (key == GLFW_KEY_A) {
-            m_Env->Agents()[0]->AssignTask(
+            m_Env->GetAgents()[0]->AssignTask(
                 std::make_unique<MoveTask>(glm::vec2(4, 0), std::make_unique<DirectMovement>()));
-            m_Env->Agents()[1]->AssignTask(
+            m_Env->GetAgents()[1]->AssignTask(
                 std::make_unique<MoveTask>(glm::vec2(-4, 0), std::make_unique<DirectMovement>()));
         } else if (key == GLFW_KEY_R) {
             m_Env->RemoveAllAgents();
@@ -112,7 +112,7 @@ void PlayApp::Render(gr::AppContext& ctx) {
     m_Gui->BeginFrame();
 
     ImGui::Begin("Environment Stats");
-    ImGui::Text("Agents: %zu", m_Env->Agents().size());
+    ImGui::Text("Agents: %zu", m_Env->GetAgents().size());
     ImGui::SliderFloat("Timescale", &m_Timescale, 0.5, 10.0);
     ImGui::End();
 

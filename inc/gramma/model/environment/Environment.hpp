@@ -22,34 +22,33 @@ class Environment {
     Environment(const glm::vec2& gravity);
     ~Environment();
 
+    /// Boundary
     void AddBoundary(const std::vector<glm::vec2>& vertices);
-    void AddObstacle(const std::vector<glm::vec2>& contour);
-
     const std::vector<glm::vec2>& GetBoundary() const;
+
+    /// Obstacle
+    void AddObstacle(const std::vector<glm::vec2>& contour);
     const std::vector<std::vector<glm::vec2>>& GetObstacles() const;
 
+    /// Agents
+    void AddAgent(std::unique_ptr<Agent> a);
+    const Agent* GetAgent(size_t idx) const;
+    const std::vector<std::unique_ptr<Agent>>& GetAgents() const;
+    void RemoveAllAgents();
+
+    /// Resources
+    void AddResource(std::shared_ptr<IResource> r);
+    const std::vector<std::shared_ptr<IResource>>& GetResources() const;
+
+    /// Checks if a point is within the boundary
     bool ContainsPoint(const glm::vec2& p) const;
     glm::vec2 RandomPosition() const;
 
-    void AddAgent(std::unique_ptr<Agent> a);
-    const std::vector<std::unique_ptr<Agent>>& Agents() const;
-    void RemoveAllAgents();
-
-    void AddResource(std::shared_ptr<IResource> r);
-
-    const std::vector<std::shared_ptr<IResource>>& Resources() const;
-
-    // Update-Loop
+    /// Update and Render loop
     void Update(float dt);
     void Render(const glm::mat4& vp);
 
-    void Stats() const;
-
-    const Agent* GetAgent(size_t idx) const {
-        return m_Agents[idx].get();
-    }
-
-    // Utility: nächste Ressource vom Typ
+    /// Find the nearest resource
     std::shared_ptr<IResource> FindNearest(ResourceType type, const glm::vec2& pos) const;
 
    private:

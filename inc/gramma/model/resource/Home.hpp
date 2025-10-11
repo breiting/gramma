@@ -20,15 +20,8 @@ class Home : public IResource {
         return m_Position;
     }
 
-    float Consume(float) override {
-        return 1.0f;
-    }
-
-    void Regenerate(float) override {
-    }
-
-    bool IsDepleted() const override {
-        return false;
+    float GetBoundingRadius() const override {
+        return 0.5;
     }
 
     bool CanEnter() const {

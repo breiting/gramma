@@ -1,4 +1,6 @@
 #pragma once
+#include <box2d/id.h>
+
 #include <glm/vec2.hpp>
 
 namespace gr {
@@ -11,10 +13,18 @@ class IResource {
 
     virtual ResourceType GetType() const = 0;
     virtual const glm::vec2& GetPosition() const = 0;
+    virtual float GetBoundingRadius() const = 0;
 
-    virtual float Consume(float amount) = 0;  // returns actual
-    virtual void Regenerate(float dt) = 0;
-    virtual bool IsDepleted() const = 0;
+    /// Physics
+    b2BodyId GetBody() const {
+        return m_Body;
+    }
+    void SetBody(b2BodyId body) {
+        m_Body = body;
+    }
+
+   protected:
+    b2BodyId m_Body;
 };
 
 }  // namespace gr

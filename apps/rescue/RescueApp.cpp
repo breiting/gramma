@@ -92,7 +92,7 @@ bool RescueApp::Init(gr::AppContext& ctx) {
         } else if (key == GLFW_KEY_A) {
             m_SeedAgents = true;
         } else if (key == GLFW_KEY_N) {
-            for (auto& a : m_Env->Agents()) {
+            for (auto& a : m_Env->GetAgents()) {
                 a->AddNeed(std::make_unique<SafetyNeed>());
             }
 
@@ -144,7 +144,7 @@ void RescueApp::Render(gr::AppContext& ctx) {
     m_Gui->BeginFrame();
 
     ImGui::Begin("Environment Stats");
-    ImGui::Text("Agents: %zu", m_Env->Agents().size());
+    ImGui::Text("Agents: %zu", m_Env->GetAgents().size());
     ImGui::SliderFloat("Timescale", &m_Timescale, 0.5, 10.0);
     ImGui::End();
 

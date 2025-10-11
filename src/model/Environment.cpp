@@ -14,6 +14,8 @@
 #include <memory>
 #include <random>
 
+#include "gramma/model/resource/IConsumable.hpp"
+
 namespace gr {
 
 Environment::Environment(const glm::vec2& gravity) {
@@ -138,16 +140,12 @@ void Environment::AddAgent(std::unique_ptr<Agent> agent) {
 
     m_Agents.emplace_back(std::move(agent));
 }
-void Environment::AddResource(std::shared_ptr<IResource> r) {
-    // TODO: box2d
-    m_Resources.emplace_back(std::move(r));
+
+const Agent* Environment::GetAgent(size_t idx) const {
+    return m_Agents[idx].get();
 }
 
-const std::vector<std::shared_ptr<IResource>>& Environment::Resources() const {
-    return m_Resources;
-}
-
-const std::vector<std::unique_ptr<Agent>>& Environment::Agents() const {
+const std::vector<std::unique_ptr<Agent>>& Environment::GetAgents() const {
     return m_Agents;
 }
 
@@ -156,6 +154,29 @@ void Environment::RemoveAllAgents() {
         b2DestroyBody(a->GetBody());
     }
     m_Agents.clear();
+}
+
+void Environment::AddResource(std::shared_ptr<IResource> r) {
+    glm::vec2 pos = r->GetPosition();
+    float radius = r->GetBoundingRadius();
+
+    b2BodyDef bd = b2DefaultBodyDef();
+    bd.type = b2_staticBody;
+    b2BodyId body = b2CreateBody(m_World, &bd);
+
+    b2Circle circle;
+    circle.center = {pos.x, pos.y};
+    circle.radius = radius;
+
+    b2ShapeDef sd = b2DefaultShapeDef();
+
+    b2CreateCircleShape(body, &sd, &circle);
+
+    m_Resources.emplace_back(std::move(r));
+}
+
+const std::vector<std::shared_ptr<IResource>>& Environment::GetResources() const {
+    return m_Resources;
 }
 
 const std::vector<glm::vec2>& Environment::GetBoundary() const {
@@ -169,8 +190,13 @@ const std::vector<std::vector<glm::vec2>>& Environment::GetObstacles() const {
 void Environment::Update(float dt) {
     b2World_Step(m_World, dt, 4);
 
-    // Ressourcen regenerieren
-    for (auto& r : m_Resources) r->Regenerate(dt);
+    // Update resources if required
+    for (auto& r : m_Resources) {
+        // All consumables
+        if (auto* consumable = dynamic_cast<IConsumable*>(r.get())) {
+            consumable->Regenerate(dt);
+        }
+    }
 
     // Sync and update agents
     for (auto& agent : m_Agents) {
@@ -194,19 +220,25 @@ void Environment::Update(float dt) {
         }
     }
 
-    // Delete empty resources
-    m_Resources.erase(std::remove_if(m_Resources.begin(), m_Resources.end(),
-                                     [](std::shared_ptr<IResource>& r) {
-                                         return r->IsDepleted();  //
-                                     }),
-                      m_Resources.end());
+    // Delete finally consumed resources
+    auto res = m_Resources.begin();
+    while (res != m_Resources.end()) {
+        if (auto* consumable = dynamic_cast<IConsumable*>(res->get())) {
+            if (consumable->IsDepleted()) {
+                b2DestroyBody(res->get()->GetBody());
+                res = m_Resources.erase(res);
+            }
+        } else {
+            ++res;
+        }
+    }
 }
 
 std::shared_ptr<IResource> Environment::FindNearest(ResourceType type, const glm::vec2& pos) const {
     float bestD2 = std::numeric_limits<float>::infinity();
     std::shared_ptr<IResource> best = nullptr;
     for (auto& r : m_Resources) {
-        if (r->GetType() != type || r->IsDepleted()) continue;
+        if (r->GetType() != type) continue;
         glm::vec2 d = r->GetPosition() - pos;
         float d2 = glm::dot(d, d);
         if (d2 < bestD2) {
@@ -215,16 +247,6 @@ std::shared_ptr<IResource> Environment::FindNearest(ResourceType type, const glm
         }
     }
     return best;
-}
-
-void Environment::Stats() const {
-    size_t numAgents = m_Agents.size();
-    size_t numResources = m_Resources.size();
-
-    // Ausgabe formatiert
-    std::cout << "=== Environment Stats ===\n"
-              << "Agents: " << numAgents << "  |  Resources: " << numResources << "\n"
-              << "-------------------------\n";
 }
 
 }  // namespace gr

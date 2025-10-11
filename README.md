@@ -36,6 +36,7 @@ MIT — free to use, learn, and build upon.
 - [GLFW](https://github.com/glfw/glfw)
 - [stb_image](https://github.com/nothings/stb)
 - [GLM](https://github.com/g-truc/glm)
+- [earcut](https://github.com/mapbox/earcut.hpp)
 - Inspired by The Nature of Code (Shiffman) and manim (3Blue1Brown), but focused on real-time, interactive exploration in C++.
 
 ### Additional

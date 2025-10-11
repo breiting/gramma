@@ -1,10 +1,11 @@
 #pragma once
 #include <algorithm>
+#include <gramma/model/resource/IConsumable.hpp>
 #include <gramma/model/resource/IResource.hpp>
 
 namespace gr {
 
-class FoodResource : public IResource {
+class FoodResource : public IResource, public IConsumable {
    public:
     FoodResource(const glm::vec2& pos, float capacity = 1.0f, float regenRate = 0.01f, float maxCap = 1.0f)
         : m_Pos(pos), m_Capacity(capacity), m_RegenRate(regenRate), m_Max(maxCap) {
@@ -15,6 +16,10 @@ class FoodResource : public IResource {
     }
     const glm::vec2& GetPosition() const override {
         return m_Pos;
+    }
+
+    float GetBoundingRadius() const override {
+        return 0.5;
     }
 
     float Consume(float amount) override {

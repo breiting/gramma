@@ -17,10 +17,10 @@ void EnvironmentView::Init() {
 void EnvironmentView::SyncWithEnvironment(Environment* env) {
     if (!env) return;
 
-    m_AgentView.UpdateInstances(env->Agents());
+    m_AgentView.UpdateInstances(env->GetAgents());
 
     // --- ResourceViews ---
-    for (auto& rPtr : env->Resources()) {
+    for (auto& rPtr : env->GetResources()) {
         IResource* res = rPtr.get();
         if (m_ResourceViews.find(res) == m_ResourceViews.end()) {
             auto view = std::make_unique<ResourceView>();
@@ -29,7 +29,7 @@ void EnvironmentView::SyncWithEnvironment(Environment* env) {
         }
     }
     for (auto it = m_ResourceViews.begin(); it != m_ResourceViews.end();) {
-        bool stillExists = std::any_of(env->Resources().begin(), env->Resources().end(),
+        bool stillExists = std::any_of(env->GetResources().begin(), env->GetResources().end(),
                                        [&](auto& fs) { return fs.get() == it->first; });
         if (!stillExists) {
             it = m_ResourceViews.erase(it);
@@ -59,7 +59,7 @@ void EnvironmentView::Draw(Environment* env, const Camera2D& cam) {
     m_AgentView.Draw(vp);
 
     // --- Draw Resources ---
-    for (auto& rPtr : env->Resources()) {
+    for (auto& rPtr : env->GetResources()) {
         IResource* res = rPtr.get();
         auto it = m_ResourceViews.find(res);
         if (it != m_ResourceViews.end()) {

@@ -106,17 +106,6 @@ bool SimApp::Init(gr::AppContext& ctx) {
 void SimApp::Update(gr::AppContext& /*ctx*/, double dt) {
     TimeMeasureGuard guard("Update");
 
-    bool drawStats = false;
-    if (drawStats) {
-        static float lastPrint = 0.0f;
-        float currentTime = Now();
-        if (currentTime - lastPrint >= 1.0f) {
-            std::cout << "Time: " << currentTime << "s, dt=" << dt << std::endl;
-            m_Env->Stats();
-            lastPrint = currentTime;
-        }
-    }
-
     if (m_SeedAgents) {
         GenerateAgents(m_Env.get());
         m_SeedAgents = false;
@@ -142,8 +131,8 @@ void SimApp::Render(gr::AppContext& ctx) {
 
     // Dein Panel
     ImGui::Begin("Environment Stats");
-    ImGui::Text("Agents: %zu", m_Env->Agents().size());
-    ImGui::Text("FoodSources: %zu", m_Env->Resources().size());
+    ImGui::Text("Agents: %zu", m_Env->GetAgents().size());
+    ImGui::Text("FoodSources: %zu", m_Env->GetResources().size());
     ImGui::SliderFloat("Timescale", &m_Timescale, 0.5, 10.0);
     ImGui::End();
 
