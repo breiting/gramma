@@ -51,6 +51,9 @@ class Environment {
     /// Find the nearest resource given the type
     std::shared_ptr<IResource> FindNearest(ResourceType type, const glm::vec2& pos) const;
 
+    /// Find agents (optimized)
+    std::vector<const Agent*> QueryAgentsInRadius(const glm::vec2& center, float radius) const;
+
    private:
     void CreateChainShape(const std::vector<glm::vec2>& contour);
 

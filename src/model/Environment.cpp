@@ -1,7 +1,4 @@
 #include <box2d/box2d.h>
-#include <box2d/id.h>
-#include <box2d/math_functions.h>
-#include <box2d/types.h>
 
 #include <glm/glm.hpp>
 #include <gramma/core/Math.hpp>
@@ -136,6 +133,9 @@ void Environment::AddAgent(std::unique_ptr<Agent> agent) {
 
     b2CreateCircleShape(body, &sd, &circle);
 
+    // register user data
+    b2Body_SetUserData(body, agent.get());
+
     agent->SetBody(body);
 
     m_Agents.emplace_back(std::move(agent));
@@ -232,6 +232,46 @@ void Environment::Update(float dt) {
             ++res;
         }
     }
+}
+
+std::vector<const Agent*> Environment::QueryAgentsInRadius(const glm::vec2& center, float radius) const {
+    std::vector<const Agent*> results;
+
+    b2AABB aabb;
+    aabb.lowerBound = {center.x - radius, center.y - radius};
+    aabb.upperBound = {center.x + radius, center.y + radius};
+
+    auto callback = [](b2ShapeId shapeId, void* context) -> bool {
+        auto* data =
+            static_cast<std::tuple<const Environment*, glm::vec2, float, std::vector<const Agent*>*>*>(context);
+        const Environment* env = std::get<0>(*data);
+        glm::vec2 center = std::get<1>(*data);
+        float radius = std::get<2>(*data);
+        auto* out = std::get<3>(*data);
+
+        b2BodyId bodyId = b2Shape_GetBody(shapeId);
+        void* userData = b2Body_GetUserData(bodyId);
+
+        if (userData) {
+            Agent* agent = static_cast<Agent*>(userData);
+            float dist = glm::distance(agent->GetPosition(), center);
+            if (dist <= radius) {
+                out->push_back(agent);
+            }
+        }
+
+        return true;
+    };
+
+    // Filter (match all)
+    b2QueryFilter filter = b2DefaultQueryFilter();
+
+    // Prepare context
+    auto context = std::make_tuple(this, center, radius, &results);
+
+    b2World_OverlapAABB(m_World, aabb, filter, callback, &context);
+
+    return results;
 }
 
 std::shared_ptr<IResource> Environment::FindNearest(ResourceType type, const glm::vec2& pos) const {
