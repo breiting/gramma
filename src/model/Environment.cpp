@@ -11,6 +11,7 @@
 #include <memory>
 #include <random>
 
+#include "gramma/core/Time.hpp"
 #include "gramma/model/resource/IConsumable.hpp"
 
 namespace gr {
@@ -19,6 +20,8 @@ Environment::Environment(const glm::vec2& gravity) {
     b2WorldDef def = b2DefaultWorldDef();
     def.gravity = {gravity.x, gravity.y};
     m_World = b2CreateWorld(&def);
+    // cellSize = max(AgentRadius * 2, SocialRadius * 0.75)
+    m_SpatialGrid = std::make_unique<SpatialGrid>(0.25f);
 }
 
 Environment::~Environment() {
@@ -188,52 +191,94 @@ const std::vector<std::vector<glm::vec2>>& Environment::GetObstacles() const {
 }
 
 void Environment::Update(float dt) {
-    b2World_Step(m_World, dt, 4);
+    {
+        TimeMeasureGuard guard("=== Box2D");
 
-    // Update resources if required
-    for (auto& r : m_Resources) {
-        // All consumables
-        if (auto* consumable = dynamic_cast<IConsumable*>(r.get())) {
-            consumable->Regenerate(dt);
-        }
+        b2World_Step(m_World, dt, 4);
     }
 
-    // Sync and update agents
-    for (auto& agent : m_Agents) {
-        if (agent->GetBody().index1 != 0) {
-            b2Transform xf = b2Body_GetTransform(agent->GetBody());
-            glm::vec2 pos = {xf.p.x, xf.p.y};
-            agent->SetPosition(pos);
-        }
-        agent->Update(*this, dt);
-    }
+    {
+        TimeMeasureGuard guard("Resource");
 
-    // Delete dead agents
-    auto it = m_Agents.begin();
-    while (it != m_Agents.end()) {
-        Agent* agent = it->get();
-        if (agent->GetState() == AgentState::Dead || agent->GetState() == AgentState::Rescued) {
-            b2DestroyBody(agent->GetBody());
-            it = m_Agents.erase(it);
-        } else {
-            ++it;
-        }
-    }
-
-    // Delete finally consumed resources
-    auto res = m_Resources.begin();
-    while (res != m_Resources.end()) {
-        if (auto* consumable = dynamic_cast<IConsumable*>(res->get())) {
-            if (consumable->IsDepleted()) {
-                b2DestroyBody(res->get()->GetBody());
-                res = m_Resources.erase(res);
+        // Update resources if required
+        for (auto& r : m_Resources) {
+            // All consumables
+            if (auto* consumable = dynamic_cast<IConsumable*>(r.get())) {
+                consumable->Regenerate(dt);
             }
-        } else {
-            ++res;
+        }
+    }
+
+    {
+        TimeMeasureGuard guard("Agent Update");
+
+        // Sync and update agents
+        for (auto& agent : m_Agents) {
+            if (agent->GetBody().index1 != 0) {
+                b2Transform xf = b2Body_GetTransform(agent->GetBody());
+                glm::vec2 pos = {xf.p.x, xf.p.y};
+                agent->SetPosition(pos);
+            }
+            agent->Update(*this, dt);
+        }
+    }
+
+    {
+        TimeMeasureGuard guard("Grid");
+        m_SpatialGrid->Clear();
+        for (size_t i = 0; i < m_Agents.size(); ++i) {
+            const glm::vec2& pos = m_Agents[i]->GetPosition();
+            m_SpatialGrid->Insert(i, pos);
+        }
+    }
+
+    {
+        TimeMeasureGuard guard("Cleanup");
+
+        // Delete dead agents
+        auto it = m_Agents.begin();
+        while (it != m_Agents.end()) {
+            Agent* agent = it->get();
+            if (agent->GetState() == AgentState::Dead || agent->GetState() == AgentState::Rescued) {
+                b2DestroyBody(agent->GetBody());
+                it = m_Agents.erase(it);
+            } else {
+                ++it;
+            }
+        }
+
+        // Delete finally consumed resources
+        auto res = m_Resources.begin();
+        while (res != m_Resources.end()) {
+            if (auto* consumable = dynamic_cast<IConsumable*>(res->get())) {
+                if (consumable->IsDepleted()) {
+                    b2DestroyBody(res->get()->GetBody());
+                    res = m_Resources.erase(res);
+                }
+            } else {
+                ++res;
+            }
         }
     }
 }
 
+std::vector<const Agent*> Environment::QueryAgentsInRadius(const glm::vec2& pos, float radius) const {
+    std::vector<const Agent*> result;
+
+    auto ids = m_SpatialGrid->QueryNeighborhood(pos, radius);
+    for (size_t id : ids) {
+        if (id >= m_Agents.size()) continue;
+        const Agent* other = m_Agents[id].get();
+        float dist = glm::length(other->GetPosition() - pos);
+        if (dist <= radius) {
+            result.push_back(other);
+        }
+    }
+
+    return result;
+}
+
+#if 0
 std::vector<const Agent*> Environment::QueryAgentsInRadius(const glm::vec2& center, float radius) const {
     std::vector<const Agent*> results;
 
@@ -273,6 +318,7 @@ std::vector<const Agent*> Environment::QueryAgentsInRadius(const glm::vec2& cent
 
     return results;
 }
+#endif
 
 std::shared_ptr<IResource> Environment::FindNearest(ResourceType type, const glm::vec2& pos) const {
     float bestD2 = std::numeric_limits<float>::infinity();

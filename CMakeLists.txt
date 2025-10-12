@@ -115,12 +115,14 @@ include_directories(${CMAKE_SOURCE_DIR}/inc)
 add_library(gramma
 		src/core/LineOfSightService.cpp
 		src/core/Runner.cpp
+		src/core/SpatialGrid.cpp
 		src/core/Time.cpp
 		src/core/Window.cpp
 
 		src/model/Agent.cpp
 		src/model/AgentFactory.cpp
 		src/model/AgentSerializer.cpp
+		src/model/Box2DPhysicsEngine.cpp
 		src/model/DirectMovement.cpp
 		src/model/EnergyNeed.cpp
 		src/model/EnergyNeedTaskBuilder.cpp
@@ -134,6 +136,7 @@ add_library(gramma
 		src/model/SeekAgentTask.cpp
 		src/model/SequenceTask.cpp
 		src/model/SimAgentFactory.cpp
+		src/model/SimpleGridPhysicsEngine.cpp
 		src/model/SocialNeed.cpp
 		src/model/SocialSensor.cpp
 		src/model/SocialNeedTaskBuilder.cpp

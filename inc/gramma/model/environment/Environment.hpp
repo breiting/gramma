@@ -10,6 +10,8 @@
 #include <memory>
 #include <vector>
 
+#include "gramma/core/SpatialGrid.hpp"
+
 namespace gr {
 
 /**
@@ -64,6 +66,8 @@ class Environment {
 
     std::vector<std::unique_ptr<Agent>> m_Agents;
     std::vector<std::shared_ptr<IResource>> m_Resources;
+
+    std::unique_ptr<SpatialGrid> m_SpatialGrid;
 };
 
 }  // namespace gr
