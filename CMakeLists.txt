@@ -131,8 +131,11 @@ add_library(gramma
 		src/model/RestTask.cpp
 		src/model/SafetyNeedTaskBuilder.cpp
 		src/model/SeekResourceTask.cpp
+		src/model/SeekAgentTask.cpp
 		src/model/SequenceTask.cpp
 		src/model/SimAgentFactory.cpp
+		src/model/SocialNeed.cpp
+		src/model/SocialNeedTaskBuilder.cpp
 		src/model/TaskFactory.cpp
 		src/model/VisionSensor.cpp
 

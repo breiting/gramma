@@ -2,6 +2,7 @@
 #include <gramma/model/need/EnergyNeed.hpp>
 #include <gramma/model/task/EnergyNeedTaskBuilder.hpp>
 #include <gramma/model/task/SafetyNeedTaskBuilder.hpp>
+#include <gramma/model/task/SocialNeedTaskBuilder.hpp>
 #include <gramma/model/task/TaskFactory.hpp>
 #include <memory>
 
@@ -19,8 +20,9 @@ std::unique_ptr<Agent> SimAgentFactory::CreateAgent(const std::string& id, const
 void SimAgentFactory::InitTaskFactory() {
     auto& factory = gr::TaskFactory::Instance();
 
-    factory.RegisterBuilder("Energy", std::make_shared<gr::EnergyNeedTaskBuilder>());
-    factory.RegisterBuilder("Safety", std::make_shared<gr::SafetyNeedTaskBuilder>());
+    factory.RegisterBuilder("Energy", std::make_shared<EnergyNeedTaskBuilder>());
+    factory.RegisterBuilder("Safety", std::make_shared<SafetyNeedTaskBuilder>());
+    factory.RegisterBuilder("Social", std::make_shared<SocialNeedTaskBuilder>());
 }
 
 AgentTraits SimAgentFactory::RandomTraits() {
