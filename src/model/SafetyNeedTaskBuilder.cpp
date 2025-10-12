@@ -1,7 +1,9 @@
 #include <gramma/model/environment/Environment.hpp>
+#include <gramma/model/movement/DirectMovement.hpp>
 #include <gramma/model/resource/IResource.hpp>
 #include <gramma/model/task/SafetyNeedTaskBuilder.hpp>
 #include <iostream>
+#include <memory>
 
 namespace gr {
 
@@ -12,7 +14,8 @@ std::unique_ptr<ITask> SafetyNeedTaskBuilder::Build(const INeed& /*need*/, Agent
         return nullptr;
     }
 
-    return std::make_unique<SeekResourceTask>(exit);
+    return std::make_unique<SeekResourceTask>(exit, std::make_unique<DirectMovement>(),
+                                              exit->GetBoundingRadius() * 2.0);
 }
 
 }  // namespace gr

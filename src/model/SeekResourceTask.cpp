@@ -3,6 +3,8 @@
 #include <gramma/model/movement/DirectMovement.hpp>
 #include <gramma/model/task/SeekResourceTask.hpp>
 
+#include "gramma/model/resource/IResource.hpp"
+
 namespace gr {
 
 SeekResourceTask::SeekResourceTask(std::shared_ptr<IResource> resource, std::unique_ptr<IMovementStrategy> movement,
@@ -38,6 +40,13 @@ void SeekResourceTask::Update(Agent& agent, float dt) {
     if (dist < m_Threshold) {
         m_AtRes = true;
         m_Done = true;
+    }
+
+    if (m_AtRes) {
+        if (m_Res->GetType() == ResourceType::Exit) {
+            agent.SetState(AgentState::Rescued);
+            m_Done = true;
+        }
     }
 }
 
