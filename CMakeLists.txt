@@ -123,12 +123,15 @@ add_library(gramma
 		src/model/AgentSerializer.cpp
 		src/model/DirectMovement.cpp
 		src/model/EnergyNeed.cpp
+		src/model/EnergyNeedTaskBuilder.cpp
 		src/model/Environment.cpp
 		src/model/Home.cpp
 		src/model/MoveTask.cpp
 		src/model/RandomDetourMovement.cpp
 		src/model/RestTask.cpp
+		src/model/SafetyNeedTaskBuilder.cpp
 		src/model/SeekResourceTask.cpp
+		src/model/SequenceTask.cpp
 		src/model/SimAgentFactory.cpp
 		src/model/TaskFactory.cpp
 		src/model/VisionSensor.cpp

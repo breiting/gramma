@@ -38,6 +38,9 @@ std::string PlayApp::Name() const {
 bool PlayApp::Init(gr::AppContext& ctx) {
     std::cout << "Initializing PlayApp..." << std::endl;
 
+    SimAgentFactory factory;
+    factory.InitTaskFactory();
+
     m_Env = std::make_unique<gr::Environment>(glm::vec2(0, 0));
 
     constexpr float border = 1.0;

@@ -18,12 +18,11 @@
 using namespace gr;
 using namespace std;
 
-void SimApp::GenerateAgents(Environment* env) {
-    if (!env) return;
+void SimApp::GenerateAgents() {
     SimAgentFactory factory;
     for (int i = 0; i < 20; ++i) {
-        auto agent = factory.Create("Agent" + std::to_string(m_AgentIdCounter++), env->RandomPosition());
-        env->AddAgent(std::move(agent));
+        auto agent = factory.CreateAgent("Agent" + std::to_string(m_AgentIdCounter++), m_Env->RandomPosition());
+        m_Env->AddAgent(std::move(agent));
     }
 }
 
@@ -50,6 +49,8 @@ std::string SimApp::Name() const {
 bool SimApp::Init(gr::AppContext& ctx) {
     std::cout << "Initializing SimApp..." << std::endl;
 
+    m_Factory.InitTaskFactory();
+
     // Room
     constexpr float border = 1.0;
     constexpr float ew = 50.0;
@@ -69,7 +70,7 @@ bool SimApp::Init(gr::AppContext& ctx) {
     m_Camera.SetOrthoByHeight(eh + border, ctx.Aspect());
 
     GenerateHome(m_Env.get());
-    GenerateAgents(m_Env.get());
+    GenerateAgents();
     // GenerateFood(m_Env.get());
 
     onKeyPressed = [this, &ctx](int key, int /*mods*/) {
@@ -107,7 +108,7 @@ void SimApp::Update(gr::AppContext& /*ctx*/, double dt) {
     TimeMeasureGuard guard("Update");
 
     if (m_SeedAgents) {
-        GenerateAgents(m_Env.get());
+        GenerateAgents();
         m_SeedAgents = false;
     }
 

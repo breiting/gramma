@@ -7,7 +7,8 @@ namespace gr {
 
 class SimAgentFactory : public AgentFactory {
    public:
-    std::unique_ptr<Agent> Create(const std::string& id, const glm::vec2& pos) override;
+    std::unique_ptr<Agent> CreateAgent(const std::string& id, const glm::vec2& pos) override;
+    void InitTaskFactory();
 
    private:
     AgentTraits RandomTraits();

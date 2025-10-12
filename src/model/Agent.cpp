@@ -109,13 +109,15 @@ void Agent::ClearTask() {
 }
 
 void Agent::EvaluateNeeds(const Environment& env, float dt) {
+    // 1. Update Needs
     for (auto& n : m_Needs) {
         n->Update(dt);
     }
 
-    // Utility-Choice
+    // 2. Utility
     float bestU = -std::numeric_limits<float>::infinity();
     INeed* chosen = nullptr;
+
     for (auto& n : m_Needs) {
         float u = n->Utility(*this, env);
         if (u > bestU) {
@@ -124,9 +126,14 @@ void Agent::EvaluateNeeds(const Environment& env, float dt) {
         }
     }
 
-    if (chosen && m_State != AgentState::Executing) {
-        TaskFactory factory;
-        AssignTask(factory.MakeFor(*chosen, *this, env));
+    if (chosen && (!m_Task || m_Task->IsFinished())) {
+        auto& factory = TaskFactory::Instance();
+        auto newTask = factory.BuildTaskForNeed(*chosen, *this, env);
+
+        if (newTask) {
+            AssignTask(std::move(newTask));
+            m_State = AgentState::Executing;
+        }
     }
 }
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <gramma/core/IApp.hpp>
+#include <gramma/model/agent/SimAgentFactory.hpp>
 #include <gramma/model/environment/Environment.hpp>
 #include <gramma/ui/IGuiLayer.hpp>
 #include <gramma/view/AgentView.hpp>
@@ -17,12 +18,13 @@ class SimApp : public gr::IApp {
     void Render(gr::AppContext& ctx) override;
 
    private:
-    void GenerateAgents(gr::Environment* env);
+    void GenerateAgents();
 
    private:
     gr::Camera2D m_Camera;
 
     std::unique_ptr<gr::Environment> m_Env;
+    gr::SimAgentFactory m_Factory;
     gr::EnvironmentView m_EnvView;
 
     std::unique_ptr<gr::IGuiLayer> m_Gui;

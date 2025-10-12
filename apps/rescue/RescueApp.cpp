@@ -19,23 +19,19 @@
 
 using namespace gr;
 
-void RescueApp::GenerateAgents(Environment* env, int count) {
-    if (!env) return;
-    SimAgentFactory factory;
+void RescueApp::GenerateAgents(int count) {
     for (int i = 0; i < count; ++i) {
-        auto agent = factory.Create("Agent" + std::to_string(m_AgentIdCounter++), env->RandomPosition());
+        auto agent = m_Factory.CreateAgent("Agent" + std::to_string(m_AgentIdCounter++), m_Env->RandomPosition());
 
-        env->AddAgent(std::move(agent));
+        m_Env->AddAgent(std::move(agent));
     }
 }
 
-void RescueApp::CreateAgent(Environment* env, const glm::vec2& pos) {
-    if (!env) return;
-    SimAgentFactory factory;
-    auto agent = factory.Create("Agent" + std::to_string(m_AgentIdCounter++), pos);
+void RescueApp::CreateAgent(const glm::vec2& pos) {
+    auto agent = m_Factory.CreateAgent("Agent" + std::to_string(m_AgentIdCounter++), pos);
     agent->AddNeed(std::make_unique<SafetyNeed>());
 
-    env->AddAgent(std::move(agent));
+    m_Env->AddAgent(std::move(agent));
 }
 
 std::string RescueApp::Name() const {
@@ -55,7 +51,7 @@ int RescueApp::Scenario1() {
 
     // Add one exit
     m_Env->AddResource(std::make_shared<Exit>(glm::vec2(ew / 2.0, 0)));
-    GenerateAgents(m_Env.get(), 50);
+    GenerateAgents(50);
     return eh + border;
 }
 
@@ -68,12 +64,14 @@ int RescueApp::Scenario2() {
     m_Env->AddBoundary(room);
     // Add one exit
     m_Env->AddResource(std::make_shared<Exit>(glm::vec2(ew / 2.0, 0)));
-    GenerateAgents(m_Env.get(), 2);
+    GenerateAgents(2);
     return eh + border;
 }
 
 bool RescueApp::Init(gr::AppContext& ctx) {
     std::cout << "Initializing RescueApp..." << std::endl;
+
+    m_Factory.InitTaskFactory();
 
     m_Env = std::make_unique<gr::Environment>(glm::vec2(0, 0));
 
@@ -113,7 +111,7 @@ bool RescueApp::Init(gr::AppContext& ctx) {
     onMouseButton = [this, &ctx](int button, int action, int /*mod*/) {
         if (button == GLFW_MOUSE_BUTTON_1 && action == GLFW_PRESS) {
             auto position = m_Camera.ScreenToWorld(m_MousePos, ctx.GetWidth(), ctx.GetHeight());
-            CreateAgent(m_Env.get(), position);
+            CreateAgent(position);
         }
     };
 
@@ -127,7 +125,7 @@ bool RescueApp::Init(gr::AppContext& ctx) {
 
 void RescueApp::Update(gr::AppContext& /*ctx*/, double dt) {
     if (m_SeedAgents) {
-        GenerateAgents(m_Env.get(), 10);
+        GenerateAgents(10);
         m_SeedAgents = false;
     }
 

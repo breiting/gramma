@@ -1,19 +1,26 @@
 #include <gramma/model/agent/SimAgentFactory.hpp>
 #include <gramma/model/need/EnergyNeed.hpp>
+#include <gramma/model/task/EnergyNeedTaskBuilder.hpp>
+#include <gramma/model/task/SafetyNeedTaskBuilder.hpp>
+#include <gramma/model/task/TaskFactory.hpp>
 #include <memory>
 
 namespace gr {
 
-std::unique_ptr<Agent> SimAgentFactory::Create(const std::string& id, const glm::vec2& pos) {
+std::unique_ptr<Agent> SimAgentFactory::CreateAgent(const std::string& id, const glm::vec2& pos) {
     auto traits = std::make_unique<AgentTraits>(RandomTraits());
 
     auto heading = glm::vec2{0, 1};
     auto agent = std::make_unique<Agent>(id, pos, heading, std::move(traits));
 
-    // Needs
-    // agent->AddNeed(std::make_unique<EnergyNeed>());
-
     return agent;
+}
+
+void SimAgentFactory::InitTaskFactory() {
+    auto& factory = gr::TaskFactory::Instance();
+
+    factory.RegisterBuilder("Energy", std::make_shared<gr::EnergyNeedTaskBuilder>());
+    factory.RegisterBuilder("Safety", std::make_shared<gr::SafetyNeedTaskBuilder>());
 }
 
 AgentTraits SimAgentFactory::RandomTraits() {
