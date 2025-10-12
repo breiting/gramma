@@ -1,11 +1,12 @@
+#include <glm/geometric.hpp>
 #include <glm/glm.hpp>
 #include <gramma/model/agent/Agent.hpp>
 #include <gramma/model/environment/Environment.hpp>
 #include <gramma/model/task/ITask.hpp>
 #include <gramma/model/task/TaskFactory.hpp>
+#include <iomanip>
+#include <iostream>
 #include <limits>
-
-#include "glm/geometric.hpp"
 
 namespace gr {
 
@@ -148,6 +149,68 @@ void Agent::Update(const Environment& env, float dt) {
             ClearTask();
         }
     }
+}
+
+void Agent::Print() const {
+    std::cout << "Agent: " << m_Id << "\n";
+    std::cout << "  Position: (" << m_Position.x << ", " << m_Position.y << ")\n";
+    std::cout << "  Heading : (" << m_Heading.x << ", " << m_Heading.y << ")\n";
+
+    std::cout << "  State   : ";
+    switch (m_State) {
+        case AgentState::Idle:
+            std::cout << "Idle";
+            break;
+        case AgentState::Executing:
+            std::cout << "Executing";
+            break;
+        case AgentState::Dead:
+            std::cout << "Dead";
+            break;
+        case AgentState::Rescued:
+            std::cout << "Rescued";
+            break;
+        default:
+            std::cout << "Unknown";
+            break;
+    }
+    std::cout << "\n";
+
+    if (m_Traits) {
+        std::cout << "  Traits:\n";
+        std::cout << "    Age Class   : ";
+        switch (m_Traits->age) {
+            case AgeClass::Child:
+                std::cout << "Child";
+                break;
+            case AgeClass::Teenager:
+                std::cout << "Teenager";
+                break;
+            case AgeClass::Adult:
+                std::cout << "Adult";
+                break;
+            case AgeClass::Senior:
+                std::cout << "Senior";
+                break;
+        }
+        std::cout << "\n";
+
+        std::cout << "    Sex         : " << (m_Traits->sex == Sex::Male ? "Male" : "Female") << "\n";
+        std::cout << "    Mass        : " << m_Traits->mass << " kg\n";
+        std::cout << "    BodyRadius  : " << m_Traits->bodyRadius << " m\n";
+        std::cout << "    SocialRadius: " << m_Traits->socialRadius << " m\n";
+        std::cout << "    MaxSpeed    : " << m_Traits->maxSpeed << " m/s\n";
+    }
+
+    if (!m_Needs.empty()) {
+        std::cout << "  Needs:\n";
+        for (const auto& n : m_Needs) {
+            std::cout << "    - " << n->Name() << " | Priority: " << std::fixed << std::setprecision(2) << n->Priority()
+                      << "\n";
+        }
+    }
+
+    std::cout << std::endl;
 }
 
 }  // namespace gr

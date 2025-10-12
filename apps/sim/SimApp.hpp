@@ -29,6 +29,7 @@ class SimApp : public gr::IApp {
 
     std::unique_ptr<gr::IGuiLayer> m_Gui;
 
+    glm::vec2 m_MousePos{0, 0};
     uint32_t m_AgentIdCounter{0};
     bool m_SeedAgents{false};
     bool m_SeedFood{false};

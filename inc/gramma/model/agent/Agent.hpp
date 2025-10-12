@@ -65,6 +65,9 @@ class Agent {
         m_Needs.emplace_back(std::move(need));
     }
 
+    /// Debug
+    void Print() const;
+
    private:
     void EvaluateNeeds(const Environment& env, float dt);
 

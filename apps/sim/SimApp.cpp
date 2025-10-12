@@ -69,7 +69,7 @@ bool SimApp::Init(gr::AppContext& ctx) {
     // Setup camera
     m_Camera.SetOrthoByHeight(eh + border, ctx.Aspect());
 
-    GenerateHome(m_Env.get());
+    // GenerateHome(m_Env.get());
     GenerateAgents();
     // GenerateFood(m_Env.get());
 
@@ -96,6 +96,20 @@ bool SimApp::Init(gr::AppContext& ctx) {
         m_Camera.SetZoom(m_Zoom);
     };
 
+    onMouseMove = [this](double x, double y) {
+        m_MousePos = glm::vec2(x, y);  //
+    };
+
+    onMouseButton = [this, &ctx](int button, int action, int /*mod*/) {
+        if (button == GLFW_MOUSE_BUTTON_1 && action == GLFW_PRESS) {
+            auto position = m_Camera.ScreenToWorld(m_MousePos, ctx.GetWidth(), ctx.GetHeight());
+            auto res = m_Env->QueryAgentsInRadius(position, 10.0);
+            for (auto& a : res) {
+                a->Print();
+            }
+        }
+    };
+
     onWindowSize = [this](int w, int h) {
         m_Camera.FitToEnvironment(m_Env.get(), float(w) / float(h));  //
     };
@@ -105,7 +119,7 @@ bool SimApp::Init(gr::AppContext& ctx) {
 }
 
 void SimApp::Update(gr::AppContext& /*ctx*/, double dt) {
-    TimeMeasureGuard guard("Update");
+    // TimeMeasureGuard guard("Update");
 
     if (m_SeedAgents) {
         GenerateAgents();
@@ -122,7 +136,7 @@ void SimApp::Update(gr::AppContext& /*ctx*/, double dt) {
 }
 
 void SimApp::Render(gr::AppContext& ctx) {
-    TimeMeasureGuard guard("Render");
+    // TimeMeasureGuard guard("Render");
     if (m_Quit) {
         ctx.RequestQuit();
         return;
