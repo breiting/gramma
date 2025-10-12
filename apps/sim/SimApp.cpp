@@ -9,6 +9,7 @@
 #include <gramma/model/agent/Agent.hpp>
 #include <gramma/model/agent/SimAgentFactory.hpp>
 #include <gramma/model/need/EnergyNeed.hpp>
+#include <gramma/model/need/SocialNeed.hpp>
 #include <gramma/model/resource/FoodResource.hpp>
 #include <gramma/model/resource/Home.hpp>
 #include <gramma/model/sensor/VisionSensor.hpp>
@@ -20,7 +21,7 @@ using namespace std;
 
 void SimApp::GenerateAgents() {
     SimAgentFactory factory;
-    for (int i = 0; i < 20; ++i) {
+    for (int i = 0; i < 2000; ++i) {
         auto agent = factory.CreateAgent("Agent" + std::to_string(m_AgentIdCounter++), m_Env->RandomPosition());
         m_Env->AddAgent(std::move(agent));
     }
@@ -59,7 +60,7 @@ bool SimApp::Init(gr::AppContext& ctx) {
     m_Env = std::make_unique<gr::Environment>(glm::vec2(0, 0));
 
     std::vector<glm::vec2> room = {
-        {-ew / 2.0, -eh / 2.0}, {ew / 2.0, -eh / 2.0}, {ew / 2.0, eh / 2.0}, {-ew / 2.0, eh / 2.0}};
+        {-ew / 2.0, -eh / 2.0}, {-ew / 2.0, eh / 2.0}, {ew / 2.0, eh / 2.0}, {ew / 2.0, -eh / 2.0}};
     m_Env->AddBoundary(room);
 
     m_EnvView.Init();
@@ -82,6 +83,10 @@ bool SimApp::Init(gr::AppContext& ctx) {
             m_SeedFood = true;
         } else if (key == GLFW_KEY_W) {
             m_Camera.FitToEnvironment(m_Env.get(), ctx.Aspect());
+        } else if (key == GLFW_KEY_S) {
+            for (auto& a : m_Env->GetAgents()) {
+                a->AddNeed(std::make_unique<SocialNeed>());
+            }
         } else if (key == GLFW_KEY_PAGE_UP) {
             m_Zoom += .1f;
             m_Camera.SetZoom(m_Zoom);
@@ -141,6 +146,7 @@ void SimApp::Render(gr::AppContext& ctx) {
         ctx.RequestQuit();
         return;
     }
+    m_EnvView.Draw(m_Env.get(), m_Camera);
 
     m_Gui->BeginFrame();
 
@@ -152,6 +158,4 @@ void SimApp::Render(gr::AppContext& ctx) {
     ImGui::End();
 
     m_Gui->EndFrame();
-
-    m_EnvView.Draw(m_Env.get(), m_Camera);
 }

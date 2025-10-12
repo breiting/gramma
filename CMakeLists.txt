@@ -135,6 +135,7 @@ add_library(gramma
 		src/model/SequenceTask.cpp
 		src/model/SimAgentFactory.cpp
 		src/model/SocialNeed.cpp
+		src/model/SocialSensor.cpp
 		src/model/SocialNeedTaskBuilder.cpp
 		src/model/TaskFactory.cpp
 		src/model/VisionSensor.cpp
