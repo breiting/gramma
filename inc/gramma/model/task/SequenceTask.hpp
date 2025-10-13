@@ -1,5 +1,6 @@
 #pragma once
 
+#include <gramma/model/physics/IPhysicsEngine.hpp>
 #include <gramma/model/task/ITask.hpp>
 #include <memory>
 #include <vector>
@@ -18,7 +19,7 @@ class SequenceTask : public ITask {
     SequenceTask(std::unique_ptr<ITask> first, std::unique_ptr<ITask> second);
 
     void Start(Agent& agent) override;
-    void Update(Agent& agent, float dt) override;
+    void Update(IPhysicsEngine* engine, Agent& agent, float dt) override;
     bool IsFinished() const override;
 
     void Add(std::unique_ptr<ITask> task);

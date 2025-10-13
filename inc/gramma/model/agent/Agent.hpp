@@ -31,9 +31,6 @@ class Agent {
     const glm::vec2& GetHeading() const;
     void SetHeading(const glm::vec2& heading);
 
-    void SetVelocity(const glm::vec2& v);
-    glm::vec2 GetVelocity() const;
-
     /// Traits
     const AgentTraits& GetTraits() const;
     AgentTraits& GetTraits();
@@ -50,16 +47,12 @@ class Agent {
     AgentState GetState() const;
     void SetState(AgentState state);
 
-    /// Physics
-    b2BodyId GetBody() const;
-    void SetBody(b2BodyId body);
-
     /// Task
     void AssignTask(std::unique_ptr<ITask> t);
     void ClearTask();
 
     /// Decision + Update
-    void Update(const Environment& env, float dt);
+    void Update(Environment& env, float dt);
 
     void AddNeed(std::unique_ptr<INeed> need) {
         m_Needs.emplace_back(std::move(need));
@@ -74,7 +67,6 @@ class Agent {
    private:
     std::string m_Id;
     glm::vec2 m_Position{0, 0};
-    b2BodyId m_Body;
     glm::vec2 m_Heading{0, 1};  // north
 
     std::unique_ptr<AgentTraits> m_Traits;

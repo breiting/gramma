@@ -1,5 +1,7 @@
 #include <gramma/model/task/SequenceTask.hpp>
 
+#include "gramma/model/physics/IPhysicsEngine.hpp"
+
 namespace gr {
 
 SequenceTask::SequenceTask(std::vector<std::unique_ptr<ITask>> tasks) : m_Tasks(std::move(tasks)) {
@@ -16,11 +18,11 @@ void SequenceTask::Start(Agent& agent) {
     m_Started = true;
 }
 
-void SequenceTask::Update(Agent& agent, float dt) {
+void SequenceTask::Update(IPhysicsEngine* engine, Agent& agent, float dt) {
     if (!m_Started || m_Tasks.empty()) return;
 
     auto& current = m_Tasks[m_CurrentIndex];
-    current->Update(agent, dt);
+    current->Update(engine, agent, dt);
 
     if (current->IsFinished()) {
         m_CurrentIndex++;

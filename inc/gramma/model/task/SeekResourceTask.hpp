@@ -14,7 +14,7 @@ class SeekResourceTask : public ITask {
                      float arrivalThreshold = 0.1f);
 
     void Start(Agent& agent) override;
-    void Update(Agent& agent, float dt) override;
+    void Update(IPhysicsEngine* engine, Agent& agent, float dt) override;
     bool IsFinished() const override;
 
     bool HasArrived() const;

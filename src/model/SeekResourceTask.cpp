@@ -3,6 +3,7 @@
 #include <gramma/model/movement/DirectMovement.hpp>
 #include <gramma/model/task/SeekResourceTask.hpp>
 
+#include "gramma/model/physics/IPhysicsEngine.hpp"
 #include "gramma/model/resource/IResource.hpp"
 
 namespace gr {
@@ -28,13 +29,14 @@ void SeekResourceTask::Start(Agent& agent) {
     m_MoveTask->Start(agent);
 }
 
-void SeekResourceTask::Update(Agent& agent, float dt) {
+void SeekResourceTask::Update(IPhysicsEngine* engine, Agent& agent, float dt) {
+    if (!engine) return;
     if (m_Done || !m_Res || !m_MoveTask) {
         m_Done = true;
         return;
     }
 
-    m_MoveTask->Update(agent, dt);
+    m_MoveTask->Update(engine, agent, dt);
 
     float dist = glm::length(agent.GetPosition() - m_Res->GetPosition());
     if (dist < m_Threshold) {

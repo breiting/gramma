@@ -1,6 +1,8 @@
 #include <gramma/model/agent/Agent.hpp>
 #include <gramma/model/task/RestTask.hpp>
 
+#include "gramma/model/physics/IPhysicsEngine.hpp"
+
 namespace gr {
 
 RestTask::RestTask(float durationSeconds) : m_Duration(durationSeconds) {
@@ -11,7 +13,7 @@ void RestTask::Start(Agent& /*agent*/) {
     m_Done = false;
 }
 
-void RestTask::Update(Agent& /*agent*/, float dt) {
+void RestTask::Update(IPhysicsEngine* engine, Agent& /*agent*/, float dt) {
     if (m_Done) return;
 
     m_Elapsed += dt;

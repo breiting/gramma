@@ -5,12 +5,13 @@
 
 namespace gr {
 
-void RandomDetourMovement::Update(Agent& agent, const glm::vec2& target, float dt) {
+void RandomDetourMovement::Update(IPhysicsEngine* engine, Agent& agent, const glm::vec2& target, float /*dt*/) {
+    if (!engine) return;
     glm::vec2 to = target - agent.GetPosition();
     float dist = glm::length(to);
 
     if (dist <= 1e-4f) {
-        agent.SetVelocity({0, 0});
+        engine->ApplyMovement(agent, {0, 0});
         return;
     }
 
@@ -25,6 +26,6 @@ void RandomDetourMovement::Update(Agent& agent, const glm::vec2& target, float d
     float speed = maxV;
     if (speed > maxV) speed = maxV;
 
-    agent.SetVelocity(dir * speed);
+    engine->ApplyMovement(agent, dir * speed);
 }
 }  // namespace gr

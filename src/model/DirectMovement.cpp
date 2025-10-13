@@ -6,7 +6,8 @@
 
 namespace gr {
 
-void DirectMovement::Update(Agent& agent, const glm::vec2& target, float dt) {
+void DirectMovement::Update(IPhysicsEngine* engine, Agent& agent, const glm::vec2& target, float dt) {
+    if (!engine) return;
     glm::vec2 to = target - agent.GetPosition();
     float dist = glm::length(to);
 
@@ -31,7 +32,7 @@ void DirectMovement::Update(Agent& agent, const glm::vec2& target, float dt) {
         m_BlockTimer = 0.0f;
     }
 
-    agent.SetVelocity(dir * speed);
+    engine->ApplyMovement(agent, dir * speed);
 }
 
 }  // namespace gr

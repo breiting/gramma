@@ -1,5 +1,6 @@
 #pragma once
 #include <glm/vec2.hpp>
+#include <gramma/model/physics/IPhysicsEngine.hpp>
 
 namespace gr {
 
@@ -18,7 +19,7 @@ class IMovementStrategy {
      * @param target The target position.
      * @param dt Delta time in seconds.
      */
-    virtual void Update(Agent& agent, const glm::vec2& target, float dt) = 0;
+    virtual void Update(IPhysicsEngine* engine, Agent& agent, const glm::vec2& target, float dt) = 0;
 };
 
 }  // namespace gr

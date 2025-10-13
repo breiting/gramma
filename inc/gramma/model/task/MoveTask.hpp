@@ -11,7 +11,7 @@ class MoveTask : public ITask {
     MoveTask(const glm::vec2& target, std::unique_ptr<IMovementStrategy> strategy);
 
     void Start(Agent& agent) override;
-    void Update(Agent& agent, float dt) override;
+    void Update(IPhysicsEngine* engine, Agent& agent, float dt) override;
     bool IsFinished() const override {
         return m_Done;
     }

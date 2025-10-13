@@ -8,7 +8,7 @@ namespace gr {
  */
 class RandomDetourMovement : public IMovementStrategy {
    public:
-    void Update(Agent& agent, const glm::vec2& target, float dt) override;
+    void Update(IPhysicsEngine* engine, Agent& agent, const glm::vec2& target, float dt) override;
 };
 
 }  // namespace gr

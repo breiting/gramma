@@ -3,6 +3,7 @@
 namespace gr {
 
 class Agent;
+class IPhysicsEngine;
 
 class ITask {
    public:
@@ -10,7 +11,7 @@ class ITask {
     virtual ~ITask() = default;
 
     virtual void Start(Agent& agent) = 0;
-    virtual void Update(Agent& agent, float dt) = 0;
+    virtual void Update(IPhysicsEngine* engine, Agent& agent, float dt) = 0;
     virtual bool IsFinished() const = 0;
 };
 

@@ -12,13 +12,14 @@ void MoveTask::Start(Agent& /*agent*/) {
     m_Done = false;
 }
 
-void MoveTask::Update(Agent& agent, float dt) {
+void MoveTask::Update(IPhysicsEngine* engine, Agent& agent, float dt) {
+    if (!engine) return;
     if (m_Done) return;
-    m_Strategy->Update(agent, m_Target, dt);
+    m_Strategy->Update(engine, agent, m_Target, dt);
 
     float dist = glm::length(agent.GetPosition() - m_Target);
     if (dist < agent.GetTraits().bodyRadius * 0.5f) {
-        agent.SetVelocity({0, 0});
+        engine->ApplyMovement(agent, {0, 0});
         m_Done = true;
     }
 }

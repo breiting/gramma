@@ -34,6 +34,10 @@ void Environment::AddObstacle(const std::vector<glm::vec2>& contour) {
     m_Physics->AddObstacle(contour);
 }
 
+IPhysicsEngine* Environment::GetPhysics() {
+    return m_Physics.get();
+}
+
 bool Environment::ContainsPoint(const glm::vec2& p) const {
     bool inside = false;
     int n = (int)m_Boundary.size();

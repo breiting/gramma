@@ -24,21 +24,6 @@ void Agent::SetId(const std::string& id) {
     m_Id = id;
 }
 
-void Agent::SetVelocity(const glm::vec2& v) {
-    b2Body_SetLinearVelocity(m_Body, {v.x, v.y});
-    if (glm::length(v) > 0.0) {
-        m_Heading = glm::normalize(v);
-    }
-}
-
-glm::vec2 Agent::GetVelocity() const {
-    if (m_Body.index1) {
-        auto v = b2Body_GetLinearVelocity(m_Body);
-        return glm::vec2(v.x, v.y);
-    }
-    return glm::vec2{0};
-}
-
 const glm::vec2& Agent::GetPosition() const {
     return m_Position;
 }
@@ -50,7 +35,9 @@ const glm::vec2& Agent::GetHeading() const {
     return m_Heading;
 }
 void Agent::SetHeading(const glm::vec2& head) {
-    m_Heading = head;
+    if (glm::length(head) > 0.0f) {
+        m_Heading = glm::normalize(head);
+    }
 }
 
 const AgentTraits& Agent::GetTraits() const {
@@ -87,13 +74,6 @@ void Agent::SetState(AgentState state) {
 }
 
 Agent::~Agent() = default;
-
-b2BodyId Agent::GetBody() const {
-    return m_Body;
-}
-void Agent::SetBody(b2BodyId body) {
-    m_Body = body;
-}
 
 void Agent::AssignTask(std::unique_ptr<ITask> t) {
     m_Task = std::move(t);
@@ -138,13 +118,13 @@ void Agent::EvaluateNeeds(const Environment& env, float dt) {
     }
 }
 
-void Agent::Update(const Environment& env, float dt) {
+void Agent::Update(Environment& env, float dt) {
     if (m_State == AgentState::Dead || m_State == AgentState::Rescued) return;
 
     EvaluateNeeds(env, dt);
 
     if (m_Task) {
-        m_Task->Update(*this, dt);
+        m_Task->Update(env.GetPhysics(), *this, dt);
         if (m_Task->IsFinished()) {
             ClearTask();
         }

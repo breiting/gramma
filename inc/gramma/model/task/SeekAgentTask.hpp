@@ -15,7 +15,7 @@ class SeekAgentTask : public ITask {
     SeekAgentTask(const Agent* target, std::unique_ptr<IMovementStrategy> mover);
 
     void Start(Agent& agent) override;
-    void Update(Agent& agent, float dt) override;
+    void Update(IPhysicsEngine* engine, Agent& agent, float dt) override;
     bool IsFinished() const override;
 
    private:

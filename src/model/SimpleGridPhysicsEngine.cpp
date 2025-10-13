@@ -80,6 +80,7 @@ void SimpleGridPhysicsEngine::ApplyMovement(Agent& agent, const glm::vec2& movem
     // --- Update grid position ---
     m_SpatialGrid->Remove(agent.GetId(), pos);
     agent.SetPosition(newPos);
+    agent.SetHeading(newPos - pos);
     m_SpatialGrid->Insert(agent.GetId(), newPos, &agent);
 }
 

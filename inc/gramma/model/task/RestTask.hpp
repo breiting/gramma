@@ -12,7 +12,7 @@ class RestTask : public ITask {
     explicit RestTask(float durationSeconds = 1.0f);
 
     void Start(Agent& agent) override;
-    void Update(Agent& agent, float dt) override;
+    void Update(IPhysicsEngine* engine, Agent& agent, float dt) override;
     bool IsFinished() const override;
 
    private:
