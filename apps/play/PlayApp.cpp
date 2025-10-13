@@ -41,7 +41,7 @@ bool PlayApp::Init(gr::AppContext& ctx) {
     SimAgentFactory factory;
     factory.InitTaskFactory();
 
-    m_Env = std::make_unique<gr::Environment>(glm::vec2(0, 0));
+    m_Env = std::make_unique<gr::Environment>();
 
     constexpr float border = 1.0;
     constexpr float ew = 10.0;

@@ -57,7 +57,7 @@ bool SimApp::Init(gr::AppContext& ctx) {
     constexpr float ew = 50.0;
     constexpr float eh = 30.0;
 
-    m_Env = std::make_unique<gr::Environment>(glm::vec2(0, 0));
+    m_Env = std::make_unique<gr::Environment>();
 
     std::vector<glm::vec2> room = {
         {-ew / 2.0, -eh / 2.0}, {-ew / 2.0, eh / 2.0}, {ew / 2.0, eh / 2.0}, {ew / 2.0, -eh / 2.0}};

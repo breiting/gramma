@@ -73,7 +73,7 @@ bool RescueApp::Init(gr::AppContext& ctx) {
 
     m_Factory.InitTaskFactory();
 
-    m_Env = std::make_unique<gr::Environment>(glm::vec2(0, 0));
+    m_Env = std::make_unique<gr::Environment>();
 
     // auto height = Scenario1();
     auto height = Scenario2();

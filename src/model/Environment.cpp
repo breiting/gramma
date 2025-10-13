@@ -2,40 +2,36 @@
 
 #include <glm/glm.hpp>
 #include <gramma/core/Math.hpp>
+#include <gramma/core/Time.hpp>
 #include <gramma/model/agent/Agent.hpp>
 #include <gramma/model/environment/Environment.hpp>
+#include <gramma/model/physics/SimpleGridPhysicsEngine.hpp>
+#include <gramma/model/resource/IConsumable.hpp>
 #include <gramma/model/resource/IResource.hpp>
 #include <gramma/model/task/ITask.hpp>
-#include <iostream>
 #include <limits>
 #include <memory>
 #include <random>
 
-#include "gramma/core/Time.hpp"
-#include "gramma/model/resource/IConsumable.hpp"
-
 namespace gr {
 
-Environment::Environment(const glm::vec2& gravity) {
-    b2WorldDef def = b2DefaultWorldDef();
-    def.gravity = {gravity.x, gravity.y};
-    m_World = b2CreateWorld(&def);
-    // cellSize = max(AgentRadius * 2, SocialRadius * 0.75)
-    m_SpatialGrid = std::make_unique<SpatialGrid>(0.25f);
+Environment::Environment() {
+    m_Physics = std::make_unique<SimpleGridPhysicsEngine>(0.5f);
+    m_Physics->Init();
 }
 
 Environment::~Environment() {
-    b2DestroyWorld(m_World);
+    m_Physics.reset();
 }
 
 void Environment::AddBoundary(const std::vector<glm::vec2>& contour) {
     m_Boundary = contour;
-    CreateChainShape(contour);
+    m_Physics->AddBoundary(contour);
 }
 
 void Environment::AddObstacle(const std::vector<glm::vec2>& contour) {
     m_Obstacles.push_back(contour);
-    CreateChainShape(contour);
+    m_Physics->AddObstacle(contour);
 }
 
 bool Environment::ContainsPoint(const glm::vec2& p) const {
@@ -81,71 +77,16 @@ glm::vec2 Environment::RandomPosition() const {
     return {(minX + maxX) * 0.5f, (minY + maxY) * 0.5f};
 }
 
-void Environment::CreateChainShape(const std::vector<glm::vec2>& contour) {
-    if (contour.size() < 4) {
-        std::cerr << "Chain needs >= 4 points\n";
-        return;
-    }
-
-    b2BodyDef bd = b2DefaultBodyDef();
-    bd.type = b2_staticBody;
-    b2BodyId body = b2CreateBody(m_World, &bd);
-
-    std::vector<b2Vec2> pts;
-    pts.reserve(contour.size());
-    for (const auto& p : contour) {
-        pts.push_back({p.x, p.y});
-    }
-
-    b2ChainDef cd = b2DefaultChainDef();
-    cd.points = pts.data();
-    cd.count = static_cast<int>(pts.size());
-    cd.isLoop = true;
-
-    b2ChainId chain = b2CreateChain(body, &cd);
-
-    b2Chain_SetFriction(chain, 0.1f);
-    b2Chain_SetRestitution(chain, 0.0f);  // no repulsion (Abprallen)
-}
-
 void Environment::AddAgent(std::unique_ptr<Agent> agent) {
-    glm::vec2 pos = agent->GetPosition();
-    float mass = agent->GetTraits().mass;
-    float radius = agent->GetTraits().bodyRadius;
-
-    // Body definition
-    b2BodyDef bd = b2DefaultBodyDef();
-    bd.type = b2_dynamicBody;
-    bd.position = {pos.x, pos.y};
-
-    // Create body in the world
-    b2BodyId body = b2CreateBody(m_World, &bd);
-    b2Body_SetFixedRotation(body, true);
-
-    b2Circle circle;
-    circle.center = {0.0f, 0.0f};
-    circle.radius = agent->GetTraits().bodyRadius;
-
-    b2ShapeDef sd = b2DefaultShapeDef();
-    sd.density = mass / (radius * radius * gr::PI);  // kg/m^2
-
-    b2SurfaceMaterial mat = b2DefaultSurfaceMaterial();
-    mat.friction = 0.3;
-    mat.restitution = 0.2;
-    sd.material = mat;
-
-    b2CreateCircleShape(body, &sd, &circle);
-
-    // register user data
-    b2Body_SetUserData(body, agent.get());
-
-    agent->SetBody(body);
-
+    m_Physics->AddAgent(*agent);
     m_Agents.emplace_back(std::move(agent));
 }
 
 const Agent* Environment::GetAgent(size_t idx) const {
-    return m_Agents[idx].get();
+    if (idx < m_Agents.size()) {
+        return m_Agents[idx].get();
+    }
+    return nullptr;
 }
 
 const std::vector<std::unique_ptr<Agent>>& Environment::GetAgents() const {
@@ -154,27 +95,13 @@ const std::vector<std::unique_ptr<Agent>>& Environment::GetAgents() const {
 
 void Environment::RemoveAllAgents() {
     for (auto& a : m_Agents) {
-        b2DestroyBody(a->GetBody());
+        m_Physics->RemoveAgent(*a);
     }
     m_Agents.clear();
 }
 
 void Environment::AddResource(std::shared_ptr<IResource> r) {
-    glm::vec2 pos = r->GetPosition();
-    float radius = r->GetBoundingRadius();
-
-    b2BodyDef bd = b2DefaultBodyDef();
-    bd.type = b2_staticBody;
-    b2BodyId body = b2CreateBody(m_World, &bd);
-
-    b2Circle circle;
-    circle.center = {pos.x, pos.y};
-    circle.radius = radius;
-
-    b2ShapeDef sd = b2DefaultShapeDef();
-
-    b2CreateCircleShape(body, &sd, &circle);
-
+    m_Physics->AddResource(r);
     m_Resources.emplace_back(std::move(r));
 }
 
@@ -192,17 +119,15 @@ const std::vector<std::vector<glm::vec2>>& Environment::GetObstacles() const {
 
 void Environment::Update(float dt) {
     {
-        TimeMeasureGuard guard("=== Box2D");
+        TimeMeasureGuard guard("=== Physics");
 
-        b2World_Step(m_World, dt, 4);
+        m_Physics->Step(dt);
     }
 
     {
         TimeMeasureGuard guard("Resource");
 
-        // Update resources if required
         for (auto& r : m_Resources) {
-            // All consumables
             if (auto* consumable = dynamic_cast<IConsumable*>(r.get())) {
                 consumable->Regenerate(dt);
             }
@@ -212,35 +137,20 @@ void Environment::Update(float dt) {
     {
         TimeMeasureGuard guard("Agent Update");
 
-        // Sync and update agents
         for (auto& agent : m_Agents) {
-            if (agent->GetBody().index1 != 0) {
-                b2Transform xf = b2Body_GetTransform(agent->GetBody());
-                glm::vec2 pos = {xf.p.x, xf.p.y};
-                agent->SetPosition(pos);
-            }
+            m_Physics->SyncAgentState(*agent);
             agent->Update(*this, dt);
-        }
-    }
-
-    {
-        TimeMeasureGuard guard("Grid");
-        m_SpatialGrid->Clear();
-        for (size_t i = 0; i < m_Agents.size(); ++i) {
-            const glm::vec2& pos = m_Agents[i]->GetPosition();
-            m_SpatialGrid->Insert(i, pos);
         }
     }
 
     {
         TimeMeasureGuard guard("Cleanup");
 
-        // Delete dead agents
         auto it = m_Agents.begin();
         while (it != m_Agents.end()) {
             Agent* agent = it->get();
             if (agent->GetState() == AgentState::Dead || agent->GetState() == AgentState::Rescued) {
-                b2DestroyBody(agent->GetBody());
+                m_Physics->RemoveAgent(*agent);
                 it = m_Agents.erase(it);
             } else {
                 ++it;
@@ -252,7 +162,7 @@ void Environment::Update(float dt) {
         while (res != m_Resources.end()) {
             if (auto* consumable = dynamic_cast<IConsumable*>(res->get())) {
                 if (consumable->IsDepleted()) {
-                    b2DestroyBody(res->get()->GetBody());
+                    m_Physics->RemoveResource(res->get());
                     res = m_Resources.erase(res);
                 }
             } else {
@@ -263,62 +173,8 @@ void Environment::Update(float dt) {
 }
 
 std::vector<const Agent*> Environment::QueryAgentsInRadius(const glm::vec2& pos, float radius) const {
-    std::vector<const Agent*> result;
-
-    auto ids = m_SpatialGrid->QueryNeighborhood(pos, radius);
-    for (size_t id : ids) {
-        if (id >= m_Agents.size()) continue;
-        const Agent* other = m_Agents[id].get();
-        float dist = glm::length(other->GetPosition() - pos);
-        if (dist <= radius) {
-            result.push_back(other);
-        }
-    }
-
-    return result;
+    return m_Physics->QueryAgentsInRadius(pos, radius);
 }
-
-#if 0
-std::vector<const Agent*> Environment::QueryAgentsInRadius(const glm::vec2& center, float radius) const {
-    std::vector<const Agent*> results;
-
-    b2AABB aabb;
-    aabb.lowerBound = {center.x - radius, center.y - radius};
-    aabb.upperBound = {center.x + radius, center.y + radius};
-
-    auto callback = [](b2ShapeId shapeId, void* context) -> bool {
-        auto* data =
-            static_cast<std::tuple<const Environment*, glm::vec2, float, std::vector<const Agent*>*>*>(context);
-        const Environment* env = std::get<0>(*data);
-        glm::vec2 center = std::get<1>(*data);
-        float radius = std::get<2>(*data);
-        auto* out = std::get<3>(*data);
-
-        b2BodyId bodyId = b2Shape_GetBody(shapeId);
-        void* userData = b2Body_GetUserData(bodyId);
-
-        if (userData) {
-            Agent* agent = static_cast<Agent*>(userData);
-            float dist = glm::distance(agent->GetPosition(), center);
-            if (dist <= radius) {
-                out->push_back(agent);
-            }
-        }
-
-        return true;
-    };
-
-    // Filter (match all)
-    b2QueryFilter filter = b2DefaultQueryFilter();
-
-    // Prepare context
-    auto context = std::make_tuple(this, center, radius, &results);
-
-    b2World_OverlapAABB(m_World, aabb, filter, callback, &context);
-
-    return results;
-}
-#endif
 
 std::shared_ptr<IResource> Environment::FindNearest(ResourceType type, const glm::vec2& pos) const {
     float bestD2 = std::numeric_limits<float>::infinity();

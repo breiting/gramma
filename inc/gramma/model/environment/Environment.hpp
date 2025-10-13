@@ -4,13 +4,12 @@
 #include <glm/mat4x4.hpp>
 #include <glm/vec2.hpp>
 #include <gramma/model/agent/Agent.hpp>
+#include <gramma/model/physics/IPhysicsEngine.hpp>
 #include <gramma/model/resource/Exit.hpp>
 #include <gramma/model/resource/Home.hpp>
 #include <gramma/model/resource/IResource.hpp>
 #include <memory>
 #include <vector>
-
-#include "gramma/core/SpatialGrid.hpp"
 
 namespace gr {
 
@@ -21,7 +20,7 @@ namespace gr {
 
 class Environment {
    public:
-    Environment(const glm::vec2& gravity);
+    Environment();
     ~Environment();
 
     /// Boundary
@@ -60,14 +59,12 @@ class Environment {
     void CreateChainShape(const std::vector<glm::vec2>& contour);
 
    private:
-    b2WorldId m_World;
+    std::vector<std::unique_ptr<Agent>> m_Agents;
     std::vector<glm::vec2> m_Boundary;
     std::vector<std::vector<glm::vec2>> m_Obstacles;
-
-    std::vector<std::unique_ptr<Agent>> m_Agents;
     std::vector<std::shared_ptr<IResource>> m_Resources;
 
-    std::unique_ptr<SpatialGrid> m_SpatialGrid;
+    std::unique_ptr<IPhysicsEngine> m_Physics;
 };
 
 }  // namespace gr
