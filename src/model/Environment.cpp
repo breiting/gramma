@@ -5,6 +5,7 @@
 #include <gramma/core/Time.hpp>
 #include <gramma/model/agent/Agent.hpp>
 #include <gramma/model/environment/Environment.hpp>
+#include <gramma/model/physics/Box2DPhysicsEngine.hpp>
 #include <gramma/model/physics/SimpleGridPhysicsEngine.hpp>
 #include <gramma/model/resource/IConsumable.hpp>
 #include <gramma/model/resource/IResource.hpp>
@@ -16,7 +17,8 @@
 namespace gr {
 
 Environment::Environment() {
-    m_Physics = std::make_unique<SimpleGridPhysicsEngine>(0.5f);
+    // m_Physics = std::make_unique<SimpleGridPhysicsEngine>(0.5f);
+    m_Physics = std::make_unique<Box2DPhysicsEngine>();
     m_Physics->Init();
 }
 

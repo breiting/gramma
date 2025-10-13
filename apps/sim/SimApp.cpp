@@ -54,8 +54,8 @@ bool SimApp::Init(gr::AppContext& ctx) {
 
     // Room
     constexpr float border = 1.0;
-    constexpr float ew = 250.0;
-    constexpr float eh = 150.0;
+    constexpr float ew = 150.0;
+    constexpr float eh = 100.0;
 
     m_Env = std::make_unique<gr::Environment>();
 

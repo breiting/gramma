@@ -82,6 +82,7 @@ void Box2DPhysicsEngine::AddAgent(Agent& agent) {
     sd.material = mat;
 
     b2CreateCircleShape(body, &sd, &circle);
+    m_Bodies[&agent] = body;
 }
 
 void Box2DPhysicsEngine::RemoveAgent(Agent& agent) {

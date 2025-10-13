@@ -51,20 +51,21 @@ int RescueApp::Scenario1() {
 
     // Add one exit
     m_Env->AddResource(std::make_shared<Exit>(glm::vec2(ew / 2.0, 0)));
-    GenerateAgents(50);
+    GenerateAgents(1);
     return eh + border;
 }
 
 int RescueApp::Scenario2() {
     constexpr float border = 1.0;
-    constexpr float ew = 10.0;
-    constexpr float eh = 5.0;
+    constexpr float ew = 50.0;
+    constexpr float eh = 30.0;
     std::vector<glm::vec2> room = {
         {-ew / 2.0, -eh / 2.0}, {-ew / 2.0, eh / 2.0}, {ew / 2.0, eh / 2.0}, {ew / 2.0, -eh / 2.0}};
     m_Env->AddBoundary(room);
-    // Add one exit
+    // Add two exits
     m_Env->AddResource(std::make_shared<Exit>(glm::vec2(ew / 2.0, 0)));
-    GenerateAgents(2);
+    m_Env->AddResource(std::make_shared<Exit>(glm::vec2(-ew / 2.0, 0)));
+    GenerateAgents(500);
     return eh + border;
 }
 
@@ -125,7 +126,7 @@ bool RescueApp::Init(gr::AppContext& ctx) {
 
 void RescueApp::Update(gr::AppContext& /*ctx*/, double dt) {
     if (m_SeedAgents) {
-        GenerateAgents(10);
+        GenerateAgents(100);
         m_SeedAgents = false;
     }
 
