@@ -2,7 +2,7 @@
 #include <gramma/model/environment/Environment.hpp>
 #include <gramma/model/need/SocialNeed.hpp>
 
-constexpr float MAX_SURROUNDED_AGENTS = 1.0f;
+constexpr float MAX_SURROUNDED_AGENTS = 20.0f;
 
 namespace gr {
 

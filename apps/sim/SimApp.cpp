@@ -21,7 +21,7 @@ using namespace std;
 
 void SimApp::GenerateAgents() {
     SimAgentFactory factory;
-    for (int i = 0; i < 2000; ++i) {
+    for (int i = 0; i < 5000; ++i) {
         auto agent = factory.CreateAgent("Agent" + std::to_string(m_AgentIdCounter++), m_Env->RandomPosition());
         m_Env->AddAgent(std::move(agent));
     }
@@ -54,8 +54,8 @@ bool SimApp::Init(gr::AppContext& ctx) {
 
     // Room
     constexpr float border = 1.0;
-    constexpr float ew = 50.0;
-    constexpr float eh = 30.0;
+    constexpr float ew = 250.0;
+    constexpr float eh = 150.0;
 
     m_Env = std::make_unique<gr::Environment>();
 

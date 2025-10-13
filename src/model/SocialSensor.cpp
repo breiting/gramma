@@ -5,10 +5,10 @@ namespace gr {
 
 // Attraction values between different AgeClass groups
 static constexpr float AttractionMatrix[4][4] = {
-    {+0.5f, +0.3f, -0.2f, -0.5f},  // Child
-    {+0.3f, +0.8f, 0.0f, -0.2f},   // Teenager
-    {-0.2f, 0.0f, +0.9f, +0.1f},   // Adult
-    {-0.5f, -0.2f, +0.1f, +0.4f}   // Senior
+    {+0.8f, -0.6f, +0.2f, -0.3f},  // Group 0 (z.B. "Red")
+    {-0.4f, +0.9f, -0.2f, +0.1f},  // Group 1 (Green)
+    {+0.3f, -0.3f, +0.7f, -0.5f},  // Group 2 (Blue)
+    {-0.2f, +0.1f, -0.5f, +0.9f}   // Group 3 (Yellow)
 };
 
 // ---------------------------------------------------------
