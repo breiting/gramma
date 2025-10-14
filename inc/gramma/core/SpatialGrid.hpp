@@ -1,6 +1,5 @@
 #pragma once
 
-#include <algorithm>
 #include <cstddef>
 #include <glm/gtx/hash.hpp>
 #include <glm/vec2.hpp>
@@ -8,8 +7,6 @@
 #include <vector>
 
 namespace gr {
-
-class Agent;
 
 struct CellHasher {
     std::size_t operator()(const glm::ivec2& v) const noexcept {
@@ -21,17 +18,18 @@ struct CellHasher {
 /**
  * SpatialGrid
  * Uniform grid for fast spatial neighborhood queries (O(1) average access)
- * Scales to millions of agents efficiently
+ * Scales to millions of agents/particles efficiently
  */
+template <typename T>
 class SpatialGrid {
    public:
     explicit SpatialGrid(float cellSize);
 
     void Clear();
-    void Insert(const std::string& id, const glm::vec2& pos, Agent* agent);
+    void Insert(const std::string& id, const glm::vec2& pos, T item);
     void Remove(const std::string& id, const glm::vec2& pos);
 
-    std::vector<const Agent*> QueryNeighborhood(const glm::vec2& pos, float radius) const;
+    std::vector<const T> QueryNeighborhood(const glm::vec2& pos, float radius) const;
 
     void SetBounds(const glm::vec2& min, const glm::vec2& max);
     bool IsInsideBounds(const glm::vec2& pos) const;
@@ -43,7 +41,7 @@ class SpatialGrid {
         return m_Max;
     }
 
-    std::vector<Agent*> GetAllAgents() const;
+    std::vector<T> GetAllItems() const;
 
    private:
     glm::ivec2 GetCellIndex(const glm::vec2& pos) const;
@@ -54,10 +52,10 @@ class SpatialGrid {
     glm::vec2 m_Max{1000.f};
 
     // Grid mapping cell -> list of agent pointers
-    std::unordered_map<glm::ivec2, std::vector<Agent*>, CellHasher> m_Grid;
+    std::unordered_map<glm::ivec2, std::vector<T>, CellHasher> m_Grid;
 
     // Optional: store IDs if needed
-    std::unordered_map<std::string, glm::ivec2> m_AgentToCell;
+    std::unordered_map<std::string, glm::ivec2> m_ItemToCell;
 };
 
 }  // namespace gr

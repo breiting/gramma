@@ -38,7 +38,7 @@ class SimpleGridPhysicsEngine : public IPhysicsEngine {
 
    private:
     float m_CellSize;
-    std::unique_ptr<SpatialGrid> m_SpatialGrid;
+    std::unique_ptr<SpatialGrid<Agent*>> m_SpatialGrid;
 
     glm::vec2 m_MinBounds{-1000.f, -1000.f};
     glm::vec2 m_MaxBounds{1000.f, 1000.f};

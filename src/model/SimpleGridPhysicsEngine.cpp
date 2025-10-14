@@ -5,7 +5,7 @@
 namespace gr {
 
 SimpleGridPhysicsEngine::SimpleGridPhysicsEngine(float cellSize) : m_CellSize(cellSize) {
-    m_SpatialGrid = std::make_unique<SpatialGrid>(m_CellSize);
+    m_SpatialGrid = std::make_unique<SpatialGrid<Agent*>>(m_CellSize);
 }
 
 void SimpleGridPhysicsEngine::Init() {
@@ -85,7 +85,16 @@ void SimpleGridPhysicsEngine::ApplyMovement(Agent& agent, const glm::vec2& movem
 }
 
 std::vector<const Agent*> SimpleGridPhysicsEngine::QueryAgentsInRadius(const glm::vec2& pos, float radius) const {
-    return m_SpatialGrid->QueryNeighborhood(pos, radius);
+    auto nearby = m_SpatialGrid->QueryNeighborhood(pos, radius);
+
+    std::vector<const Agent*> result;
+    result.reserve(nearby.size());
+
+    for (Agent* ptr : nearby) {
+        result.push_back(static_cast<const Agent*>(ptr));
+    }
+
+    return result;
 }
 
 }  // namespace gr
