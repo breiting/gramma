@@ -63,10 +63,6 @@ void ParticleLifeBehavior::Update(Particle& self, float dt, const SpatialGrid<Pa
     vel += force * dt;
     vel *= 0.95f;  // Friction / Damping
 
-    if (glm::length(vel) < 0.01f) {
-        vel = glm::normalize(force) * 0.1f;  // Reaktivierung
-    }
-
     // --- Boundary correction ---
     glm::vec2 nextPos = pos + vel * dt;
     glm::vec2 min = grid.GetMinBounds();
