@@ -49,7 +49,6 @@ glm::vec2 Camera2D::ScreenToWorld(const glm::vec2& screen, int width, int height
 }
 
 void Camera2D::FitToEnvironment(Environment* env, float aspect) {
-    if (!env) return;
     m_Zoom = 1.0;
     float width = 10;  // TODO:
     float height = 10 * aspect;

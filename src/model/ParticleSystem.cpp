@@ -7,18 +7,26 @@ namespace gr {
 ParticleSystem::ParticleSystem(int width, int height, float cellSize) : m_Grid(cellSize) {
     m_Size.x = width;
     m_Size.y = height;
+
+    m_XMin = -width / 2.0;
+    m_XMax = width / 2.0;
+    m_YMin = -height / 2.0;
+    m_YMax = height / 2.0;
+
+    m_Border = {{m_XMin, m_YMin}, {m_XMax, m_YMin}, {m_XMax, m_YMax}, {m_XMin, m_YMax}};
+    m_Grid.SetBounds({m_XMin, m_XMax}, {m_YMin, m_YMax});
 }
 
-void ParticleSystem::Init(size_t count) {
+void ParticleSystem::Init(size_t count, int groups) {
     Clear();
 
-    std::uniform_real_distribution<float> posX(0.0f, m_Size.x);
-    std::uniform_real_distribution<float> posY(0.0f, m_Size.y);
-    std::uniform_int_distribution<int> grp(0, 1);  // groups
+    std::uniform_real_distribution<float> posX(m_XMin, m_XMax);
+    std::uniform_real_distribution<float> posY(m_YMin, m_YMax);
+    std::uniform_int_distribution<int> grp(0, groups - 1);
 
     for (size_t i = 0; i < count; ++i) {
         auto pos = glm::vec2(posX(m_Rng), posY(m_Rng));
-        auto p = std::make_unique<Particle>(std::to_string(i), pos, grp(m_Rng));
+        auto p = std::make_unique<Particle>(std::to_string(i), pos, grp(m_Rng), 1.0f);
         m_Particles.push_back(std::move(p));
     }
 }

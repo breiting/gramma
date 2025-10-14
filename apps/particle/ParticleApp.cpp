@@ -27,7 +27,7 @@ std::string ParticleApp::Name() const {
 }
 
 void ParticleApp::GenerateParticles(int count) {
-    m_System->Init(count);
+    m_System->Init(count, 2 /* groups */);
 }
 
 bool ParticleApp::Init(gr::AppContext& ctx) {
@@ -35,9 +35,7 @@ bool ParticleApp::Init(gr::AppContext& ctx) {
 
     constexpr float border = 1.0;
     constexpr float ew = 100.0;
-    constexpr float eh = 50.0;
-    std::vector<glm::vec2> room = {
-        {-ew / 2.0, -eh / 2.0}, {-ew / 2.0, eh / 2.0}, {ew / 2.0, eh / 2.0}, {ew / 2.0, -eh / 2.0}};
+    constexpr float eh = 100.0;
     auto height = eh + border;
 
     std::vector<std::vector<float>> matrix;
@@ -82,9 +80,9 @@ bool ParticleApp::Init(gr::AppContext& ctx) {
         }
     };
 
-    // onWindowSize = [this](int w, int h) {
-    //     m_Camera.FitToEnvironment(m_Env.get(), float(w) / float(h));  //
-    // };
+    onWindowSize = [this](int w, int h) {
+        m_Camera.FitToEnvironment(nullptr, float(w) / float(h));  //
+    };
 
     std::cout << "ParticleApp initialized." << std::endl;
     return true;

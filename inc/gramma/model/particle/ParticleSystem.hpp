@@ -14,7 +14,7 @@ class ParticleSystem {
    public:
     explicit ParticleSystem(int width, int height, float cellSize = 1.0f);
 
-    void Init(size_t count);
+    void Init(size_t count, int groups);
     void AddParticle(std::unique_ptr<Particle> p);
     void Clear();
     void Step(float dt);
@@ -27,6 +27,8 @@ class ParticleSystem {
     void UpdateGrid();
 
    private:
+    std::vector<glm::vec2> m_Border;
+    float m_XMin, m_XMax, m_YMin, m_YMax;
     std::vector<std::unique_ptr<Particle>> m_Particles;
     std::unique_ptr<ParticleBehavior> m_Behavior;
     SpatialGrid<Particle*> m_Grid;
