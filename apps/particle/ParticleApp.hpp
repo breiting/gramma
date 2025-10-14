@@ -30,4 +30,5 @@ class ParticleApp : public gr::IApp {
     bool m_Quit{false};
     float m_Zoom{1.0};
     float m_Timescale{1.0};
+    int m_NumParticles{1000};
 };

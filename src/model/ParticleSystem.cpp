@@ -23,16 +23,20 @@ void ParticleSystem::Init(size_t count, float radius, int groups) {
 
     std::uniform_real_distribution<float> posX(m_XMin, m_XMax);
     std::uniform_real_distribution<float> posY(m_YMin, m_YMax);
+    std::uniform_real_distribution<float> velo(0, glm::two_pi<float>());
     std::uniform_int_distribution<int> grp(0, groups - 1);
 
     for (size_t i = 0; i < count; ++i) {
         auto pos = glm::vec2(posX(m_Rng), posY(m_Rng));
         auto p = std::make_unique<Particle>(std::to_string(i), pos, grp(m_Rng), radius);
+        float angle = velo(m_Rng);
+        glm::vec2 v = glm::vec2(glm::cos(angle), glm::sin(angle)) * 1.0f;
+        p->SetVelocity(v);
         m_Particles.push_back(std::move(p));
     }
 }
 
-void ParticleSystem::SetBehavior(std::unique_ptr<ParticleBehavior> behavior) {
+void ParticleSystem::SetBehavior(std::unique_ptr<IParticleBehavior> behavior) {
     m_Behavior = std::move(behavior);
 }
 

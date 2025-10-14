@@ -1,12 +1,12 @@
 #pragma once
 #include <glm/vec2.hpp>
 #include <gramma/core/SpatialGrid.hpp>
+#include <gramma/model/particle/IParticleBehavior.hpp>
 #include <gramma/model/particle/Particle.hpp>
-#include <gramma/model/particle/ParticleBehavior.hpp>
 
 namespace gr {
 
-class SimpleParticleBehavior : public ParticleBehavior {
+class SimpleParticleBehavior : public IParticleBehavior {
    public:
     SimpleParticleBehavior(float radius, float strength);
 

@@ -2,8 +2,8 @@
 
 #include <glm/glm.hpp>
 #include <gramma/core/SpatialGrid.hpp>
+#include <gramma/model/particle/IParticleBehavior.hpp>
 #include <gramma/model/particle/Particle.hpp>
-#include <gramma/model/particle/ParticleBehavior.hpp>
 #include <memory>
 #include <random>
 #include <vector>
@@ -19,7 +19,7 @@ class ParticleSystem {
     void Clear();
     void Step(float dt);
 
-    void SetBehavior(std::unique_ptr<ParticleBehavior> behavior);
+    void SetBehavior(std::unique_ptr<IParticleBehavior> behavior);
 
     const std::vector<std::unique_ptr<Particle>>& GetParticles() const;
 
@@ -30,7 +30,7 @@ class ParticleSystem {
     std::vector<glm::vec2> m_Border;
     float m_XMin, m_XMax, m_YMin, m_YMax;
     std::vector<std::unique_ptr<Particle>> m_Particles;
-    std::unique_ptr<ParticleBehavior> m_Behavior;
+    std::unique_ptr<IParticleBehavior> m_Behavior;
     SpatialGrid<Particle*> m_Grid;
     glm::ivec2 m_Size;
     std::mt19937 m_Rng;

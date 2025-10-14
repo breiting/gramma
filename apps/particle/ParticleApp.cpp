@@ -8,6 +8,7 @@
 #include <gramma/core/Window.hpp>
 #include <gramma/model/particle/ParticleLifeBehavior.hpp>
 #include <gramma/model/particle/ParticleSystem.hpp>
+#include <gramma/model/particle/RepulsionOnlyBehavior.hpp>
 #include <gramma/model/particle/SimpleParticleBehavior.hpp>
 #include <gramma/ui/ImGuiLayer.hpp>
 #include <iostream>
@@ -15,6 +16,15 @@
 
 using namespace gr;
 using namespace std;
+
+constexpr float border = 1.0;
+constexpr float globalWidth = 50.0;
+constexpr float globalHeight = 50.0;
+constexpr float numParticles = 1000;
+constexpr float particleRadius = 0.4;
+constexpr float neighborhoodRadius = 2.0;
+constexpr float cellSize = 1.0;
+constexpr int numGroups = 1;
 
 static constexpr float AttractionMatrix[4][4] = {
     {+0.8f, -0.6f, +0.2f, -0.3f},  // Group 0 (z.B. "Red")
@@ -29,19 +39,22 @@ std::string ParticleApp::Name() const {
 
 void ParticleApp::GenerateParticles(int count, float radius, int groups) {
     m_System->Init(count, radius, groups);
+#if 0
+    int id = 0;
+    int w = 50;
+    int h = 50;
+    for (int x = -w / 2; x < w / 2; x++) {
+        for (int y = -h / 2; y < h / 2; y++) {
+            auto pos = glm::vec2(x, y);
+            auto p = std::make_unique<Particle>(std::to_string(id++), pos, 0, 0.25);
+            m_System->AddParticle(std::move(p));
+        }
+    }
+#endif
 }
 
 bool ParticleApp::Init(gr::AppContext& ctx) {
     std::cout << "Initializing ParticleApp..." << std::endl;
-
-    constexpr float border = 1.0;
-    constexpr float globalWidth = 100.0;
-    constexpr float globalHeight = 100.0;
-    constexpr float numParticles = 2000;
-    constexpr float particleRadius = 0.4;
-    constexpr float neighborhoodRadius = 3.0;
-    constexpr float cellSize = 2.0;
-    constexpr int numGroups = 2;
 
     auto height = globalHeight + border;
 
@@ -60,8 +73,9 @@ bool ParticleApp::Init(gr::AppContext& ctx) {
     };
 
     m_System = std::make_unique<gr::ParticleSystem>(globalWidth, globalHeight, cellSize);
-    m_System->SetBehavior(std::make_unique<ParticleLifeBehavior>(neighborhoodRadius, attractionMatrix));
-    // m_System->SetBehavior(std::make_unique<SimpleParticleBehavior>(neighborhoodRadius, 2.0));
+    // m_System->SetBehavior(std::make_unique<ParticleLifeBehavior>(neighborhoodRadius, attractionMatrix));
+    m_System->SetBehavior(std::make_unique<RepulsionOnlyBehavior>(neighborhoodRadius, 6.0, 0.95));
+    // m_System->SetBehavior(std::make_unique<SimpleParticleBehavior>(neighborhoodRadius, 1.0));
 
     GenerateParticles(numParticles, particleRadius, numGroups);
 
@@ -123,6 +137,10 @@ void ParticleApp::Render(gr::AppContext& ctx) {
 
     ImGui::Begin("Environment Stats");
     ImGui::SliderFloat("Timescale", &m_Timescale, 0.5, 10.0);
+    ImGui::SliderInt("#Particles", &m_NumParticles, 10, 10000);
+    if (ImGui::Button("Generate")) {
+        GenerateParticles(m_NumParticles, particleRadius, numGroups);
+    }
     ImGui::End();
 
     m_Gui->EndFrame();

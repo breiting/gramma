@@ -6,9 +6,9 @@ namespace gr {
 
 class Particle;
 
-class ParticleBehavior {
+class IParticleBehavior {
    public:
-    virtual ~ParticleBehavior() = default;
+    virtual ~IParticleBehavior() = default;
 
     virtual void Update(Particle& p, float dt, const SpatialGrid<Particle*>& grid) const = 0;
 };
