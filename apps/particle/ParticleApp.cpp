@@ -108,20 +108,30 @@ bool ParticleApp::Init(gr::AppContext& ctx) {
         }
     };
 
-    onScroll = [this](double /*xoffs*/, double yoffs) {
-        m_Zoom += yoffs * 0.02f;
-        m_Camera.SetZoom(m_Zoom);
+    onScroll = [this, &ctx](double /*xoffs*/, double yoffs) {
+        m_Camera.ZoomAtCursor(yoffs * 0.1f, m_MousePos, ctx.GetWidth(), ctx.GetHeight());
     };
 
     onMouseMove = [this](double x, double y) {
-        m_MousePos = glm::vec2(x, y);  //
+        auto pos = glm::vec2(x, y);  //
+        if (m_IsDragging) {
+            glm::vec2 delta = pos - m_MousePos;
+            delta.y *= -1.0;
+            m_Camera.Pan(-delta * 0.2f);
+        }
+        m_MousePos = pos;
     };
 
-    onMouseButton = [this, &ctx](int button, int action, int /*mod*/) {
-        if (button == GLFW_MOUSE_BUTTON_1 && action == GLFW_PRESS) {
-            auto position = m_Camera.ScreenToWorld(m_MousePos, ctx.GetWidth(), ctx.GetHeight());
-            // CreateAgent(m_Env.get(), position);
+    onMouseButton = [this](int button, int action, int /*mod*/) {
+        if (button == GLFW_MOUSE_BUTTON_1) {
+            if (action == GLFW_PRESS) {
+                m_DragStart = m_MousePos;
+                m_IsDragging = true;
+            } else if (action == GLFW_RELEASE) {
+                m_IsDragging = false;
+            }
         }
+        // auto position = m_Camera.ScreenToWorld(m_MousePos, ctx.GetWidth(), ctx.GetHeight());
     };
 
     onWindowSize = [this](int w, int h) {
@@ -145,6 +155,7 @@ void ParticleApp::Update(gr::AppContext& /*ctx*/, double dt) {
         TimeMeasureGuard guard("Sync");
         m_View.SyncWithParticleSystem(m_System.get());
     }
+    m_Camera.Update(dt);
 }
 
 void ParticleApp::Render(gr::AppContext& ctx) {

@@ -29,8 +29,10 @@ class ParticleApp : public gr::IApp {
     std::unique_ptr<gr::IGuiLayer> m_Gui;
 
     glm::vec2 m_MousePos{0, 0};
+    glm::vec2 m_DragStart{0, 0};
+    bool m_IsDragging = false;
+
     bool m_Quit{false};
-    float m_Zoom{1.0};
     float m_Timescale{1.0};
     int m_NumParticles{1000};
     uint32_t m_ParticleIdCounter{0};

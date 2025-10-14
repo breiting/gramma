@@ -39,6 +39,28 @@ void Camera2D::SetZoom(float z) {
     m_Zoom = z;
 }
 
+void Camera2D::Update(float /*dt*/) {
+    // Smooth Interpolation
+    m_Position += (m_TargetPosition - m_Position) * m_LerpSpeed;
+    m_Zoom += (m_TargetZoom - m_Zoom) * m_LerpSpeed;
+}
+
+void Camera2D::ZoomAtCursor(float zoomDelta, const glm::vec2& cursorScreen, int width, int height) {
+    m_TargetZoom = glm::clamp(m_TargetZoom + zoomDelta, 0.05f, 20.0f);
+
+    glm::vec2 worldBefore = ScreenToWorld(cursorScreen, width, height);
+
+    // After zoom, this point would shift – we compensate that
+    glm::vec2 worldAfter = ScreenToWorld(cursorScreen, width, height);
+    glm::vec2 delta = worldBefore - worldAfter;
+
+    m_TargetPosition += delta;
+}
+
+void Camera2D::Pan(const glm::vec2& delta) {
+    m_TargetPosition += delta / m_Zoom;
+}
+
 glm::vec2 Camera2D::ScreenToWorld(const glm::vec2& screen, int width, int height) {
     float xNDC = 2.0f * (screen.x / (float)width) - 1.0f;
     float yNDC = 1.0f - 2.0f * (screen.y / (float)height);
