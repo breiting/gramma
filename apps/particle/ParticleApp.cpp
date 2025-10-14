@@ -37,7 +37,7 @@ bool ParticleApp::Init(gr::AppContext& ctx) {
     constexpr float border = 1.0;
     constexpr float globalWidth = 100.0;
     constexpr float globalHeight = 100.0;
-    constexpr float numParticles = 1000;
+    constexpr float numParticles = 2000;
     constexpr float particleRadius = 0.4;
     constexpr float neighborhoodRadius = 3.0;
     constexpr float cellSize = 2.0;
@@ -54,9 +54,14 @@ bool ParticleApp::Init(gr::AppContext& ctx) {
         matrix.push_back(row);
     }
 
+    const std::vector<std::vector<float>> attractionMatrix = {
+        {10.5f, -1.0f},
+        {-1.0f, 10.5f},
+    };
+
     m_System = std::make_unique<gr::ParticleSystem>(globalWidth, globalHeight, cellSize);
-    m_System->SetBehavior(std::make_unique<ParticleLifeBehavior>(neighborhoodRadius, matrix));
-    // m_System->SetBehavior(std::make_unique<SimpleParticleBehavior>(neighborhoodRadius, 1.0));
+    m_System->SetBehavior(std::make_unique<ParticleLifeBehavior>(neighborhoodRadius, attractionMatrix));
+    // m_System->SetBehavior(std::make_unique<SimpleParticleBehavior>(neighborhoodRadius, 2.0));
 
     GenerateParticles(numParticles, particleRadius, numGroups);
 
