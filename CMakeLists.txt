@@ -18,6 +18,7 @@ file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/generated/assets")
 option(GRAMMA_BUILD_SIM "Build sim app" ON)
 option(GRAMMA_BUILD_RESCUE "Build rescue app" ON)
 option(GRAMMA_BUILD_PLAY "Build play app" ON)
+option(GRAMMA_BUILD_PARTICLE "Build particle app" ON)
 
 # -------- Dependencies (fetch once, available everywhere) --------
 include(FetchContent)
@@ -115,7 +116,6 @@ include_directories(${CMAKE_SOURCE_DIR}/inc)
 add_library(gramma
 		src/core/LineOfSightService.cpp
 		src/core/Runner.cpp
-		src/core/SpatialGrid.cpp
 		src/core/Time.cpp
 		src/core/Window.cpp
 
@@ -129,17 +129,20 @@ add_library(gramma
 		src/model/Environment.cpp
 		src/model/Home.cpp
 		src/model/MoveTask.cpp
+		src/model/Particle.cpp
+		src/model/ParticleLifeBehavior.cpp
+		src/model/ParticleSystem.cpp
 		src/model/RandomDetourMovement.cpp
 		src/model/RestTask.cpp
 		src/model/SafetyNeedTaskBuilder.cpp
-		src/model/SeekResourceTask.cpp
 		src/model/SeekAgentTask.cpp
+		src/model/SeekResourceTask.cpp
 		src/model/SequenceTask.cpp
 		src/model/SimAgentFactory.cpp
 		src/model/SimpleGridPhysicsEngine.cpp
 		src/model/SocialNeed.cpp
-		src/model/SocialSensor.cpp
 		src/model/SocialNeedTaskBuilder.cpp
+		src/model/SocialSensor.cpp
 		src/model/TaskFactory.cpp
 		src/model/VisionSensor.cpp
 
@@ -148,6 +151,8 @@ add_library(gramma
 		src/view/EnvironmentView.cpp
 		src/view/HomeView.cpp
 		src/view/LineShape.cpp
+		src/view/ParticleView.cpp
+		src/view/ParticleSystemView.cpp
 		src/view/ResourceView.cpp
 		src/view/Shader.cpp
 		src/view/Texture.cpp
@@ -160,6 +165,9 @@ add_library(gramma
 # -------------------------
 set(SHADER_SRC_DIR "${CMAKE_SOURCE_DIR}/assets")
 set(GEN_INC_DIR    "${CMAKE_BINARY_DIR}/generated")
+
+embed_text_to_header("${SHADER_SRC_DIR}/particle.vert"  "${GEN_INC_DIR}/assets/particle_vert.h"  particle_vert_glsl)
+embed_text_to_header("${SHADER_SRC_DIR}/particle.frag"  "${GEN_INC_DIR}/assets/particle_frag.h"  particle_frag_glsl)
 
 embed_text_to_header("${SHADER_SRC_DIR}/agent-body.vert"  "${GEN_INC_DIR}/assets/agent_body_vert.h"  agent_body_vert_glsl)
 embed_text_to_header("${SHADER_SRC_DIR}/agent-body.frag"  "${GEN_INC_DIR}/assets/agent_body_frag.h"  agent_body_frag_glsl)
@@ -231,5 +239,17 @@ if(GRAMMA_BUILD_PLAY)
 		)
 	target_include_directories(play PRIVATE ${CMAKE_SOURCE_DIR}/inc ${CMAKE_SOURCE_DIR}/extern/glad/include)
 	target_compile_features(play PRIVATE cxx_std_17)
+endif()
+
+if(GRAMMA_BUILD_PARTICLE)
+	add_executable(particle
+				apps/particle/main.cpp
+				apps/particle/ParticleApp.cpp
+		)
+	target_link_libraries(particle
+				PRIVATE gramma glm::glm gramma_ui
+		)
+	target_include_directories(particle PRIVATE ${CMAKE_SOURCE_DIR}/inc ${CMAKE_SOURCE_DIR}/extern/glad/include)
+	target_compile_features(particle PRIVATE cxx_std_17)
 endif()
 

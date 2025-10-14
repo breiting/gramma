@@ -13,7 +13,7 @@ void RestTask::Start(Agent& /*agent*/) {
     m_Done = false;
 }
 
-void RestTask::Update(IPhysicsEngine* engine, Agent& /*agent*/, float dt) {
+void RestTask::Update(IPhysicsEngine* /*engine*/, Agent& /*agent*/, float dt) {
     if (m_Done) return;
 
     m_Elapsed += dt;

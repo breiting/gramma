@@ -24,6 +24,7 @@ class Shader {
     void BuildAgentBody();
     void BuildAgentLine();
     void BuildResource();
+    void BuildParticle();
     void BuildLine();
     void BuildUnlit();
 

@@ -12,6 +12,8 @@
 #include "assets/food_vert.h"
 #include "assets/line_frag.h"
 #include "assets/line_vert.h"
+#include "assets/particle_frag.h"
+#include "assets/particle_vert.h"
 #include "assets/unlit_frag.h"
 #include "assets/unlit_vert.h"
 
@@ -118,6 +120,10 @@ void Shader::BuildAgentBody() {
 
 void Shader::BuildAgentLine() {
     CompileShader(agent_line_vert_glsl, agent_line_frag_glsl);
+}
+
+void Shader::BuildParticle() {
+    CompileShader(particle_vert_glsl, particle_frag_glsl);
 }
 
 void Shader::BuildBasic() {
