@@ -21,7 +21,7 @@ constexpr float border = 1.0;
 constexpr float globalWidth = 100.0;
 constexpr float globalHeight = 100.0;
 constexpr float numParticles = 1000;
-constexpr float particleRadius = 0.4;
+constexpr float particleRadius = 0.25;
 constexpr float neighborhoodRadius = 2.0;
 constexpr float cellSize = 1.0;
 constexpr int numGroups = 2;
@@ -33,8 +33,25 @@ static constexpr float AttractionMatrix[4][4] = {
     {-0.2f, +0.1f, -0.5f, +0.9f}     // Group 3 (Yellow)
 };
 
+static constexpr float AttractionMatrix2[2][2] = {
+    {1.0f, 0.5f},   // Group 0
+    {-0.1f, 1.0f},  // Group 1
+};
+
 std::string ParticleApp::Name() const {
     return "ParticleApp";
+}
+
+void ParticleApp::AddParticle() {
+    std::uniform_real_distribution<float> velo(0, glm::two_pi<float>());
+    std::uniform_int_distribution<int> group(0, 1);
+
+    auto pos = glm::vec2(0, 0);
+    auto p = std::make_unique<Particle>(std::to_string(m_ParticleIdCounter++), pos, group(m_Rng), particleRadius);
+    float angle = velo(m_Rng);
+    glm::vec2 v = glm::vec2(glm::cos(angle), glm::sin(angle)) * 2.0f;
+    p->SetVelocity(v);
+    m_System->AddParticle(std::move(p));
 }
 
 void ParticleApp::GenerateParticles(int count, float radius, int groups) {
@@ -63,22 +80,17 @@ bool ParticleApp::Init(gr::AppContext& ctx) {
     for (int i = 0; i < 3; ++i) {
         std::vector<float> row;
         for (int j = 0; j < 3; ++j) {
-            row.push_back(AttractionMatrix[i][j]);
+            row.push_back(AttractionMatrix2[i][j]);
         }
         matrix.push_back(row);
     }
-
-    const std::vector<std::vector<float>> attractionMatrix = {
-        {1.5f, -10.0f},
-        {-10.0f, 1.5f},
-    };
 
     m_System = std::make_unique<gr::ParticleSystem>(globalWidth, globalHeight, cellSize);
     m_System->SetBehavior(std::make_unique<ParticleLifeBehavior>(neighborhoodRadius, matrix));
     // m_System->SetBehavior(std::make_unique<RepulsionOnlyBehavior>(neighborhoodRadius, 6.0, 0.95));
     // m_System->SetBehavior(std::make_unique<SimpleParticleBehavior>(neighborhoodRadius, 1.0));
 
-    // GenerateParticles(numParticles, particleRadius, numGroups);
+    GenerateParticles(numParticles, particleRadius, numGroups);
 
     m_View.Init();
 
@@ -91,9 +103,7 @@ bool ParticleApp::Init(gr::AppContext& ctx) {
             m_Quit = true;
         } else if (key == GLFW_KEY_A) {
             for (int i = 0; i < 10; i++) {
-                auto pos = glm::vec2(0, 0);
-                auto p = std::make_unique<Particle>(std::to_string(m_ParticleIdCounter++), pos, 0, 0.25);
-                m_System->AddParticle(std::move(p));
+                AddParticle();
             }
         }
     };
@@ -123,16 +133,8 @@ bool ParticleApp::Init(gr::AppContext& ctx) {
 }
 
 void ParticleApp::Update(gr::AppContext& /*ctx*/, double dt) {
-    if (m_ParticleIdCounter < 1000) {
-        std::uniform_real_distribution<float> velo(0, glm::two_pi<float>());
-        std::uniform_int_distribution<int> group(0, 2);
-
-        auto pos = glm::vec2(0, 0);
-        auto p = std::make_unique<Particle>(std::to_string(m_ParticleIdCounter++), pos, group(m_Rng), 0.25);
-        float angle = velo(m_Rng);
-        glm::vec2 v = glm::vec2(glm::cos(angle), glm::sin(angle)) * 1.0f;
-        p->SetVelocity(v);
-        m_System->AddParticle(std::move(p));
+    if (m_ParticleIdCounter < 100) {
+        AddParticle();
     }
     {
         TimeMeasureGuard guard("Step");

@@ -18,6 +18,7 @@ class ParticleApp : public gr::IApp {
 
    private:
     void GenerateParticles(int count, float radius, int groups);
+    void AddParticle();
 
    private:
     gr::Camera2D m_Camera;
