@@ -5,6 +5,7 @@
 #include <gramma/ui/IGuiLayer.hpp>
 #include <gramma/view/Camera2D.hpp>
 #include <gramma/view/ParticleSystemView.hpp>
+#include <random>
 
 class ParticleApp : public gr::IApp {
    public:
@@ -31,4 +32,6 @@ class ParticleApp : public gr::IApp {
     float m_Zoom{1.0};
     float m_Timescale{1.0};
     int m_NumParticles{1000};
+    uint32_t m_ParticleIdCounter{0};
+    std::mt19937 m_Rng;
 };

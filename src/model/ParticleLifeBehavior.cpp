@@ -15,7 +15,7 @@ void ParticleLifeBehavior::Update(Particle& self, float dt, const SpatialGrid<Pa
 
     glm::vec2 force(0.0f);
 
-    const float maxForce = 5.0f;
+    const float maxForce = 10.0f;
     const float minDist2 = 2.0f * 2.0f;         // squared
     const float radius2 = m_Radius * m_Radius;  // squared
 
@@ -62,7 +62,8 @@ void ParticleLifeBehavior::Update(Particle& self, float dt, const SpatialGrid<Pa
     }
 
     glm::vec2 newVel = self.GetVelocity() + force * dt;
-    // newVel *= 0.98f;  // damping
+    newVel *= 0.95f;  // damping
     self.SetVelocity(newVel);
 }
+
 }  // namespace gr

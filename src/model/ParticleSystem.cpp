@@ -28,6 +28,7 @@ void ParticleSystem::Init(size_t count, float radius, int groups) {
 
     for (size_t i = 0; i < count; ++i) {
         auto pos = glm::vec2(posX(m_Rng), posY(m_Rng));
+        // auto pos = glm::vec2(0, 0);
         auto p = std::make_unique<Particle>(std::to_string(i), pos, grp(m_Rng), radius);
         float angle = velo(m_Rng);
         glm::vec2 v = glm::vec2(glm::cos(angle), glm::sin(angle)) * 1.0f;
