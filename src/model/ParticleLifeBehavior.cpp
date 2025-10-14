@@ -3,36 +3,68 @@
 #include <gramma/model/particle/Particle.hpp>
 #include <gramma/model/particle/ParticleLifeBehavior.hpp>
 
+#include "glm/gtc/random.hpp"
+
 namespace gr {
 
 ParticleLifeBehavior::ParticleLifeBehavior(float radius, const std::vector<std::vector<float>>& matrix)
     : m_Radius(radius), m_AttractionMatrix(matrix) {
 }
 
-void ParticleLifeBehavior::Update(Particle& p, float dt, const SpatialGrid<Particle*>& grid) const {
-    glm::vec2 force{0.0f};
+void ParticleLifeBehavior::Update(Particle& self, float dt, const SpatialGrid<Particle*>& grid) const {
+    const glm::vec2& pos = self.GetPosition();
+    const int group = self.GetGroup();
 
-    auto neighbors = grid.QueryNeighborhood(p.GetPosition(), m_Radius);
+    glm::vec2 force(0.0f);
+
+    const float maxForce = 10.0f;
+    const float minDist2 = 2.0f * 2.0f;         // squared
+    const float radius2 = m_Radius * m_Radius;  // squared
+
+    auto neighbors = grid.QueryNeighborhood(pos, m_Radius);
+
     for (const auto* other : neighbors) {
-        if (other == &p) continue;
+        if (other == &self) continue;
 
-        glm::vec2 diff = other->GetPosition() - p.GetPosition();
-        float dist = glm::length(diff);
-        if (dist < 0.001f || dist > m_Radius) continue;
+        glm::vec2 delta = other->GetPosition() - pos;
+        float dist2 = glm::dot(delta, delta);  // faster than length²
 
-        glm::vec2 dir = glm::normalize(diff);
-        int g1 = p.GetGroup();
-        int g2 = other->GetGroup();
-        float attraction = m_AttractionMatrix[g1][g2];
+        if (dist2 < 0.0001f || dist2 > radius2) continue;
 
-        // Inversely proportional to distance
-        float strength = attraction * (1.0f - dist / m_Radius);
-        force += dir * strength;
+        float dist = std::sqrt(dist2);
+        glm::vec2 dir = delta / dist;  // normalized
+
+        float interaction = m_AttractionMatrix[group][other->GetGroup()];
+
+        if (group == other->GetGroup() && dist2 < minDist2) {
+            float repelStrength = (std::sqrt(minDist2) - dist) / std::sqrt(minDist2);
+            force -= dir * repelStrength * 2.5f;
+        } else {
+            float falloff = 1.0f - (dist / m_Radius);
+            force += dir * interaction * falloff;
+        }
     }
 
-    glm::vec2 newVel = force;
-    p.SetVelocity(newVel);
-    p.SetPosition(p.GetPosition() + newVel * dt);
-}
+    float forceLen2 = glm::dot(force, force);
+    if (forceLen2 > maxForce * maxForce) {
+        force = glm::normalize(force) * maxForce;
+    }
 
+    // Boundary correction
+    glm::vec2 correctedPos = pos + force * dt;
+    glm::vec2 min = grid.GetMinBounds();
+    glm::vec2 max = grid.GetMaxBounds();
+
+    for (int i = 0; i < 2; ++i) {
+        if (correctedPos[i] < min[i] + 1.0f) {
+            force[i] += (min[i] + 1.0f - correctedPos[i]) * 5.0f;
+        } else if (correctedPos[i] > max[i] - 1.0f) {
+            force[i] -= (correctedPos[i] - (max[i] - 1.0f)) * 5.0f;
+        }
+    }
+
+    glm::vec2 newVel = self.GetVelocity() + force * dt;
+    newVel *= 0.95f;  // damping
+    self.SetVelocity(newVel);
+}
 }  // namespace gr

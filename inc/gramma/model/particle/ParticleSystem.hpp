@@ -14,7 +14,7 @@ class ParticleSystem {
    public:
     explicit ParticleSystem(int width, int height, float cellSize = 1.0f);
 
-    void Init(size_t count, int groups);
+    void Init(size_t count, float radius, int groups);
     void AddParticle(std::unique_ptr<Particle> p);
     void Clear();
     void Step(float dt);

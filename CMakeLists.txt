@@ -131,6 +131,7 @@ add_library(gramma
 		src/model/MoveTask.cpp
 		src/model/Particle.cpp
 		src/model/ParticleLifeBehavior.cpp
+		src/model/SimpleParticleBehavior.cpp
 		src/model/ParticleSystem.cpp
 		src/model/RandomDetourMovement.cpp
 		src/model/RestTask.cpp

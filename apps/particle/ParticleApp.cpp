@@ -8,6 +8,7 @@
 #include <gramma/core/Window.hpp>
 #include <gramma/model/particle/ParticleLifeBehavior.hpp>
 #include <gramma/model/particle/ParticleSystem.hpp>
+#include <gramma/model/particle/SimpleParticleBehavior.hpp>
 #include <gramma/ui/ImGuiLayer.hpp>
 #include <iostream>
 #include <memory>
@@ -26,17 +27,23 @@ std::string ParticleApp::Name() const {
     return "ParticleApp";
 }
 
-void ParticleApp::GenerateParticles(int count) {
-    m_System->Init(count, 2 /* groups */);
+void ParticleApp::GenerateParticles(int count, float radius, int groups) {
+    m_System->Init(count, radius, groups);
 }
 
 bool ParticleApp::Init(gr::AppContext& ctx) {
     std::cout << "Initializing ParticleApp..." << std::endl;
 
     constexpr float border = 1.0;
-    constexpr float ew = 100.0;
-    constexpr float eh = 100.0;
-    auto height = eh + border;
+    constexpr float globalWidth = 100.0;
+    constexpr float globalHeight = 100.0;
+    constexpr float numParticles = 1000;
+    constexpr float particleRadius = 0.4;
+    constexpr float neighborhoodRadius = 3.0;
+    constexpr float cellSize = 2.0;
+    constexpr int numGroups = 2;
+
+    auto height = globalHeight + border;
 
     std::vector<std::vector<float>> matrix;
     for (int i = 0; i < 3; ++i) {
@@ -47,10 +54,11 @@ bool ParticleApp::Init(gr::AppContext& ctx) {
         matrix.push_back(row);
     }
 
-    m_System = std::make_unique<gr::ParticleSystem>(ew, eh);
-    m_System->SetBehavior(std::make_unique<ParticleLifeBehavior>(3.0f, matrix));
+    m_System = std::make_unique<gr::ParticleSystem>(globalWidth, globalHeight, cellSize);
+    m_System->SetBehavior(std::make_unique<ParticleLifeBehavior>(neighborhoodRadius, matrix));
+    // m_System->SetBehavior(std::make_unique<SimpleParticleBehavior>(neighborhoodRadius, 1.0));
 
-    GenerateParticles(1000);
+    GenerateParticles(numParticles, particleRadius, numGroups);
 
     m_View.Init();
 
@@ -89,8 +97,15 @@ bool ParticleApp::Init(gr::AppContext& ctx) {
 }
 
 void ParticleApp::Update(gr::AppContext& /*ctx*/, double dt) {
-    m_System->Step(static_cast<float>(dt) * m_Timescale);
-    m_View.SyncWithParticleSystem(m_System.get());
+    {
+        TimeMeasureGuard guard("Step");
+        m_System->Step(static_cast<float>(dt) * m_Timescale);
+    }
+
+    {
+        TimeMeasureGuard guard("Sync");
+        m_View.SyncWithParticleSystem(m_System.get());
+    }
 }
 
 void ParticleApp::Render(gr::AppContext& ctx) {

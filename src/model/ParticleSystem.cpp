@@ -1,3 +1,4 @@
+#include <cstdlib>
 #include <gramma/model/particle/ParticleSystem.hpp>
 #include <memory>
 #include <string>
@@ -14,10 +15,10 @@ ParticleSystem::ParticleSystem(int width, int height, float cellSize) : m_Grid(c
     m_YMax = height / 2.0;
 
     m_Border = {{m_XMin, m_YMin}, {m_XMax, m_YMin}, {m_XMax, m_YMax}, {m_XMin, m_YMax}};
-    m_Grid.SetBounds({m_XMin, m_XMax}, {m_YMin, m_YMax});
+    m_Grid.SetBounds({m_XMin, m_YMin}, {m_XMax, m_YMax});
 }
 
-void ParticleSystem::Init(size_t count, int groups) {
+void ParticleSystem::Init(size_t count, float radius, int groups) {
     Clear();
 
     std::uniform_real_distribution<float> posX(m_XMin, m_XMax);
@@ -26,7 +27,7 @@ void ParticleSystem::Init(size_t count, int groups) {
 
     for (size_t i = 0; i < count; ++i) {
         auto pos = glm::vec2(posX(m_Rng), posY(m_Rng));
-        auto p = std::make_unique<Particle>(std::to_string(i), pos, grp(m_Rng), 1.0f);
+        auto p = std::make_unique<Particle>(std::to_string(i), pos, grp(m_Rng), radius);
         m_Particles.push_back(std::move(p));
     }
 }
@@ -54,10 +55,12 @@ void ParticleSystem::UpdateGrid() {
 void ParticleSystem::Step(float dt) {
     if (!m_Behavior) return;
 
-    UpdateGrid();
     for (auto& p : m_Particles) {
         m_Behavior->Update(*p, dt, m_Grid);
+        // Euler integration
+        p->SetPosition(p->GetPosition() + p->GetVelocity() * dt);
     }
+    UpdateGrid();
 }
 
 const std::vector<std::unique_ptr<Particle>>& ParticleSystem::GetParticles() const {
