@@ -4,6 +4,7 @@
 #include <gramma/model/task/SeekResourceTask.hpp>
 
 #include "gramma/model/physics/IPhysicsEngine.hpp"
+#include "gramma/model/resource/Exit.hpp"
 #include "gramma/model/resource/IResource.hpp"
 
 namespace gr {
@@ -46,7 +47,10 @@ void SeekResourceTask::Update(IPhysicsEngine* engine, Agent& agent, float dt) {
 
     if (m_AtRes) {
         if (m_Res->GetType() == ResourceType::Exit) {
-            agent.SetState(AgentState::Rescued);
+            auto exit = dynamic_cast<Exit*>(m_Res.get());
+            if (!exit->IsBlocked()) {
+                agent.SetState(AgentState::Rescued);
+            }
             m_Done = true;
         }
     }

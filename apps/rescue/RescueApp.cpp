@@ -17,6 +17,8 @@
 #include <gramma/ui/ImGuiLayer.hpp>
 #include <iostream>
 
+#include "gramma/model/need/SocialNeed.hpp"
+
 using namespace gr;
 
 void RescueApp::GenerateAgents(int count) {
@@ -62,8 +64,13 @@ int RescueApp::Scenario2() {
     std::vector<glm::vec2> room = {
         {-ew / 2.0, -eh / 2.0}, {-ew / 2.0, eh / 2.0}, {ew / 2.0, eh / 2.0}, {ew / 2.0, -eh / 2.0}};
     m_Env->AddBoundary(room);
+
+    std::vector<glm::vec2> inner = {{-5, -5}, {5, -5}, {5, 5}, {-5, 5}};
+    m_Env->AddObstacle(inner);
+
     // Add two exits
-    m_Env->AddResource(std::make_shared<Exit>(glm::vec2(ew / 2.0, 0)));
+    m_Exit1 = std::make_shared<Exit>(glm::vec2(ew / 2.0, 0));
+    m_Env->AddResource(m_Exit1);
     m_Env->AddResource(std::make_shared<Exit>(glm::vec2(-ew / 2.0, 0)));
     GenerateAgents(500);
     return eh + border;
@@ -90,6 +97,12 @@ bool RescueApp::Init(gr::AppContext& ctx) {
             m_Quit = true;
         } else if (key == GLFW_KEY_A) {
             m_SeedAgents = true;
+        } else if (key == GLFW_KEY_S) {
+            for (auto& a : m_Env->GetAgents()) {
+                a->AddNeed(std::make_unique<SocialNeed>());
+            }
+        } else if (key == GLFW_KEY_B) {
+            m_Exit1->SetBlocked(!m_Exit1->IsBlocked());
         } else if (key == GLFW_KEY_N) {
             for (auto& a : m_Env->GetAgents()) {
                 a->AddNeed(std::make_unique<SafetyNeed>());

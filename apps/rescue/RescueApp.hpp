@@ -8,6 +8,8 @@
 #include <gramma/view/Camera2D.hpp>
 #include <gramma/view/EnvironmentView.hpp>
 
+#include "gramma/model/resource/Exit.hpp"
+
 class RescueApp : public gr::IApp {
    public:
     ~RescueApp() = default;
@@ -29,6 +31,7 @@ class RescueApp : public gr::IApp {
     std::unique_ptr<gr::Environment> m_Env;
     gr::SimAgentFactory m_Factory;
     gr::EnvironmentView m_EnvView;
+    std::shared_ptr<gr::Exit> m_Exit1;
 
     std::unique_ptr<gr::IGuiLayer> m_Gui;
 

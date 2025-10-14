@@ -26,6 +26,11 @@ class Exit : public IResource {
     bool IsBlocked() const {
         return m_IsBlocked;
     }
+
+    void SetBlocked(bool blocked) {
+        m_IsBlocked = blocked;
+    }
+
     float GetWidth() const {
         return m_Width;
     }

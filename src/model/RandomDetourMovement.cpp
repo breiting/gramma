@@ -17,11 +17,10 @@ void RandomDetourMovement::Update(IPhysicsEngine* engine, Agent& agent, const gl
 
     glm::vec2 dir = to / dist;
 
-    // Zufallsstörung hinzufügen
-    glm::vec2 noise = glm::linearRand(glm::vec2(-0.15f), glm::vec2(0.15f));
+    // add random noise
+    glm::vec2 noise = glm::linearRand(glm::vec2(-0.45f), glm::vec2(0.45f));
     dir = glm::normalize(dir + noise);
 
-    // Geschwindigkeit berechnen
     float maxV = agent.GetTraits().maxSpeed;
     float speed = maxV;
     if (speed > maxV) speed = maxV;

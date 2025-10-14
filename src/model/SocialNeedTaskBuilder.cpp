@@ -1,5 +1,6 @@
 #include <glm/glm.hpp>
 #include <gramma/model/movement/DirectMovement.hpp>
+#include <gramma/model/movement/RandomDetourMovement.hpp>
 #include <gramma/model/need/SocialNeed.hpp>
 #include <gramma/model/social/SocialSensor.hpp>
 #include <gramma/model/task/SocialNeedTaskBuilder.hpp>
@@ -11,7 +12,7 @@ std::unique_ptr<ITask> SocialNeedTaskBuilder::Build(const INeed& need, Agent& ag
 
     const Agent* target = SocialSensor::FindMostAttractive(agent, env);
     if (target) {
-        return std::make_unique<SeekAgentTask>(target, std::make_unique<DirectMovement>());
+        return std::make_unique<SeekAgentTask>(target, std::make_unique<RandomDetourMovement>());
     }
 
     return nullptr;

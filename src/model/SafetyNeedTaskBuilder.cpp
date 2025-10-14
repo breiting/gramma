@@ -13,6 +13,10 @@ std::unique_ptr<ITask> SafetyNeedTaskBuilder::Build(const INeed& /*need*/, Agent
         std::cerr << "[SafetyNeedTaskBuilder] No exit found.\n";
         return nullptr;
     }
+    auto ptr = dynamic_cast<Exit*>(exit.get());
+    if (ptr->IsBlocked()) {
+        return nullptr;
+    }
 
     return std::make_unique<SeekResourceTask>(exit, std::make_unique<DirectMovement>(),
                                               exit->GetBoundingRadius() * 2.0);

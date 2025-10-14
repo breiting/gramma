@@ -26,7 +26,7 @@ void SimAgentFactory::InitTaskFactory() {
 }
 
 AgentTraits SimAgentFactory::RandomTraits() {
-    std::uniform_int_distribution<int> ageDist(0, 1);
+    std::uniform_int_distribution<int> ageDist(0, 3);
     std::uniform_real_distribution<float> radiusDist(0.15f, 0.25f);
     std::uniform_real_distribution<float> comfortDist(0.26f, 0.5f);
     std::uniform_real_distribution<float> speedDist(0.8f, 4.8f);
