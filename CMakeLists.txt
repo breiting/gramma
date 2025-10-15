@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 4.1.1)
 project(gramma LANGUAGES CXX)
 
 # Produce json file for neovim clangd completion
@@ -90,6 +90,16 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(json)
 
+set(TBB_TEST OFF CACHE BOOL "Disable TBB tests")
+set(TBB_BUILD_TESTS OFF CACHE BOOL "Disable TBB tests")
+FetchContent_Declare(
+		TBB
+		GIT_REPOSITORY https://github.com/oneapi-src/oneTBB.git
+		GIT_TAG        v2022.2.0
+)
+
+FetchContent_MakeAvailable(TBB)
+
 
 # GUI Layer
 add_library(gramma_ui
@@ -98,14 +108,14 @@ add_library(gramma_ui
 
 target_include_directories(gramma_ui
 PUBLIC inc
-${imgui_SOURCE_DIR}
-${imgui_SOURCE_DIR}/backends
-extern
+	${imgui_SOURCE_DIR}
+	${imgui_SOURCE_DIR}/backends
+	extern
 )
 
 target_link_libraries(gramma_ui
-		PUBLIC imgui
-		PRIVATE glfw glad
+	PUBLIC imgui
+	PRIVATE glfw glad
 )
 
 
@@ -194,6 +204,8 @@ PUBLIC
 	project_settings
 	box2d glfw glad glm::glm
 	nlohmann_json::nlohmann_json
+PRIVATE
+	TBB::tbb
 )
 
 target_compile_features(gramma PUBLIC cxx_std_17)

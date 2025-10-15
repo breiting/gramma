@@ -1,3 +1,6 @@
+#include <tbb/blocked_range.h>
+#include <tbb/parallel_for.h>
+
 #include <cstdlib>
 #include <gramma/model/particle/ParticleSystem.hpp>
 #include <memory>
@@ -60,12 +63,18 @@ void ParticleSystem::UpdateGrid() {
 void ParticleSystem::Step(float dt) {
     if (!m_Behavior) return;
 
+    UpdateGrid();
+
+    tbb::parallel_for(tbb::blocked_range<size_t>(0, m_Particles.size()), [&](const tbb::blocked_range<size_t>& range) {
+        for (size_t i = range.begin(); i < range.end(); ++i) {
+            Particle* p = m_Particles[i].get();
+            m_Behavior->Update(*p, dt, m_Grid);
+        }
+    });
+
     for (auto& p : m_Particles) {
-        m_Behavior->Update(*p, dt, m_Grid);
-        // Euler integration
         p->SetPosition(p->GetPosition() + p->GetVelocity() * dt);
     }
-    UpdateGrid();
 }
 
 const std::vector<std::unique_ptr<Particle>>& ParticleSystem::GetParticles() const {
