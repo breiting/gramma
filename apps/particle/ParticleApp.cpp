@@ -24,7 +24,7 @@ constexpr float numParticles = 1000;
 constexpr float particleRadius = 0.25;
 constexpr float neighborhoodRadius = 2.0;
 constexpr float cellSize = 1.0;
-constexpr int numGroups = 2;
+constexpr int numGroups = 3;
 
 static constexpr float AttractionMatrix[4][4] = {
     {+0.8f, -50.6f, +10.2f, -0.3f},  // Group 0 (z.B. "Red")
@@ -33,9 +33,10 @@ static constexpr float AttractionMatrix[4][4] = {
     {-0.2f, +0.1f, -0.5f, +0.9f}     // Group 3 (Yellow)
 };
 
-static constexpr float AttractionMatrix2[2][2] = {
-    {1.0f, 0.5f},   // Group 0
-    {-0.1f, 1.0f},  // Group 1
+static constexpr float AttractionMatrix2[3][3] = {
+    {1.0f, 0.5f, 0.0f},   // Group 0
+    {-0.1f, 1.0f, 0.3f},  // Group 1
+    {-0.0f, 0.0f, 1.0f},  // Group 1
 };
 
 std::string ParticleApp::Name() const {
@@ -44,7 +45,7 @@ std::string ParticleApp::Name() const {
 
 void ParticleApp::AddParticle() {
     std::uniform_real_distribution<float> velo(0, glm::two_pi<float>());
-    std::uniform_int_distribution<int> group(0, 1);
+    std::uniform_int_distribution<int> group(0, 2);
 
     auto pos = glm::vec2(0, 0);
     auto p = std::make_unique<Particle>(std::to_string(m_ParticleIdCounter++), pos, group(m_Rng), particleRadius);
