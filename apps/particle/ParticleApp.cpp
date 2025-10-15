@@ -18,13 +18,13 @@ using namespace gr;
 using namespace std;
 
 constexpr float border = 1.0;
-constexpr float globalWidth = 100.0;
-constexpr float globalHeight = 100.0;
-constexpr float numParticles = 1000;
-constexpr float particleRadius = 0.25;
+constexpr float globalWidth = 500.0;
+constexpr float globalHeight = 500.0;
+constexpr float numParticles = 10000;
+constexpr float particleRadius = 0.5;
 constexpr float neighborhoodRadius = 2.0;
-constexpr float cellSize = 1.0;
-constexpr int numGroups = 3;
+constexpr float cellSize = 3.0;
+constexpr int numGroups = 4;
 
 static constexpr float AttractionMatrix[4][4] = {
     {+0.8f, -50.6f, +10.2f, -0.3f},  // Group 0 (z.B. "Red")
@@ -33,10 +33,11 @@ static constexpr float AttractionMatrix[4][4] = {
     {-0.2f, +0.1f, -0.5f, +0.9f}     // Group 3 (Yellow)
 };
 
-static constexpr float AttractionMatrix2[3][3] = {
-    {1.0f, 0.5f, 0.0f},   // Group 0
-    {-0.1f, 1.0f, 0.3f},  // Group 1
-    {-0.0f, 0.0f, 1.0f},  // Group 1
+static constexpr float AttractionMatrix2[4][4] = {
+    {1.0f, 0.5f, 0.0f, 0.0f},    // Group 0
+    {-0.0f, 1.0f, 0.5f, 0.0f},   // Group 1
+    {-0.0f, -0.0f, 1.0f, 0.5f},  // Group 1
+    {-1.0f, -0.0f, 0.0f, 1.0f},  // Group 1
 };
 
 std::string ParticleApp::Name() const {
@@ -78,9 +79,9 @@ bool ParticleApp::Init(gr::AppContext& ctx) {
     auto height = globalHeight + border;
 
     std::vector<std::vector<float>> matrix;
-    for (int i = 0; i < 3; ++i) {
+    for (int i = 0; i < 4; ++i) {
         std::vector<float> row;
-        for (int j = 0; j < 3; ++j) {
+        for (int j = 0; j < 4; ++j) {
             row.push_back(AttractionMatrix2[i][j]);
         }
         matrix.push_back(row);
