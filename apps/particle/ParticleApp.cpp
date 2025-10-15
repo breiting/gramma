@@ -46,7 +46,7 @@ std::string ParticleApp::Name() const {
 
 void ParticleApp::AddParticle() {
     std::uniform_real_distribution<float> velo(0, glm::two_pi<float>());
-    std::uniform_int_distribution<int> group(0, 2);
+    std::uniform_int_distribution<int> group(0, numGroups - 1);
 
     auto pos = glm::vec2(0, 0);
     auto p = std::make_unique<Particle>(std::to_string(m_ParticleIdCounter++), pos, group(m_Rng), particleRadius);

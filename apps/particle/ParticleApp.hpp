@@ -1,12 +1,16 @@
 #pragma once
 
+#include <random>
+
 #include <gramma/core/IApp.hpp>
 #include <gramma/model/particle/ParticleSystem.hpp>
 #include <gramma/ui/IGuiLayer.hpp>
 #include <gramma/view/Camera2D.hpp>
 #include <gramma/view/ParticleSystemView.hpp>
-#include <random>
 
+/**
+ * @brief Standalone demo app showcasing the particle life simulation.
+ */
 class ParticleApp : public gr::IApp {
    public:
     ~ParticleApp() = default;
@@ -17,7 +21,9 @@ class ParticleApp : public gr::IApp {
     void Render(gr::AppContext& ctx) override;
 
    private:
+    /** @brief Seed the simulation with an initial set of particles. */
     void GenerateParticles(int count, float radius, int groups);
+    /** @brief Create and enqueue a single particle at the current mouse cursor. */
     void AddParticle();
 
    private:

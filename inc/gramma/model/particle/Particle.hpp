@@ -1,22 +1,43 @@
 #pragma once
-#include <glm/glm.hpp>
+
 #include <string>
+
+#include <glm/glm.hpp>
 
 namespace gr {
 
+/**
+ * @brief Lightweight data object representing a simulated particle.
+ *
+ * A particle stores its identifier, spatial properties, group membership, and
+ * optional traits such as radius. All coordinates are expressed in world space.
+ */
 class Particle {
    public:
+    /**
+     * @param id Unique identifier for serialization and spatial indexing.
+     * @param position Initial world-space position.
+     * @param group Logical group or species identifier used by behaviors.
+     * @param radius Rendering and collision radius (defaults to 0.1 units).
+     */
     explicit Particle(std::string id, const glm::vec2& position, int group, float radius = 0.1);
 
+    /** @return Immutable particle identifier. */
     const std::string& GetId() const;
+    /** @return Current world-space position. */
     const glm::vec2& GetPosition() const;
-    void SetPosition(const glm::vec2& pos);
+    /** @brief Update the particle position in world space. */
+   void SetPosition(const glm::vec2& pos);
 
+    /** @return Current velocity vector. */
     const glm::vec2& GetVelocity() const;
+    /** @brief Set the instantaneous velocity vector. */
     void SetVelocity(const glm::vec2& vel);
 
+    /** @return Rendering and interaction radius. */
     float GetRadius() const;
 
+    /** @return Group identifier used by interaction behaviors. */
     int GetGroup() const;
 
    private:

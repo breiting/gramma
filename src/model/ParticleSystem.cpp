@@ -2,11 +2,45 @@
 #include <tbb/parallel_for.h>
 
 #include <cstdlib>
-#include <gramma/model/particle/ParticleSystem.hpp>
 #include <memory>
+#include <stdexcept>
 #include <string>
 
+#include <glm/gtc/constants.hpp>
+#include <glm/trigonometric.hpp>
+
+#include <gramma/model/particle/ParticleSystem.hpp>
+
 namespace gr {
+
+namespace {
+
+class RandomParticleSeeder final : public IParticleSeeder {
+   public:
+    std::unique_ptr<Particle> Create(std::size_t index, float radius, int groupCount, std::mt19937& rng,
+                                     const glm::vec2& minBounds, const glm::vec2& maxBounds) override {
+        if (groupCount < 1) {
+            throw std::invalid_argument("RandomParticleSeeder requires at least one group.");
+        }
+
+        std::uniform_real_distribution<float> posX(minBounds.x, maxBounds.x);
+        std::uniform_real_distribution<float> posY(minBounds.y, maxBounds.y);
+        std::uniform_real_distribution<float> angleDist(0.0f, glm::two_pi<float>());
+        std::uniform_int_distribution<int> groupDist(0, groupCount - 1);
+
+        const glm::vec2 position(posX(rng), posY(rng));
+        auto particle =
+            std::make_unique<Particle>(std::to_string(index), position, groupDist(rng), radius);
+
+        const float angle = angleDist(rng);
+        const glm::vec2 velocity = glm::vec2(glm::cos(angle), glm::sin(angle));
+        particle->SetVelocity(velocity);
+
+        return particle;
+    }
+};
+
+}  // namespace
 
 ParticleSystem::ParticleSystem(int width, int height, float cellSize) : m_Grid(cellSize) {
     m_Size.x = width;
@@ -19,25 +53,41 @@ ParticleSystem::ParticleSystem(int width, int height, float cellSize) : m_Grid(c
 
     m_Border = {{m_XMin, m_YMin}, {m_XMax, m_YMin}, {m_XMax, m_YMax}, {m_XMin, m_YMax}};
     m_Grid.SetBounds({m_XMin, m_YMin}, {m_XMax, m_YMax});
+    m_Seeder = std::make_unique<RandomParticleSeeder>();
 }
 
 void ParticleSystem::Init(size_t count, float radius, int groups) {
+    if (count == 0) {
+        throw std::invalid_argument("ParticleSystem::Init requires count > 0.");
+    }
+    if (radius <= 0.0f) {
+        throw std::invalid_argument("ParticleSystem::Init requires radius > 0.");
+    }
+    if (groups < 1) {
+        throw std::invalid_argument("ParticleSystem::Init requires at least one group.");
+    }
+    if (!m_Seeder) {
+        throw std::runtime_error("ParticleSystem::Init requires a particle seeder.");
+    }
+
     Clear();
 
-    std::uniform_real_distribution<float> posX(m_XMin, m_XMax);
-    std::uniform_real_distribution<float> posY(m_YMin, m_YMax);
-    std::uniform_real_distribution<float> velo(0, glm::two_pi<float>());
-    std::uniform_int_distribution<int> grp(0, groups - 1);
-
+    m_GroupCount = groups;
     for (size_t i = 0; i < count; ++i) {
-        auto pos = glm::vec2(posX(m_Rng), posY(m_Rng));
-        // auto pos = glm::vec2(0, 0);
-        auto p = std::make_unique<Particle>(std::to_string(i), pos, grp(m_Rng), radius);
-        float angle = velo(m_Rng);
-        glm::vec2 v = glm::vec2(glm::cos(angle), glm::sin(angle)) * 1.0f;
-        p->SetVelocity(v);
+        auto p = m_Seeder->Create(i, radius, groups, m_Rng, {m_XMin, m_YMin}, {m_XMax, m_YMax});
+        if (!p) {
+            throw std::runtime_error("ParticleSystem seeder returned a null particle.");
+        }
+        const int group = p->GetGroup();
+        if (group < 0 || group >= groups) {
+            throw std::out_of_range("ParticleSystem seeder produced a particle with an invalid group id.");
+        }
         m_Particles.push_back(std::move(p));
     }
+}
+
+void ParticleSystem::SetSeeder(std::unique_ptr<IParticleSeeder> seeder) {
+    m_Seeder = std::move(seeder);
 }
 
 void ParticleSystem::SetBehavior(std::unique_ptr<IParticleBehavior> behavior) {
@@ -45,6 +95,15 @@ void ParticleSystem::SetBehavior(std::unique_ptr<IParticleBehavior> behavior) {
 }
 
 void ParticleSystem::AddParticle(std::unique_ptr<Particle> p) {
+    if (!p) {
+        throw std::invalid_argument("ParticleSystem::AddParticle received a null particle.");
+    }
+    if (m_GroupCount > 0) {
+        const int group = p->GetGroup();
+        if (group < 0 || group >= m_GroupCount) {
+            throw std::out_of_range("ParticleSystem::AddParticle received a particle with an invalid group id.");
+        }
+    }
     m_Particles.push_back(std::move(p));
 }
 
