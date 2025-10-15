@@ -1,10 +1,11 @@
 #pragma once
 
+#include <glm/glm.hpp>
 #include <string>
 
-#include <glm/glm.hpp>
-
 namespace gr {
+
+class Genome;
 
 /**
  * @brief Lightweight data object representing a simulated particle.
@@ -27,7 +28,7 @@ class Particle {
     /** @return Current world-space position. */
     const glm::vec2& GetPosition() const;
     /** @brief Update the particle position in world space. */
-   void SetPosition(const glm::vec2& pos);
+    void SetPosition(const glm::vec2& pos);
 
     /** @return Current velocity vector. */
     const glm::vec2& GetVelocity() const;
@@ -36,6 +37,12 @@ class Particle {
 
     /** @return Rendering and interaction radius. */
     float GetRadius() const;
+
+    /** @return Genome, nullptr if not available. */
+    Genome* GetGenome();
+
+    /** @brief Set the genome (optional). */
+    void SetGenome(Genome* gen);
 
     /** @return Group identifier used by interaction behaviors. */
     int GetGroup() const;
@@ -46,6 +53,7 @@ class Particle {
     glm::vec2 m_Velocity{0.0f};
     int m_Group;
     float m_Radius;
+    Genome* m_Genome{nullptr};
 };
 
 }  // namespace gr

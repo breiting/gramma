@@ -2,14 +2,12 @@
 #include <tbb/parallel_for.h>
 
 #include <cstdlib>
+#include <glm/gtc/constants.hpp>
+#include <glm/trigonometric.hpp>
+#include <gramma/model/particle/ParticleSystem.hpp>
 #include <memory>
 #include <stdexcept>
 #include <string>
-
-#include <glm/gtc/constants.hpp>
-#include <glm/trigonometric.hpp>
-
-#include <gramma/model/particle/ParticleSystem.hpp>
 
 namespace gr {
 
@@ -29,8 +27,7 @@ class RandomParticleSeeder final : public IParticleSeeder {
         std::uniform_int_distribution<int> groupDist(0, groupCount - 1);
 
         const glm::vec2 position(posX(rng), posY(rng));
-        auto particle =
-            std::make_unique<Particle>(std::to_string(index), position, groupDist(rng), radius);
+        auto particle = std::make_unique<Particle>(std::to_string(index), position, groupDist(rng), radius);
 
         const float angle = angleDist(rng);
         const glm::vec2 velocity = glm::vec2(glm::cos(angle), glm::sin(angle));
@@ -83,6 +80,16 @@ void ParticleSystem::Init(size_t count, float radius, int groups) {
             throw std::out_of_range("ParticleSystem seeder produced a particle with an invalid group id.");
         }
         m_Particles.push_back(std::move(p));
+    }
+}
+
+void ParticleSystem::RandomizePositions() {
+    std::uniform_real_distribution<float> posX(m_XMin, m_XMax);
+    std::uniform_real_distribution<float> posY(m_YMin, m_YMax);
+
+    for (size_t i = 0; i < m_Particles.size(); i++) {
+        m_Particles[i]->SetPosition(glm::vec2(posX(m_Rng), posY(m_Rng)));
+        m_Particles[i]->SetVelocity(glm::vec2(0.0f));
     }
 }
 

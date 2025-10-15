@@ -1,14 +1,13 @@
 #pragma once
 
 #include <cstddef>
-#include <memory>
-#include <random>
-#include <vector>
-
 #include <glm/glm.hpp>
 #include <gramma/core/SpatialGrid.hpp>
 #include <gramma/model/particle/IParticleBehavior.hpp>
 #include <gramma/model/particle/Particle.hpp>
+#include <memory>
+#include <random>
+#include <vector>
 
 namespace gr {
 
@@ -76,6 +75,8 @@ class ParticleSystem {
 
     /** @return Immutable reference to the internal particle storage. */
     const std::vector<std::unique_ptr<Particle>>& GetParticles() const;
+
+    void RandomizePositions();
 
    private:
     void UpdateGrid();

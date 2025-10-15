@@ -19,6 +19,7 @@ option(GRAMMA_BUILD_SIM "Build sim app" ON)
 option(GRAMMA_BUILD_RESCUE "Build rescue app" ON)
 option(GRAMMA_BUILD_PLAY "Build play app" ON)
 option(GRAMMA_BUILD_PARTICLE "Build particle app" ON)
+option(GRAMMA_BUILD_EVOLUTION "Build evolution app" ON)
 
 # -------- Dependencies (fetch once, available everywhere) --------
 include(FetchContent)
@@ -139,6 +140,10 @@ add_library(gramma
 		src/model/Environment.cpp
 		src/model/Home.cpp
 		src/model/MoveTask.cpp
+		src/model/Genome.cpp
+		src/model/Population.cpp
+		src/model/CircleFormationEvaluator.cpp
+		src/model/NeuralParticleBehavior.cpp
 		src/model/Particle.cpp
 		src/model/ParticleLifeBehavior.cpp
 		src/model/RepulsionOnlyBehavior.cpp
@@ -265,5 +270,18 @@ if(GRAMMA_BUILD_PARTICLE)
 		)
 	target_include_directories(particle PRIVATE ${CMAKE_SOURCE_DIR}/inc ${CMAKE_SOURCE_DIR}/extern/glad/include)
 	target_compile_features(particle PRIVATE cxx_std_17)
+endif()
+
+
+if(GRAMMA_BUILD_EVOLUTION)
+	add_executable(evolution
+				apps/evolution/main.cpp
+				apps/evolution/EvolutionApp.cpp
+		)
+	target_link_libraries(evolution
+				PRIVATE gramma glm::glm gramma_ui
+		)
+	target_include_directories(evolution PRIVATE ${CMAKE_SOURCE_DIR}/inc ${CMAKE_SOURCE_DIR}/extern/glad/include)
+	target_compile_features(evolution PRIVATE cxx_std_17)
 endif()
 

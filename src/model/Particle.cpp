@@ -30,6 +30,14 @@ float Particle::GetRadius() const {
     return m_Radius;
 }
 
+Genome* Particle::GetGenome() {
+    return m_Genome;
+}
+
+void Particle::SetGenome(Genome* gen) {
+    m_Genome = gen;
+}
+
 int Particle::GetGroup() const {
     return m_Group;
 }
