@@ -1,36 +1,55 @@
-#include "gramma/model/evolution/Population.hpp"
-
 #include <algorithm>
-#include <iostream>
+#include <gramma/model/evolution/Population.hpp>
+#include <numeric>
 
-using namespace std;
 namespace gr {
 
-Population::Population(int size, int in, int hidden, int out) : m_In(in), m_Hid(hidden), m_Out(out) {
-    for (int i = 0; i < size; ++i) {
-        m_Genomes.emplace_back(in, hidden, out);
+Population::Population(size_t size, std::vector<int> topology, ActivationType act)
+    : m_Topology(std::move(topology)), m_ActType(act), m_Rng(std::random_device{}()) {
+    m_Genomes.reserve(size);
+    m_Fitness.resize(size, 0.0f);
+    for (size_t i = 0; i < size; ++i) {
+        auto g = std::make_unique<FeedForwardGenome>(m_Topology, m_ActType);
+        g->Randomize();
+        m_Genomes.push_back(std::move(g));
     }
 }
 
+void Population::SetFitness(const std::vector<float>& fitness) {
+    if (fitness.size() != m_Genomes.size()) throw std::runtime_error("Fitness size mismatch");
+    m_Fitness = fitness;
+}
+
+const FeedForwardGenome& Population::GetBestGenome() const {
+    auto it = std::max_element(m_Fitness.begin(), m_Fitness.end());
+    return *m_Genomes[std::distance(m_Fitness.begin(), it)];
+}
+
 void Population::Evolve() {
-    std::sort(m_Genomes.begin(), m_Genomes.end(), [](auto& a, auto& b) { return a.GetFitness() > b.GetFitness(); });
+    const size_t N = m_Genomes.size();
+    std::vector<size_t> sortedIndices(N);
+    std::iota(sortedIndices.begin(), sortedIndices.end(), 0);
 
-    int eliteCount = m_Genomes.size() / 10;
+    std::sort(sortedIndices.begin(), sortedIndices.end(),
+              [&](size_t a, size_t b) { return m_Fitness[a] > m_Fitness[b]; });
 
-    cout << "Best Fitness: " << m_Genomes[0].GetFitness() << endl;
+    const size_t survivors = N / 4;  // top 25%
+    std::vector<std::unique_ptr<FeedForwardGenome>> nextGen;
 
-    std::vector<Genome> next;
-    next.insert(next.end(), m_Genomes.begin(), m_Genomes.begin() + eliteCount);
-
-    while (next.size() < m_Genomes.size()) {
-        const auto& a = m_Genomes[rand() % eliteCount];
-        const auto& b = m_Genomes[rand() % eliteCount];
-        auto child = Genome::Crossover(a, b);
-        child.Mutate();
-        next.push_back(std::move(child));
+    for (size_t i = 0; i < survivors; ++i) {
+        nextGen.push_back(std::make_unique<FeedForwardGenome>(*m_Genomes[sortedIndices[i]]));
     }
 
-    m_Genomes.swap(next);
+    std::uniform_int_distribution<size_t> pick(0, survivors - 1);
+
+    while (nextGen.size() < N) {
+        auto clone = std::make_unique<FeedForwardGenome>(*nextGen[pick(m_Rng)]);
+        clone->Mutate(0.1f, 0.3f);
+        nextGen.push_back(std::move(clone));
+    }
+
+    m_Genomes = std::move(nextGen);
+    std::fill(m_Fitness.begin(), m_Fitness.end(), 0.0f);
 }
 
 }  // namespace gr

@@ -5,7 +5,7 @@
 
 namespace gr {
 
-class Genome;
+class FeedForwardGenome;
 
 /**
  * @brief Lightweight data object representing a simulated particle.
@@ -39,10 +39,10 @@ class Particle {
     float GetRadius() const;
 
     /** @return Genome, nullptr if not available. */
-    Genome* GetGenome();
+    FeedForwardGenome* GetGenome();
 
     /** @brief Set the genome (optional). */
-    void SetGenome(Genome* gen);
+    void SetGenome(FeedForwardGenome* gen);
 
     /** @return Group identifier used by interaction behaviors. */
     int GetGroup() const;
@@ -53,7 +53,7 @@ class Particle {
     glm::vec2 m_Velocity{0.0f};
     int m_Group;
     float m_Radius;
-    Genome* m_Genome{nullptr};
+    FeedForwardGenome* m_Genome{nullptr};
 };
 
 }  // namespace gr

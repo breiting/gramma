@@ -44,6 +44,7 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(glfw)
 
+# Box2D
 FetchContent_Declare(
 		box2d
 		GIT_REPOSITORY https://github.com/erincatto/box2d.git
@@ -51,6 +52,15 @@ FetchContent_Declare(
 )
 
 FetchContent_MakeAvailable(box2d)
+
+# Eigen 5
+FetchContent_Declare(
+		eigen
+		GIT_REPOSITORY https://gitlab.com/libeigen/eigen.git
+		GIT_TAG 5.0.0
+)
+FetchContent_MakeAvailable(eigen)
+
 
 FetchContent_Declare(
 		imgui
@@ -141,10 +151,12 @@ add_library(gramma
 		src/model/Home.cpp
 		src/model/MoveTask.cpp
 		src/model/Genome.cpp
+		src/model/FeedForwardGenome.cpp
 		src/model/Population.cpp
 		src/model/CircleFormationEvaluator.cpp
 		src/model/NeuralParticleBehavior.cpp
 		src/model/Particle.cpp
+		src/model/FitnessTracker.cpp
 		src/model/ParticleLifeBehavior.cpp
 		src/model/RepulsionOnlyBehavior.cpp
 		src/model/SimpleParticleBehavior.cpp
@@ -209,7 +221,7 @@ PUBLIC
 	project_settings
 	box2d glfw glad glm::glm
 	nlohmann_json::nlohmann_json
-PRIVATE
+	Eigen3::Eigen
 	TBB::tbb
 )
 

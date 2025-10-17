@@ -30,11 +30,11 @@ float Particle::GetRadius() const {
     return m_Radius;
 }
 
-Genome* Particle::GetGenome() {
+FeedForwardGenome* Particle::GetGenome() {
     return m_Genome;
 }
 
-void Particle::SetGenome(Genome* gen) {
+void Particle::SetGenome(FeedForwardGenome* gen) {
     m_Genome = gen;
 }
 

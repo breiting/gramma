@@ -8,6 +8,8 @@
 #include <gramma/view/Camera2D.hpp>
 #include <gramma/view/ParticleSystemView.hpp>
 
+#include "gramma/model/evolution/FitnessTracker.hpp"
+
 /**
  * @brief Standalone demo app showcasing evolution
  */
@@ -28,6 +30,7 @@ class EvolutionApp : public gr::IApp {
 
     std::unique_ptr<gr::CircleFormationEvaluator> m_Evaluator;
     std::unique_ptr<gr::Population> m_Population;
+    std::unique_ptr<gr::FitnessTracker> m_FitnessTracker;
 
     std::unique_ptr<gr::IGuiLayer> m_Gui;
 
@@ -36,20 +39,21 @@ class EvolutionApp : public gr::IApp {
     bool m_IsDragging = false;
 
     int m_Generation{0};
-    int m_GenerationSteps = 500;
+    int m_GenerationSteps = 800;
     int m_CurrentStep = 0;
     bool m_Running = true;
 
     float m_Timescale = 1.0f;
-    float m_GlobalWidth = 200.0f;
-    float m_GlobalHeight = 200.0f;
+    float m_GlobalWidth = 500.0f;
+    float m_GlobalHeight = 500.0f;
 
     float m_CellSize = 3.0f;
     float m_NeighborhoodRadius = 5.0f;
-    float m_ParticleRadius = 0.8f;
+    float m_ParticleRadius = 2.0f;
+    float m_MaxSpeed = 20.0f;
 
     int m_NumGroups = 1;
-    int m_NumParticles = 500;
+    int m_NumParticles = 300;
 
     bool m_Quit{false};
 };

@@ -21,16 +21,19 @@ std::string EvolutionApp::Name() const {
 bool EvolutionApp::Init(gr::AppContext& ctx) {
     std::cout << "Initializing EvolutionApp..." << std::endl;
 
-    m_Population = std::make_unique<Population>(m_NumParticles, 2, 8, 2);
-    m_Evaluator = std::make_unique<CircleFormationEvaluator>(10.f);
+    std::vector<int> layers = {4, 8, 2};
+    m_Population = std::make_unique<Population>(m_NumParticles, layers);
+    m_Evaluator = std::make_unique<CircleFormationEvaluator>(50.f, glm::vec2(0, 0));
     m_System = std::make_unique<ParticleSystem>(m_GlobalWidth, m_GlobalHeight, m_CellSize);
+    m_FitnessTracker = std::make_unique<gr::FitnessTracker>();
 
     m_System->Init(m_NumParticles, m_ParticleRadius, m_NumGroups);
-    m_System->SetBehavior(std::make_unique<NeuralParticleBehavior>(10.0));
+    m_System->SetBehavior(std::make_unique<NeuralParticleBehavior>(m_GlobalWidth * 0.5f));
 
-    for (size_t i = 0; i < m_System->GetParticles().size(); i++) {
-        m_System->GetParticles()[i]->SetGenome(&m_Population->GetGenomes()[i]);
-    }
+    // assign genomes
+    auto& gens = m_Population->GetGenomes();
+    auto& parts = m_System->GetParticles();
+    for (size_t i = 0; i < parts.size(); ++i) parts[i]->SetGenome(gens[i].get());
 
     m_Camera.SetOrthoByHeight(m_GlobalHeight, ctx.Aspect());
 
@@ -84,13 +87,17 @@ void EvolutionApp::Update(gr::AppContext& /*ctx*/, double dt) {
     m_CurrentStep++;
 
     if (m_CurrentStep > m_GenerationSteps) {
-        m_Evaluator->Evaluate(*m_System);
+        auto fitness = m_Evaluator->Evaluate(*m_System);
+        m_FitnessTracker->AddGeneration(fitness);
+        m_Population->SetFitness(fitness);
         m_Population->Evolve();
 
-        // assign new genomes
-        auto& gens = m_Population->GetGenomes();
-        auto& parts = m_System->GetParticles();
-        for (size_t i = 0; i < parts.size(); ++i) parts[i]->SetGenome(&gens[i]);
+        auto& genomes = m_Population->GetGenomes();
+        auto& particles = m_System->GetParticles();
+
+        for (size_t i = 0; i < particles.size(); ++i) {
+            particles[i]->SetGenome(genomes[i].get());
+        }
 
         m_System->RandomizePositions();
         m_CurrentStep = 0;
@@ -111,14 +118,23 @@ void EvolutionApp::Render(gr::AppContext& ctx) {
 
     m_Gui->BeginFrame();
 
-    ImGui::Begin("Evolution");
+    ImGui::Begin("Evolution Stats");
     ImGui::Text("Generation: %d", m_Generation);
     ImGui::Text("Particles: %zu", m_System->GetParticles().size());
-    ImGui::SliderFloat("Timescale", &m_Timescale, 0.1f, 10.0f);
-    ImGui::SliderInt("Generation Steps", &m_GenerationSteps, 300, 800);
-    if (ImGui::Button("SAVE")) {
-        m_Population->GetBestGenome().Save("genome.json");
+    ImGui::Text("Best Fitness: %.3f", m_FitnessTracker->GetLastBest());
+    ImGui::Text("Avg Fitness: %.3f", m_FitnessTracker->GetLastAverage());
+    ImGui::Separator();
+
+    const auto& avg = m_FitnessTracker->GetAverageHistory();
+    const auto& best = m_FitnessTracker->GetBestHistory();
+    if (!avg.empty()) {
+        ImGui::PlotLines("Avg Fitness", avg.data(), (int)avg.size(), 0, nullptr, 0.0f, 1.0f, ImVec2(0, 80));
+        ImGui::PlotLines("Best Fitness", best.data(), (int)best.size(), 0, nullptr, 0.0f, 1.0f, ImVec2(0, 80));
     }
+
+    ImGui::Separator();
+    ImGui::SliderFloat("Timescale", &m_Timescale, 0.2f, 10.0f);
+    ImGui::SliderFloat("Max Speed", &m_MaxSpeed, 5.0f, 100.0f);
     ImGui::End();
 
     m_Gui->EndFrame();

@@ -1,25 +1,53 @@
 #pragma once
-#include <gramma/model/evolution/Genome.hpp>
+
+#include <tbb/parallel_for.h>
+
+#include <gramma/model/evolution/FeedForwardGenome.hpp>
+#include <memory>
+#include <random>
 #include <vector>
 
 namespace gr {
 
+/**
+ * @class Population
+ * @brief Manages a set of neural network genomes, providing evolution operations.
+ */
 class Population {
    public:
-    Population(int size, int in, int hidden, int out);
-    void Evolve();
+    explicit Population(size_t size, std::vector<int> topology, ActivationType act = ActivationType::Tanh);
 
-    std::vector<Genome>& GetGenomes() {
+    /**
+     * @brief Get reference to all genomes.
+     */
+    std::vector<std::unique_ptr<FeedForwardGenome>>& GetGenomes() {
         return m_Genomes;
     }
 
-    Genome GetBestGenome() const {
-        return m_Genomes[0];
-    }
+    /**
+     * @brief Assign fitness values to each genome.
+     * @param fitness Array of fitness values corresponding to each genome.
+     */
+    void SetFitness(const std::vector<float>& fitness);
+
+    /**
+     * @brief Perform selection, crossover (optional), and mutation.
+     */
+    void Evolve();
+
+    /**
+     * @brief Return best genome of current generation.
+     */
+    const FeedForwardGenome& GetBestGenome() const;
 
    private:
-    int m_In, m_Hid, m_Out;
-    std::vector<Genome> m_Genomes;
+    std::vector<std::unique_ptr<FeedForwardGenome>> m_Genomes;
+    std::vector<float> m_Fitness;
+
+    std::vector<int> m_Topology;
+    ActivationType m_ActType;
+
+    mutable std::mt19937 m_Rng;
 };
 
 }  // namespace gr
